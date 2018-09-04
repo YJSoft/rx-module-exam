@@ -1,0 +1,440 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<lang>
+	<item name="exam">
+		<value xml:lang="ko"><![CDATA[시험]]></value>
+	</item>
+	<item name="unit_score">
+		<value xml:lang="ko"><![CDATA[점]]></value>
+	</item>
+	<item name="unit_hours">
+		<value xml:lang="ko"><![CDATA[시간]]></value>
+	</item>
+	<item name="list_display_item">
+		<value xml:lang="ko"><![CDATA[표시 항목]]></value>
+	</item>
+	<item name="exam_pass_setting">
+		<value xml:lang="ko"><![CDATA[합격시 설정]]></value>
+	</item>
+	<item name="exam_pass_point">
+		<value xml:lang="ko"><![CDATA[합격시 포인트]]></value>
+	</item>
+	<item name="exam_pass_group">
+		<value xml:lang="ko"><![CDATA[합격시 그룹변경]]></value>
+	</item>
+	<item name="exam_pass_point_give">
+		<value xml:lang="ko"><![CDATA[포인트 지급]]></value>
+	</item>
+	<item name="exam_pass_point_minus">
+		<value xml:lang="ko"><![CDATA[포인트 차감]]></value>
+	</item>
+    <item name="exam_pass_group_give">
+		<value xml:lang="ko"><![CDATA[소속그룹 변경]]></value>
+	</item>
+	<item name="search_result">
+		<value xml:lang="ko"><![CDATA[검색결과]]></value>
+	</item>
+	<item name="exam_duration_new">
+		<value xml:lang="ko"><![CDATA[new 표시 시간]]></value>
+	</item>
+    <item name="exam_management">
+		<value xml:lang="ko"><![CDATA[시험 관리]]></value>
+	</item>
+    <item name="exam_create">
+		<value xml:lang="ko"><![CDATA[모듈 생성]]></value>
+	</item>
+	<item name="about_exam_duration_new">
+		<value xml:lang="ko"><![CDATA[새 시험지가 생성되었을때 new 아이콘을 출력할 시간을 입력하여 주세요. (단위: 시간)]]></value>
+	</item>
+	<item name="about_pass_point">
+		<value xml:lang="ko"><![CDATA[합격시 지급할 포인트를 설정할 수 있습니다. (%d ~ %d 사이만 가능)]]></value>
+	</item>
+	<item name="about_pass_point_minus">
+		<value xml:lang="ko"><![CDATA[Y를 선택하시면 포인트 지급 금액만큼 작성자의 포인트를 차감합니다.]]></value>
+	</item>
+	<item name="about_use_point_minus">
+		<value xml:lang="ko"><![CDATA[참고! 지급된 포인트만큼 본인의 포인트가 차감됩니다]]></value>
+	</item>
+	<item name="about_pass_group">
+		<value xml:lang="ko"><![CDATA[합격시 회원의 소속그룹을 변경 시킬 수 있습니다. ]]></value>
+	</item>
+    <item name="about_exam">
+		<value xml:lang="ko"><![CDATA[시험형태로 문제를 생성하고 풀이할 수 있습니다.]]></value>
+	</item>
+    <item name="cmd_exam_list">
+		<value xml:lang="ko"><![CDATA[시험 목록]]></value>
+	</item>
+	<item name="cmd_exam_info">
+		<value xml:lang="ko"><![CDATA[시험 정보]]></value>
+	</item>
+	<item name="cmd_exam_config">
+		<value xml:lang="ko"><![CDATA[시험 설정]]></value>
+	</item>
+	<item name="cmd_exam_category_config">
+		<value xml:lang="ko"><![CDATA[분류 설정]]></value>
+	</item>
+    <item name="cmd_exam_grant_config">
+		<value xml:lang="ko"><![CDATA[권한 설정]]></value>
+	</item>
+	<item name="cmd_exam_skin_config">
+		<value xml:lang="ko"><![CDATA[스킨 설정]]></value>
+	</item>
+	<item name="cmd_exam_mskin_config">
+		<value xml:lang="ko"><![CDATA[모바일스킨 설정]]></value>
+	</item>
+	<item name="cmd_exam_write">
+		<value xml:lang="ko"><![CDATA[시험지 생성]]></value>
+	</item>
+	<item name="cmd_my_exam_result">
+		<value xml:lang="ko"><![CDATA[시험 응시 현황]]></value>
+	</item>
+	<item name="cmd_change_editmode">
+		<value xml:lang="ko"><![CDATA[편집모드 전환]]></value>
+	</item>
+	<item name="cmd_question_write">
+		<value xml:lang="ko"><![CDATA[문제 출제]]></value>
+	</item>
+	<item name="cmd_question_edit">
+		<value xml:lang="ko"><![CDATA[문제 수정]]></value>
+	</item>
+	<item name="cmd_question_delete">
+		<value xml:lang="ko"><![CDATA[문제 삭제]]></value>
+	</item>
+    <item name="cmd_list_setting">
+		<value xml:lang="ko"><![CDATA[목록설정]]></value>
+	</item>
+    <item name="cmd_selected_result_manage">
+		<value xml:lang="ko"><![CDATA[시험 응시 내역 수정]]></value>
+	</item>
+    <item name="exam_srl">
+		<value xml:lang="ko"><![CDATA[시험번호]]></value>
+	</item>
+    <item name="exam_join">
+		<value xml:lang="ko"><![CDATA[응시]]></value>
+	</item>
+    <item name="exam_title">
+		<value xml:lang="ko"><![CDATA[시험명]]></value>
+	</item>
+    <item name="exam_content">
+		<value xml:lang="ko"><![CDATA[시험 설명]]></value>
+	</item>
+    <item name="exam_date">
+		<value xml:lang="ko"><![CDATA[시험기간]]></value>
+	</item>
+    <item name="exam_regdate">
+		<value xml:lang="ko"><![CDATA[등록일]]></value>
+	</item>
+    <item name="exam_result_time">
+		<value xml:lang="ko"><![CDATA[소요시간]]></value>
+	</item>
+    <item name="exam_result_regdate">
+		<value xml:lang="ko"><![CDATA[응시일]]></value>
+	</item>
+    <item name="exam_last_update">
+		<value xml:lang="ko"><![CDATA[최근 수정일]]></value>
+	</item>
+    <item name="exam_page_type">
+		<value xml:lang="ko"><![CDATA[시험 유형]]></value>
+	</item>
+    <item name="exam_result_type">
+		<value xml:lang="ko"><![CDATA[채점 결과]]></value>
+	</item>
+    <item name="exam_cutline">
+		<value xml:lang="ko"><![CDATA[합격 커트라인]]></value>
+	</item>
+    <item name="exam_score">
+		<value xml:lang="ko"><![CDATA[점수]]></value>
+	</item>
+    <item name="exam_score_secert">
+		<value xml:lang="ko"><![CDATA[비공개]]></value>
+	</item>
+    <item name="exam_time">
+		<value xml:lang="ko"><![CDATA[제한 시간]]></value>
+	</item>
+    <item name="exam_join_point">
+		<value xml:lang="ko"><![CDATA[응시료]]></value>
+	</item>
+    <item name="exam_correct_count">
+		<value xml:lang="ko"><![CDATA[정답 수]]></value>
+	</item>
+    <item name="exam_wrong_count">
+		<value xml:lang="ko"><![CDATA[오답 수]]></value>
+	</item>
+    <item name="exam_question_count">
+		<value xml:lang="ko"><![CDATA[문제개수]]></value>
+	</item>
+    <item name="exam_join_count">
+		<value xml:lang="ko"><![CDATA[응시자수]]></value>
+	</item>
+    <item name="exam_status">
+		<value xml:lang="ko"><![CDATA[상태]]></value>
+	</item>
+    <item name="exam_status_modify">
+		<value xml:lang="ko"><![CDATA[상태 변경]]></value>
+	</item>
+    <item name="exam_image">
+		<value xml:lang="ko"><![CDATA[이미지]]></value>
+	</item>
+    <item name="q_level">
+		<value xml:lang="ko"><![CDATA[난이도]]></value>
+	</item>
+    <item name="q_type">
+		<value xml:lang="ko"><![CDATA[문제유형]]></value>
+	</item>
+    <item name="q_title">
+		<value xml:lang="ko"><![CDATA[문제]]></value>
+	</item>
+    <item name="q_content">
+		<value xml:lang="ko"><![CDATA[해설]]></value>
+	</item>
+    <item name="q_answer">
+		<value xml:lang="ko"><![CDATA[정답]]></value>
+	</item>
+    <item name="q_description">
+		<value xml:lang="ko"><![CDATA[지문]]></value>
+	</item>
+    <item name="q_answerCheckType">
+		<value xml:lang="ko"><![CDATA[복수답안 처리]]></value>
+	</item>
+    <item name="use_description">
+		<value xml:lang="ko"><![CDATA[사용]]></value>
+	</item>
+    <item name="q_description_title">
+		<value xml:lang="ko"><![CDATA[머리글]]></value>
+	</item>
+    <item name="q_description_content">
+		<value xml:lang="ko"><![CDATA[내　용]]></value>
+	</item>
+    <item name="hide_category">
+		<value xml:lang="ko"><![CDATA[분류 숨기기]]></value>
+	</item>
+	<item name="about_hide_category">
+		<value xml:lang="ko"><![CDATA[임시로 분류를 사용하지 않으려면 체크하세요.]]></value>
+	</item>
+    <item name="about_list_config">
+		<value xml:lang="ko"><![CDATA[시험의 목록형식 사용시 원하는 항목들로 배치를 할 수 있습니다. 단 스킨에서 지원하지 않는 경우 불가능합니다. 대상항목/ 표시항목의 항목을 더블클릭하면 추가/ 제거가 됩니다.]]></value>
+	</item>
+    <item name="about_exam_editor_skin">
+		<value xml:lang="ko"><![CDATA[시험문제 출제페이지에서 지문 입력 시 사용할 에디터스킨을 선택하세요.]]></value>
+	</item>
+    <item name="exam_delete_warning">
+		<value xml:lang="ko"><![CDATA[모듈을 삭제하시면 이 모듈의 시험지 및 문제정보 등도 같이 삭제됩니다.]]></value>
+	</item>
+    <item name="no_exam_instance">
+		<value xml:lang="ko"><![CDATA[생성된 시험이 없습니다.]]></value>
+	</item>
+	<item name="no_exam_list">
+		<value xml:lang="ko"><![CDATA[진행중인 시험이 없습니다.]]></value>
+	</item>
+	<item name="no_question_list">
+		<value xml:lang="ko"><![CDATA[출제된 문제가 없습니다.]]></value>
+	</item>
+	<item name="no_result_list">
+		<value xml:lang="ko"><![CDATA[응시한 시험이 없습니다.]]></value>
+	</item>
+    <item name="exam_pass_pointOption" type="array">
+    	<item name="0">
+            <value xml:lang="ko"><![CDATA[사용안함]]></value>
+        </item>
+    	<item name="1">
+            <value xml:lang="ko"><![CDATA[작성자가 보유한만큼 지급 가능]]></value>
+        </item>
+    	<item name="2">
+            <value xml:lang="ko"><![CDATA[관리자가 설정한 범위내에서 지급 가능]]></value>
+        </item>
+	</item>
+    <item name="exam_pass_groupOption" type="array">
+    	<item name="0">
+            <value xml:lang="ko"><![CDATA[사용안함]]></value>
+        </item>
+    	<item name="1">
+            <value xml:lang="ko"><![CDATA[작성자가 소속한 그룹내에서 변경 가능]]></value>
+        </item>
+    	<item name="2">
+            <value xml:lang="ko"><![CDATA[관리자가 설정한 그룹내에서 변경 가능]]></value>
+        </item>
+	</item>
+    <item name="statusList" type="array">
+    	<item name="Y">
+            <value xml:lang="ko"><![CDATA[공개]]></value>
+        </item>
+    	<item name="N">
+            <value xml:lang="ko"><![CDATA[종료]]></value>
+        </item>
+	</item>
+    <item name="pageTypeList" type="array">
+    	<item name="0">
+            <value xml:lang="ko"><![CDATA[시험지 형태]]></value>
+        </item>
+	</item>
+	<item name="resultTypeList" type="array">
+    	<item name="0">
+            <value xml:lang="ko"><![CDATA[비공개]]></value>
+        </item>
+    	<item name="1">
+            <value xml:lang="ko"><![CDATA[점수 공개]]></value>
+        </item>
+    	<item name="2">
+            <value xml:lang="ko"><![CDATA[풀이 공개]]></value>
+        </item>
+    	<item name="3">
+            <value xml:lang="ko"><![CDATA[전체 공개]]></value>
+        </item>
+	</item>
+	<item name="resultStatusList" type="array">
+    	<item name="P">
+            <value xml:lang="ko"><![CDATA[합격]]></value>
+        </item>
+    	<item name="N">
+            <value xml:lang="ko"><![CDATA[불합격]]></value>
+        </item>
+	</item>
+    <item name="qTypeList" type="array">
+    	<item name="0">
+            <value xml:lang="ko"><![CDATA[객관식]]></value>
+        </item>
+    	<item name="1">
+            <value xml:lang="ko"><![CDATA[주관식]]></value>
+        </item>
+	</item>
+    <item name="qLevelList" type="array">
+    	<item name="0">
+            <value xml:lang="ko"><![CDATA[하]]></value>
+        </item>
+    	<item name="1">
+            <value xml:lang="ko"><![CDATA[중]]></value>
+        </item>
+    	<item name="2">
+            <value xml:lang="ko"><![CDATA[상]]></value>
+        </item>
+	</item>
+	<item name="answerCheckList" type="array">
+    	<item name="0">
+            <value xml:lang="ko"><![CDATA[하나만 일치해도 정답 인정]]></value>
+        </item>
+    	<item name="1">
+            <value xml:lang="ko"><![CDATA[모두 일치해야 정답 인정]]></value>
+        </item>
+    	<item name="2">
+            <value xml:lang="ko"><![CDATA[모두 일치해야 정답 인정 + 부분 점수]]></value>
+        </item>
+	</item>
+    <item name="numIconList" type="array">
+    	<item name="1">
+            <value xml:lang="ko"><![CDATA[①]]></value>
+        </item>
+    	<item name="2">
+            <value xml:lang="ko"><![CDATA[②]]></value>
+        </item>
+    	<item name="3">
+            <value xml:lang="ko"><![CDATA[③]]></value>
+        </item>
+    	<item name="4">
+            <value xml:lang="ko"><![CDATA[④]]></value>
+        </item>
+    	<item name="5">
+            <value xml:lang="ko"><![CDATA[⑤]]></value>
+        </item>
+	</item>
+	<item name="result_search_list" type="array">
+    	<item name="document_srl">
+            <value xml:lang="ko"><![CDATA[시험번호]]></value>
+        </item>
+    	<item name="member_srl">
+            <value xml:lang="ko"><![CDATA[회원번호]]></value>
+        </item>
+    	<item name="correct_count">
+            <value xml:lang="ko"><![CDATA[정답 수]]></value>
+        </item>
+    	<item name="correct_count_more">
+            <value xml:lang="ko"><![CDATA[정답 수(이상)]]></value>
+        </item>
+    	<item name="correct_count_less">
+            <value xml:lang="ko"><![CDATA[정답 수(이하)]]></value>
+        </item>
+    	<item name="score">
+            <value xml:lang="ko"><![CDATA[점수]]></value>
+        </item>
+    	<item name="score_more">
+            <value xml:lang="ko"><![CDATA[점수(이상)]]></value>
+        </item>
+    	<item name="score_less">
+            <value xml:lang="ko"><![CDATA[점수(이하)]]></value>
+        </item>
+    	<item name="regdate_more">
+            <value xml:lang="ko"><![CDATA[응시일(이상)]]></value>
+        </item>
+    	<item name="regdate_less">
+            <value xml:lang="ko"><![CDATA[응시일(이하)]]></value>
+        </item>
+    </item>
+    <item name="about_pagetype">
+		<value xml:lang="ko"><![CDATA[시험을 응시할 때 어떤 형태로 보일것인지 선택할 수 있습니다.]]></value>
+	</item>
+	<item name="about_resulttype">
+		<value xml:lang="ko"><![CDATA[시험 응시 후 결과를 어떻게 알려줄 것인지 선택할 수 있습니다. 비공개를 설정하면 응시자는 결과를 확인할 수 없으며 전체 공개로 설정하시면 정답까지 보여줍니다.]]></value>
+	</item>
+	<item name="about_cutline">
+		<value xml:lang="ko"><![CDATA[시험 점수가 커트라인 이상일경우 합격, 아니면 불합격으로 처리할 수 있습니다. (0~100 사이로 입력가능)]]></value>
+	</item>
+	<item name="about_date">
+		<value xml:lang="ko"><![CDATA[시험기간을 설정하면 해당기간에만 시험에 응시할 수 있습니다.]]></value>
+	</item>
+	<item name="about_time">
+		<value xml:lang="ko"><![CDATA[제한 시간을 설정하면 시험 응시 중 남은시간이 표시되며 남은 시간이 지날경우 시험은 자동 제출됩니다.]]></value>
+	</item>
+	<item name="about_join_point">
+		<value xml:lang="ko"><![CDATA[시험 응시에 필요한 포인트를 설정하실 수 있습니다.]]></value>
+	</item>
+	<item name="about_exam_delete">
+		<value xml:lang="ko"><![CDATA[시험지를 삭제하면 문제 및 참여자정보도 같이 삭제됩니다.]]></value>
+	</item>
+	<item name="msg_not_exam_title">
+		<value xml:lang="ko"><![CDATA[시험명을 입력하여 주세요.]]></value>
+	</item>
+	<item name="msg_not_exam_date">
+		<value xml:lang="ko"><![CDATA[시험기간 설정시 시작일 또는 종료일을 선택하여 주세요.]]></value>
+	</item>
+	<item name="msg_not_exam_time">
+		<value xml:lang="ko"><![CDATA[제한할 시간(초)를 입력하여 주세요.]]></value>
+	</item>
+	<item name="msg_not_answer">
+		<value xml:lang="ko"><![CDATA[정답을 입력(선택)하여 주세요.]]></value>
+	</item>
+	<item name="msg_invalid_exam_score">
+		<value xml:lang="ko"><![CDATA[점수는 100점을 넘길 수 없습니다.]]></value>
+	</item>
+	<item name="msg_invalid_exam_cutline">
+		<value xml:lang="ko"><![CDATA[합격 커트라인은 100점을 넘길 수 없습니다.]]></value>
+	</item>
+	<item name="msg_invalid_start_time">
+		<value xml:lang="ko"><![CDATA[시험 시작일은 종료일보다 느릴 수 없습니다.]]></value>
+	</item>
+	<item name="msg_invalid_end_time">
+		<value xml:lang="ko"><![CDATA[시험 종료일은 시작일보다 빠를 수 없습니다.]]></value>
+	</item>
+	<item name="msg_not_examitem">
+		<value xml:lang="ko"><![CDATA[해당 시험지가 존재하지 않습니다.]]></value>
+	</item>
+	<item name="msg_not_exam_date">
+		<value xml:lang="ko"><![CDATA[시험기간에만 응시할 수 있습니다.]]></value>
+	</item>
+	<item name="msg_time_over">
+		<value xml:lang="ko"><![CDATA[제한시간이 초과되었습니다.]]></value>
+	</item>
+    <item name="msg_not_enough_point">
+		<value xml:lang="ko"><![CDATA[포인트가 부족합니다]]></value>
+	</item>
+	<item name="msg_not_session">
+		<value xml:lang="ko"><![CDATA[세션이 만료되었습니다. 다시 시도하여 주십시요.]]></value>
+	</item>
+	<item name="msg_not_answer_text">
+		<value xml:lang="ko"><![CDATA[번 문제 정답을 입력하세요.]]></value>
+	</item>
+	<item name="msg_not_answer_radio">
+		<value xml:lang="ko"><![CDATA[번 문제 정답을 선택하세요.]]></value>
+	</item>
+	<item name="msg_exists_result">
+		<value xml:lang="ko"><![CDATA[이미 이 시험에 응시 하셨습니다.]]></value>
+	</item>
+
+</lang>

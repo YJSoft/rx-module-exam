@@ -1,0 +1,28 @@
+<load target="css/exam.paper.css" />
+<load target="js/exam.js" />
+
+<div id="wrap" class="add_ntc">
+    <div id="container">
+        <div id="content" class="content">
+            <div class="spot">
+                <div class="paper_list">
+                    <div class="paper_inn">
+                        <div class="paper">
+                            <div class="paper_inner">
+                                {$content}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+jQuery(function($) {
+    $(document).bind('contextmenu', function() {
+        return false;
+    });
+});
+</script>

@@ -1,0 +1,22 @@
+<load target="css/message.css" />
+
+<div id="exam_message">
+    <div class="login-header">
+        <img src="img/img_hmessage.png" width="70" height="70" alt="" />
+        <h1>{$message}</h1>
+    </div>
+    <div class="login-body">
+        <p cond="$is_logged">
+			<a href="{getUrl('act','dispMemberLogout')}">{$lang->cmd_logout}</a>
+		</p>
+		<p cond="!$is_logged && $module != 'admin'">
+			<a href="{getUrl('act','dispMemberLoginForm')}">{$lang->cmd_login}</a>
+		</p>
+    </div>
+    <div class="login-footer" >
+        <a href="{getUrl('','act','dispMemberFindAccount')}">{$lang->cmd_find_member_account}</a>
+        <span class="bar">|</span>
+        <a href="{getUrl('','act','dispMemberSignUpForm')}"><span>{$lang->cmd_signup}</span></a>
+    </div>
+</div>		    
+<include target="_footer.html" />

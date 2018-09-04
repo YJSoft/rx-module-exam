@@ -1,0 +1,8 @@
+<query id="deleteResult" action="delete">
+    <tables>
+        <table name="exam_result" />
+    </tables>
+    <conditions>
+        <condition operation="equal" column="log_srl" var="log_srl" filter="number" notnull="notnull" />
+    </conditions>
+</query>

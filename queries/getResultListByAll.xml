@@ -1,0 +1,13 @@
+<query id="getResultListByAll" action="select">
+    <tables>
+        <table name="exam_result" alias="result" />
+    </tables>
+    <columns>
+        <column name="result.log_srl" />
+        <column name="result.answer" />
+        <column name="result.document_srl" />
+    </columns>
+    <navigation>
+        <index var="sort_index" default="result.log_srl" order="asc" />
+   </navigation>
+</query>

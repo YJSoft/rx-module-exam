@@ -1,0 +1,20 @@
+<query id="getResult" action="select">
+    <tables>
+        <table name="exam_result" alias="result" />
+        <table name="exam" alias="exam" />
+    </tables>
+    <columns>
+        <column name="result.*" />
+        <column name="exam.title" />
+        <column name="exam.result_type" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="result.member_srl" var="member_srl" />
+        <condition operation="equal" column="result.status" var="status" />
+        <group pipe="and">
+            <condition operation="equal" column="result.document_srl" var="document_srl" />
+            <condition operation="equal" column="result.log_srl" var="log_srl" pipe="and" />
+        </group>
+        <condition operation="equal" column="exam.document_srl" var="result.document_srl" notnull="notnull" pipe="and" />
+    </conditions>
+</query>

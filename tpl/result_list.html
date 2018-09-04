@@ -1,0 +1,239 @@
+<load target="js/exam.js" />
+<include target="header.html" />
+
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/tpl/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<form action="" method="post">
+	<table id="resultList" class="x_table x_table-striped x_table-hover">
+		<caption>
+			<a href="{getUrl('status', '', 'page', '')}" class="active"|cond="$status==''">{$lang->total}</a>
+			<i>|</i>
+            <block loop="$lang->resultStatusList=>$key,$val">
+			<a href="{getUrl('status', $key, 'page', '')}" class="active"|cond="$status==$key">{$val} <block cond="$status==$key">({$total_count})</block></a>
+			<i>|</i>
+            </block>
+			<div class="x_pull-right x_btn-group">
+				<a href="#listManager" data-value="modify" class="modalAnchor _examresult x_btn">{$lang->exam_status_modify}</a>
+				<a href="#listManager" data-value="delete" class="modalAnchor _examresult x_btn">{$lang->cmd_delete}</a>
+			</div>
+		</caption>
+		<thead>
+			<tr>
+                <th scope="col" class="nowr">{$lang->exam_title}</th>
+                <th scope="col" class="nowr">
+                    <select id="view_name" style="width:100px;margin:0;padding:0">
+                    <option value="">{$lang->nick_name}</option>
+                    <option value="user_name">{$lang->user_name}</option>
+                    </select>
+                </th>
+				<th scope="col" class="nowr"><a href="{getUrl('sort_index', 'question_count', 'sort_order', ($sort_order == 'asc') ? 'desc' : 'asc')}">{$lang->exam_question_count}<block cond="$sort_index == 'question_count'"> <em cond="$sort_order=='asc'">▲</em><em cond="$sort_order != 'asc'">▼</em></block></a></th>
+				<th scope="col" class="nowr"><a href="{getUrl('sort_index', 'correct_count', 'sort_order', ($sort_order == 'asc') ? 'desc' : 'asc')}">{$lang->exam_correct_count}<block cond="$sort_index == 'correct_count'"> <em cond="$sort_order=='asc'">▲</em><em cond="$sort_order != 'asc'">▼</em></block></a></th>
+				<th scope="col" class="nowr"><a href="{getUrl('sort_index', 'score', 'sort_order', ($sort_order == 'asc') ? 'desc' : 'asc')}">{$lang->exam_score}<block cond="$sort_index == 'score'"> <em cond="$sort_order=='asc'">▲</em><em cond="$sort_order != 'asc'">▼</em></block></a></th>
+				<th scope="col" class="nowr">{$lang->exam_result_time}</th>
+				<th scope="col" class="nowr">{$lang->status}</th>
+				<th scope="col" class="nowr">{$lang->exam_result_regdate}</th>
+				<th scope="col" class="nowr">{$lang->exam_result_type}</th>
+				<th scope="col" class="nowr">{$lang->cmd_modify}</th>
+				<th scope="col">
+					<input type="checkbox" title="Check All" data-name="cart" />
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr loop="$result_list=>$no,$resultitem">
+				<td class="nowr">
+                    <a href="{getUrl('','mid',$module_info->mid,'document_srl',$resultitem->document_srl)}" onclick="examopen(this.href,'exam');return false">{$resultitem->title}</a>
+                    <a href="{getUrl('search_target','document_srl','search_keyword',$resultitem->document_srl)}" class="x_icon-search">{$lang->cmd_search}</a>
+                </td>
+                <td class="nowr">
+					<a cond="$view_name!='user_name'" href="#popup_menu_area" class="member_{$resultitem->member_srl}" title="Info">{$resultitem->nick_name}</a>
+					<a cond="$view_name=='user_name'" href="#popup_menu_area" class="member_{$resultitem->member_srl}" title="Info">{$resultitem->user_name}</a>
+                    <a href="{getUrl('search_target2','member_srl','search_keyword2',$resultitem->member_srl)}" class="x_icon-search">{$lang->cmd_search}</a>
+                </td>
+				<td class="nowr">{$resultitem->correct_count+$resultitem->wrong_count}</td>
+				<td class="nowr">{$resultitem->correct_count}</td>
+				<td class="nowr">{$resultitem->score}</td>
+				<td class="nowr">{$resultitem->exam_timeText}</td>
+				<td class="nowr">{$lang->resultStatusList[$resultitem->status]}</td>
+                <td class="nowr">{zdate($resultitem->regdate, 'Y-m-d')}</td>
+				<td class="nowr"><a href="{getUrl('','mid',$module_info->mid->mid,'act','dispExamCorrectCheck','log_srl',$resultitem->log_srl)}" onclick="examopen(this.href,'exam2');return false">{$lang->exam_result_type}</a></td>
+				<td class="nowr"><a href="{getUrl('', 'module', 'admin', 'act', 'dispExamAdminResultUpdate','module_srl',$module_srl,'log_srl', $resultitem->log_srl)}">{$lang->cmd_modify}</a></td>
+				<td><input type="checkbox" name="cart" value="{$resultitem->log_srl."\t".$resultitem->title."\t".$resultitem->nick_name."\t".$resultitem->score."\t".$lang->resultStatusList[$resultitem->status]}" /></td>
+			</tr>
+			<tr cond="$total_count==0">
+				<td>{$lang->no_result_list}</td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+<div class="x_clearfix">
+	<form cond="$page_navigation" action="./" class="x_pagination x_pull-left" no-error-return-url="true" style="margin:0">
+		<input type="hidden" name="module" value="{$module}" />
+		<input type="hidden" name="act" value="{$act}" />
+		<input type="hidden" name="module_srl" value="{$module_srl}" />
+		<input cond="$sort_index" type="hidden" name="sort_index" value="{$sort_index}" />
+		<input cond="$sort_order" type="hidden" name="sort_order" value="{$sort_order}" />
+		<input cond="$search_keyword" type="hidden" name="search_keyword" value="{$search_keyword}" />
+		<ul>
+			<li class="x_disabled"|cond="!$page || $page == 1"><a href="{getUrl('page', '')}">&laquo; {$lang->first_page}</a></li>
+			<block cond="$page_navigation->first_page != 1 && $page_navigation->first_page + $page_navigation->page_count > $page_navigation->last_page - 1 && $page_navigation->page_count != $page_navigation->total_page">
+				{@$isGoTo = true}
+				<li>
+					<a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+					<span cond="$isGoTo" id="goTo" class="x_input-append">
+						<input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+						<button type="submit" class="x_add-on">Go</button>
+					</span>
+				</li>
+			</block>
+	
+			<!--@while($page_no = $page_navigation->getNextPage())-->
+				{@$last_page = $page_no}
+				<li class="x_active"|cond="$page_no == $page"><a  href="{getUrl('page', $page_no)}">{$page_no}</a></li>
+			<!--@end-->
+			<block cond="$last_page != $page_navigation->last_page && $last_page + 1 != $page_navigation->last_page">
+				{@$isGoTo = true}
+				<li>
+					<a href="#goTo" data-toggle title="{$lang->cmd_go_to_page}">&hellip;</a>
+					<span cond="$isGoTo" id="goTo" class="x_input-append">
+						<input type="number" min="1" max="{$page_navigation->last_page}" required name="page" title="{$lang->cmd_go_to_page}" />
+						<button type="submit" class="x_add-on">Go</button>
+					</span>
+				</li>
+			</block>
+			<li class="x_disabled"|cond="$page == $page_navigation->last_page"><a href="{getUrl('page', $page_navigation->last_page)}" title="{$page_navigation->last_page}">{$lang->last_page} &raquo;</a></li>
+		</ul>
+	</form>
+	<div class="x_pull-right x_btn-group">
+        <a href="#listManager" data-value="modify" class="modalAnchor _examresult x_btn">{$lang->exam_status_modify}</a>
+        <a href="#listManager" data-value="delete" class="modalAnchor _examresult x_btn">{$lang->cmd_delete}</a>
+    </div>
+</div>
+<form id="searchForm" action="./" method="get" class="search center x_input-append" no-error-return-url="true">
+	<input type="hidden" name="module" value="{$module}" />
+	<input type="hidden" name="act" value="{$act}" />
+	<input type="hidden" name="module_srl" value="{$module_srl}" />
+	<input  type="hidden" name="view_name" value="{$view_name}" />
+    <input cond="$status" type="hidden" name="status" value="{$status}" />
+    <input cond="$sort_index" type="hidden" name="sort_index" value="{$sort_index}" />
+    <input cond="$sort_order" type="hidden" name="sort_order" value="{$sort_order}" />
+	<select name="search_target" style="margin-right:4px" title="{$lang->search_target}">
+		<option value="">{$lang->search_target}</option>
+        <option value="{$key}" loop="$lang->result_search_list=>$key,$val" selected="selected"|cond="$search_target==$key">{$val}</option>
+	</select>
+	<input type="search" name="search_keyword" value="{htmlspecialchars($search_keyword, ENT_COMPAT | ENT_HTML401, 'UTF-8', false)}" style="width:140px">
+	<select name="search_target2" style="margin-right:4px" title="{$lang->search_target}">
+		<option value="">{$lang->search_target}</option>
+        <option value="{$key}" loop="$lang->result_search_list=>$key,$val" selected="selected"|cond="$search_target2==$key">{$val}</option>
+	</select>
+	<input type="search" name="search_keyword2" value="{htmlspecialchars($search_keyword2, ENT_COMPAT | ENT_HTML401, 'UTF-8', false)}" style="width:140px">
+	<select name="search_target3" style="margin-right:4px" title="{$lang->search_target}">
+		<option value="">{$lang->search_target}</option>
+        <option value="{$key}" loop="$lang->result_search_list=>$key,$val" selected="selected"|cond="$search_target3==$key">{$val}</option>
+	</select>
+	<input type="search" name="search_keyword3" value="{htmlspecialchars($search_keyword3, ENT_COMPAT | ENT_HTML401, 'UTF-8', false)}" style="width:140px">
+    <button class="x_btn x_btn-inverse" type="submit">{$lang->cmd_search}</button>
+	<a class="x_btn" href="{getUrl('', 'module', 'admin', 'act', 'dispExamAdminResultList', 'module_srl', $module_srl, 'page', $page)}">{$lang->cmd_cancel}</a>
+</form>
+<section class="x_modal" id="listManager">
+	<form action="./" ruleset="updateSeletecdResultInfo" method="post">
+	<input type="hidden" name="module" value="exam" />
+	<input type="hidden" name="act" value="procExamAdminSelectedResultManage" />
+	<input type="hidden" name="module_srl" value="{$module_srl}" />
+	<input type="hidden" name="success_return_url" value="{getUrl('act', $act)}" />
+	<input type="hidden" name="xe_validator_id" value="modules/exam/tpl/1" />
+		<div class="x_modal-header">
+			<h1>{$lang->cmd_selected_result_manage}: <span class="_sub"></span></h1>
+		</div>
+		<div class="x_modal-body">
+			<table class="x_table x_table-striped x_table-hover">
+				<thead>
+					<tr>
+						<th scope="col">{$lang->exam_title}</th>
+						<th scope="col">{$lang->nick_name}</th>
+						<th scope="col">{$lang->exam_score}</th>
+						<th scope="col" class="text">{$lang->status}</th>
+						<th scope="col">&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody id="popupBody">
+				</tbody>
+			</table>
+			<div class="x_control-group _moveTarget" hidden>
+				<h3>{$lang->status}</h3>
+				<label loop="$lang->resultStatusList=>$key,$val" class="x_inline" for="status_{$key}"><input type="radio" name="status" id="status_{$key}" value="{$key}" /> {$val}</label>
+			</div>
+			<div class="x_control-group _moveTarget" hidden>
+				<h3>{$lang->about_send_message}</h3>
+				<textarea rows="5" cols="42" id="message" style="width:98%" name="message" title="{$lang->about_send_message}"></textarea>
+			</div>
+		</div>
+		<div class="x_modal-footer">
+			<button type="button" class="x_btn x_pull-left" data-hide="#listManager">{$lang->cmd_close}</button>
+			<span class="x_btn-group x_pull-right">
+				<button type="submit" name="type" value="modify|delete" class="x_btn x_btn-inverse">{$lang->confirm}</button>
+			</span>
+		</div>
+	</form>
+</section>
+<script>
+jQuery(function($){
+	// Modal anchor activation
+	var $resultList = $('#resultList');
+	$resultList.find(':checkbox').change(function(){
+		var $modalAnchor = $('a[data-value]');
+		if($resultList.find('tbody :checked').length == 0){
+			$modalAnchor.removeAttr('href').addClass('x_disabled');
+		} else {
+			$modalAnchor.attr('href','#listManager').removeClass('x_disabled');
+		}
+	}).change();
+
+	// Modal anchor button action
+	$('a[data-value]').click(function(){
+		if($resultList.find(':checked').length != 0){
+			var $this = $(this);
+			var $moveTarget = $('._moveTarget');
+			var thisValue = $this.attr('data-value');
+			var thisText = $this.text();
+			$('#listManager').find('.x_modal-header ._sub').text(thisText).end().find('[type="submit"]').val(thisValue).text(thisText);
+			if(thisValue == 'delete'){
+				$moveTarget.hide().next().css('borderTopWidth','0');
+			} else {
+				$moveTarget.show().next().css('borderTopWidth','1px');
+			}
+		}
+	});
+	$('#view_name').change(function(){
+        $('input[name=view_name]').val($(this).val());
+        $("#searchForm").submit();
+	});
+
+	$('a.modalAnchor._examresult').bind('before-open.mw', function(){
+		var $List = $('#resultList tbody :checked');
+		if ($List.length == 0){
+			alert('{$lang->msg_not_founded}');
+			return false;
+		}
+		var resultInfo, logSrl;
+		var resultTag = "";
+		$('#message').val('');
+		$('#popupBody').empty();
+		for (var i = 0; i<$List.length; i++){
+			resultInfo = $List.eq(i).val().split('\t');
+			logSrl = resultInfo.shift();
+
+            $tr = $('<tr></tr>');
+			for(var j in resultInfo)
+			{
+				var info = resultInfo[j];
+				var $td = $('<td></td>').text(info);
+				$tr.append($td);
+			}
+			$tr.append('<td><input type="hidden" name="log_srls[]" value="'+logSrl+'"/></td>');
+			$('#popupBody').append($tr);
+		}
+	});
+});
+</script>

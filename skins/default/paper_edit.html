@@ -1,0 +1,19 @@
+<h3>{$examitem->getTitle()}</h3>
+<div class="sc_tp">
+    <div class="fl">
+        <block cond="$mode=='write'">
+        <a href="{getUrl('mode','','question_srl','')}" class="btn">{$lang->cmd_back}</a>
+        </block>
+        <block cond="$mode!='write'">
+        <a  href="{getUrl('mode','write','question_srl','')}" class="btn">{$lang->cmd_question_write}</a>
+        <a href="{getUrl('act','','mode','','question_srl','')}" class="btn">{$lang->cmd_back}</a>
+        </block>
+    </div>
+    <p class="qcnt">
+        총 <span id="total_q_count">{$examitem->getQuestionCount()}</span> 문항
+    </p>
+</div>
+<div id="questions" class="questions">
+    <include target="_paper_q_write.html" cond="$mode=='write'" />
+    <include target="_paper_edit.html" cond="$mode!='write'" />
+</div>

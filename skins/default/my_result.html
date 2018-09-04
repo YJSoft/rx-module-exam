@@ -1,0 +1,74 @@
+<include target="_header.html" />
+
+<div class="exam_search_area">
+    <div class="exam_search">
+        <form action="{getUrl()}" method="get" no-error-return-url="true">
+            <input type="hidden" name="mid" value="{$mid}" />
+            <input type="hidden" name="vid" value="{$vid}" />
+            <input type="hidden" name="act" value="{$act}" />
+            <div class="search_select">
+                <select name="search_status">
+                    <option value="">{$lang->total}</option>
+                    <option loop="$lang->resultStatusList=>$key,$val" value="{$key}" selected="selected"|cond="$search_status==$key">{$val}</option>
+                </select>
+            </div>
+            <div class="search_con">
+                <button type="submit" class="btn"><i class="xe-magnifier"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="exam_list basic_type">
+    <table class="tbl_exam_list">
+    <caption>응시한 시험 리스트</caption>
+    <colgroup>
+    <col />
+    <col style="width:100px" />
+    <col style="width:90px" />
+    <col style="width:120px" />
+    <col />
+    </colgroup>
+    <thead>
+    <tr>
+    <th scope="col"><div class="ta_c">{$lang->exam_title}</div></th>
+    <th scope="col"><div class="ta_c">{$lang->exam_score}</div></th>
+    <th scope="col"><div class="ta_c">{$lang->exam_status}</div></th>
+    <th scope="col"><div class="ta_c">{$lang->date}</div></th>
+    <th scope="col"> </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr cond="!$result_list">
+        <td colspan="5"><div class="ta_c">{$lang->no_result_list}</div></td>
+    </tr>
+    <tr cond="$result_list" loop="$result_list=>$no,$resultitem">
+    <td><div class="ta_l bd_tit">{$resultitem->title}</div></td>
+    <td cond="$resultitem->result_type"><div class="ta_c">{$resultitem->score}</div></td>
+    <td cond="!$resultitem->result_type"><div class="ta_c">{$lang->exam_score_secert}</div></td>
+    <td><div class="ta_c">{$lang->resultStatusList[$resultitem->status]}</div></td>
+    <td><div class="ta_c">{zdate($resultitem->regdate,'Y.m.d')}</div></td>
+    <td>
+        <div class="ta_c">
+            <a href="{getUrl('','mid',$mid,'act','dispExamCorrectCheck','log_srl',$resultitem->log_srl)}" onclick="examopen(this.href,'exam2');return false" class="btn"><i class="xe-pen"></i> {$lang->exam_result_type}</a>
+        </div>
+    </td>
+    </tr>
+    </tbody>
+    </table>
+</div>
+<div class="list_footer">
+    <!-- PAGINATE -->
+    <div class="exam_paginate" cond="$result_list">
+		<a href="{getUrl('page','','document_srl','')}" class="pg_btn"><i class="xe-angle-left"><span class="blind">{$lang->first_page}</span></i></a> 
+		<block loop="$page_no=$page_navigation->getNextPage()">
+			<strong cond="$page==$page_no">{$page_no}</strong> 
+			<a cond="$page!=$page_no" href="{getUrl('page',$page_no,'document_srl','')}">{$page_no}</a>
+		</block>
+        <a href="#" class="pg_btn">
+            <i class="xe-angle-right"><span class="blind">다음</span></i>
+        </a>
+    </div>
+    <!-- /PAGINATE -->
+</div>
+<include target="_footer.html" />

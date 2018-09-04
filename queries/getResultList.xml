@@ -1,0 +1,38 @@
+<query id="getResultList" action="select">
+    <tables>
+        <table name="exam_result" alias="result" />
+        <table name="exam" alias="exam" />
+    </tables>
+    <columns>
+        <column name="result.*" />
+        <column name="exam.title" />
+        <column name="exam.result_type" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="result.member_srl" var="member_srl" />
+        <condition operation="equal" column="result.module_srl" var="module_srl" pipe="and" />
+        <condition operation="equal" column="result.document_srl" var="document_srl" pipe="and" />
+        <condition operation="equal" column="result.status" var="status" pipe="and" />
+        <group pipe="and">
+            <condition operation="equal" column="result.correct_count" var="correct_count" filter="number" />
+            <condition operation="more" column="result.correct_count" var="correct_count_more" pipe="and" />
+            <condition operation="less" column="result.correct_count" var="correct_count_less" pipe="and" />
+        </group>
+        <group pipe="and">
+            <condition operation="equal" column="result.score" var="score" filter="number" />
+            <condition operation="more" column="result.score" var="score_more" pipe="and" />
+            <condition operation="less" column="result.score" var="score_less" pipe="and" />
+        </group>
+        <group pipe="and">
+            <condition operation="more" column="result.regdate" var="regdate_more" pipe="and" />
+            <condition operation="less" column="result.regdate" var="regdate_less" pipe="and" />
+        </group>
+        <condition operation="equal" column="exam.document_srl" var="result.document_srl" notnull="notnull" pipe="and" />
+    </conditions>
+    <navigation>
+        <index var="sort_index" default="result.regdate" order="sort_order" />
+        <list_count var="list_count" default="20" />
+        <page_count var="page_count" default="10" />
+        <page var="page" default="1" />
+    </navigation>
+</query>

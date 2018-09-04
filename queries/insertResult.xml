@@ -1,0 +1,19 @@
+<query id="insertResult" action="insert">
+    <tables>
+        <table name="exam_result" />
+    </tables>
+    <columns>
+        <column name="log_srl" var="log_srl" filter="number" notnull="notnull" />
+        <column name="module_srl" var="module_srl" filter="number" notnull="notnull" />
+        <column name="document_srl" var="document_srl" filter="number" notnull="notnull" />
+        <column name="member_srl" var="member_srl" filter="number" notnull="notnull" />
+        <column name="answer" var="answer" />
+        <column name="correct_count" var="correct_count" default="0" filter="number" />
+        <column name="wrong_count" var="wrong_count" default="0" filter="number" />
+        <column name="exam_time" var="exam_time" default="0" filter="number" />
+        <column name="score" var="score" default="0" filter="number" />
+        <column name="regdate" var="regdate" default="curdate()" />
+        <column name="ipaddress" var="ipaddress" default="ipaddress()" />
+        <column name="status" var="status" default="N" />
+    </columns>
+</query>

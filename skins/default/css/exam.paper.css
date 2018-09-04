@@ -1,0 +1,89 @@
+@charset "utf-8";
+/**
+ * 시험지(popup) css
+ **/
+
+/* Common */
+body,p,h1,h2,h3,h4,h5,h6,ul,ol,li,dl,dt,dd,table,th,td,form,fieldset,legend,input,textarea,button,select{margin:0;padding:0;-webkit-text-size-adjust:none}
+body,input,textarea,select,button,table{font-family:'나눔고딕',NanumGothic,'돋움',Dotum,Helvetica Neue,Helvetica,sans-serif;font-size:12px}
+img,fieldset,button{border:0}
+ul,ol{list-style:none}
+em,address{font-style:normal}
+a{text-decoration:none}
+a:hover,a:active,a:focus{text-decoration:none}
+.blind{overflow:hidden;position:absolute;top:0;left:0;width:1px;height:1px;font-size:0;line-height:0}
+.edge{position:absolute;top:5px;right:8px;width:0;height:0;border-width:0 8px 8px;border-style:solid;border-color:transparent transparent #f9f9f9}
+.clear{clear:both}
+
+/* Layout */
+body{min-height:500px;background: url(../img/body_bg.png);overflow-x:hidden}
+#wrap {position: relative;height:100%;min-width:850px;}
+.add_ntc {min-height:600px !important;}
+#container {position: absolute;top:0;bottom:0;overflow: hidden;width: 100%;height: auto;zoom: 1;}
+.spot {position: absolute;left:0;top:60%;width: 100%;margin-top: -322px;z-index:20}
+.paper_list{position:relative;width:50%;min-width:792px;height:560px;margin:0 auto;white-space:nowrap;z-index:0}
+.paper_inn{position:absolute;top:0;left:0;width:500%;zoom:1;z-index:400}
+.paper{position: relative;float: left;width: 20%;height: 560px;background: url(../img/paper_bg.png) 50% 0 no-repeat;vertical-align: top;text-align: center;white-space: normal}
+.paper_inner{position:relative;width:746px;height:540px;margin:0 auto}
+.paper h3{width:700px;height:50px;margin:0 auto;padding:25px 0 33px;text-align:center;border-bottom:3px solid #000;font-size:32px}
+.paper h3 img{vertical-align:top}
+.paper .sc_tp {zoom: 1;width:700px;height:25px;margin:-33px auto 20px auto}
+.paper .sc_tp:after{content:'';clear:both;display:block}
+.paper .sc_tp .fl{float:left;position:relative;padding-top:2px}
+.paper .sc_tp .qcnt{float:left;padding:8px 0 0 9px;margin-top:-1px;font-size:11px;line-height:13px;font-family:'돋움',Dotum;color:#4e4e4e}
+.paper .sc_tp .fr{float:right;padding:8px 0 0 9px;margin-top:-1px;font-size:11px;line-height:13px;font-family:'돋움',Dotum;color:#4e4e4e}
+.paper .sc_tp .fr em{margin-right:2px;font-family:tahoma;color:#454545}
+.paper .sc_tp .fr label{font-weight:bold;padding:0 10px}
+.paper .cd {position:absolute;top:25px;left:30px;width:200px;height:55px;text-align:left}
+.paper .questions {margin:0 auto;width:700px;height:400px;text-align:left;overflow:auto}
+input.underInput{width:75px;border:0 none;border-bottom:1px solid #333;background-color:#fff;color:#000;font-size:12px}
+
+.paper_message{position: relative;padding:50px 50px 30px 50px}
+.paper_message h2 {width:100%;margin: 0 auto;text-align: center;padding-bottom: 29px;font-size: 28px;font-weight: bold;text-align: center;color: #151515}
+.paper_message .sub_list{list-style: circle;position:relative;margin:20px auto}
+.paper_message .sub_list li {margin-bottom:16px;font-size:16px;color: #333}
+.paper_message_area{text-align:center}
+.paper_message_area .exam_btn1 {display: block;overflow: hidden;width: 158px;height: 47px;margin:0 auto;border: solid 2px #313fa0;background-color:#313fa0;font-size: 20px;line-height: 47px;text-align: center;text-decoration: none;font-weight: bold;color: #fff}
+.paper_message_area .exam_btn1:hover {background-color:#fff;color: #313fa0}
+
+.qitem{position:relative;padding:0 10px 5px}
+.qitem .qtitle{position:relative;padding-top:5px;font-size:16px}
+.qitem .qtitle .q_number{position:absolute;top:-1px;left:-3px;z-index:3;width:55px;height:45px;display:block}
+.qitem .qtitle .txt{position:relative;z-index:5;padding:3px 0 0 10px}
+.qitem .qtitle .txt span{font-weight:bold;font-size:16px}
+.qitem .description{border:1px solid #333;margin:8px 20px;padding:7px;font-size:13px}
+.qitem .description legend{visibility:visible;width:auto;height:auto;font-size:14px;line-height:160%;padding-left:5px;font-weight:bold}
+.qitem .description img{max-width:100%}
+.qitem .qanswer{padding:20px}
+.qitem .qanswer .underInput{margin-left:3px;font-size:14px;width:150px}
+.qitem .qanswer_list{padding:20px;list-style:none}
+.qitem .qanswer_list:after{clear:both;display:block;content:'';}
+.qitem .qanswer_list li{position:relative;float:left;width:50%;padding-bottom:7px;color:#333;font-size:14px;letter-spacing:2px}
+.qitem .qanswer_list .marking{position:absolute;top:-6px;left:-5px;z-index:3;display:none}
+.qitem .qanswer_list .show{display:block}
+.qitem .qanswer_list .txt{position:relative;z-index:5}
+.qitem .qanswer_list li a{color:#333}
+.qitem .qanswer_list li a:hover{color:blue}
+
+/* question insert/edit table */
+.tbl_q_write{table-layout:fixed;width:100%;border-collapse:collapse;border-spacing:0;border-top:1px solid #bcbcbc;border-bottom:1px solid #bcbcbc}
+.tbl_q_write .ta_l{padding-left:12px;text-align:left}
+.tbl_q_write .ta_c{text-align:center}
+.tbl_q_write thead th{padding:13px 0 12px;font-size:15px;font-weight:normal;color:#414141}
+.tbl_q_write thead th a{color:#414141}
+.tbl_q_write thead th a:hover,
+.tbl_q_write thead th a:focus{text-decoration:underline}
+.tbl_q_write tbody td{padding:9px 0 10px}
+.tbl_q_write tbody td .bd_tit{font-size:13px}
+.tbl_q_write tbody td .bd_tit a{color:#616161}
+.tbl_q_write tbody td .bd_tit.read_check a{color:#9d9d9d}
+.tbl_q_write tbody td.bg{font-weight:bold;color:#333;background-color:#f4f4f4}
+.tbl_q_write tbody td{padding:9px 0 10px;border-top:1px solid #e0e0e0;font-size:12px;line-height:1.5;color:#9d9d9d}
+.tbl_q_write tbody tr:first-child td{border-color:#bcbcbc}
+.tbl_q_write tbody td span.req {display: inline-block;width: 12px;color: #f68074}
+.tbl_q_write tbody td .iText{width:250px;height:10px;padding:6px 5px 6px;font-size:12px;border:1px solid #e0e0e0;color:#747474}
+.tbl_q_write tbody td .iTextarea{width:250px;height:50px;padding:8px 5px 8px;font-size:12px;border:1px solid #e0e0e0;color:#747474}
+.tbl_q_write tbody td .answer_marking{font-weight:bold;color:#000;margin-right:3px;font-size:12px}
+.tbl_q_write tbody td .answer_marking.on{color:red}
+.tbl_q_write tbody td p.info{padding-top:10px}
+.tbl_q_write tbody td img {vertical-align:middle}

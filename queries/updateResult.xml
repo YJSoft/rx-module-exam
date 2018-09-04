@@ -1,0 +1,15 @@
+<query id="updateResult" action="update">
+    <tables>
+        <table name="exam_result" />
+    </tables>
+    <columns>
+        <column name="correct_count" var="correct_count" default="0" filter="number" />
+        <column name="wrong_count" var="wrong_count" default="0" filter="number" />
+        <column name="exam_time" var="exam_time" default="0" filter="number" />
+        <column name="score" var="score" default="0" filter="number" />
+        <column name="status" var="status" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="log_srl" var="log_srl" filter="number" notnull="notnull" />
+    </conditions>
+</query>

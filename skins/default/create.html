@@ -1,0 +1,280 @@
+<include target="_header.html" />
+
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/exam_create/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<div class="exam_list ">
+    <form ruleset="createExam" action="./" method="post" enctype="multipart/form-data" class="board_write">
+        <input type="hidden" name="module" value="exam" />
+        <input type="hidden" name="act" value="procExamCreate" />
+        <input type="hidden" name="page" value="{$page}" />
+        <input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+        <input type="hidden" name="success_return_url" value="{getRequestUriByServerEnviroment()}" />
+        <input type="hidden" name="xe_validator_id" value="modules/exam/exam_create/1" />
+        <input cond="$document_srl" type="hidden" name="document_srl" value="{$document_srl}" />
+
+        <table class="tbl_exam_list ">
+        <caption>시험지 생성</caption>
+        <colgroup>
+        <col style="width:150px" />
+        <col>
+        </colgroup>
+        <tbody>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <span class="req">*</span> {$lang->exam_page_type}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <block loop="$lang->pageTypeList=>$key,$val">
+                        <label for="page_type{$key}">
+                            <input type="radio" name="page_type" id="page_type{$key}" value="{$key}" checked="checked"|cond="$key==$examitem->get('page_type')" /> {$val}
+                        </label> &nbsp;&nbsp;
+                    </block>
+                    <p class="info">{$lang->about_pagetype}</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <span class="req">*</span> {$lang->exam_result_type}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <block loop="$lang->resultTypeList=>$key,$val">
+                        <label for="result_type{$key}">
+                            <input type="radio" name="result_type" id="result_type{$key}" value="{$key}" checked="checked"|cond="$key==$examitem->get('result_type')" /> {$val}
+                        </label> &nbsp;&nbsp;
+                    </block>
+                    <p class="info">{$lang->about_resulttype}</p>
+                </div>
+            </td>
+        </tr>
+        <tr cond="$module_info->hide_category!='Y'">
+            <td class="bg">
+                <div class="ta_l">
+                    <span class="req">*</span> <label for="exam_title">{$lang->category}</label>
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <select name="category_srl">
+                        <option value="">{$lang->category}</option>
+                        <option loop="$category_list => $val" disabled="disabled"|cond="!$val->grant" value="{$val->category_srl}" selected="selected"|cond="$val->grant&&$val->selected||$val->category_srl==$examitem->get('category_srl')">
+                            {str_repeat("&nbsp;&nbsp;",$val->depth)} {$val->title} ({$val->document_count})
+                        </option>
+                    </select>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <span class="req">*</span> <label for="exam_title">{$lang->exam_title}</label>
+                </div>
+            </td>
+            <td><div class="ta_l"><input type="text" name="exam_title" id="exam_title" placeholder="{$lang->exam_title}" value="{$examitem->getTitle()}"|cond="$examitem->getTitle()" class="iText w250" /></div></td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <label for="exam_content">{$lang->exam_content}</label>
+                </div>
+            </td>
+            <td><div class="ta_l"><textarea name="exam_content" id="exam_content" class="iTextarea w250">{($examitem->getContentText())? $examitem->getContentText() : ''}</textarea></div></td>
+        </tr>
+        <!-- tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <label for="exam_image">{$lang->exam_image}</label>
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <input type="file" name="exam_image" class="iText w250" />
+                </div>
+                <div id="exam_image_preview" class="ta_l"></div>
+            </td>
+        </tr -->
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <label for="exam_cutline">{$lang->exam_cutline}</label>
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <input type="number" name="exam_cutline" id="exam_cutline" placeholder="{$lang->exam_cutline}" value="{($examitem->get('cutline'))? $examitem->get('cutline') : '0'}" maxlength="3" class="iText" style="width:80px" />{$lang->unit_score}
+                    <p class="info">{$lang->about_cutline}</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">{$lang->exam_date}</div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <label for="is_date">
+                        <input type="checkbox" name="is_date" id="is_date" value="Y" checked="checked"|cond="$examitem->get('is_date')=='Y'" /> {$lang->cmd_setup}
+                    </label>
+                    <input type="hidden" name="start_date" value="{$examitem->get('start_date')}" />
+                    <input type="text" placeholder="YYYY-MM-DD H:i" value="{zdate($examitem->get('start_date'),'Y-m-d H:i')}"|cond="$examitem->get('start_date')"  readonly="readonly" class="iText inputDate" style="width:120px" />
+                    <input type="button" value="{$lang->cmd_reset}" class="btn dateRemover" /> ~ 
+                    <input type="hidden" name="end_date" value="{$examitem->get('end_date')}" />
+                    <input type="text" placeholder="YYYY-MM-DD H:i" value="{zdate($examitem->get('end_date'),'Y-m-d H:i')}"|cond="$examitem->get('end_date')" readonly="readonly" class="iText inputDate" style="width:120px" />
+                    <input type="button" value="{$lang->cmd_reset}" class="btn dateRemover" />
+                    <p class="info">{$lang->about_date}</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">{$lang->exam_time}</div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <label for="is_time">
+                        <input type="checkbox" name="is_time" id="is_time" value="Y" checked="checked"|cond="$examitem->get('is_time')=='Y'" /> {$lang->cmd_setup}
+                    </label>
+                    <input type="text" name="exam_time" id="exam_time" placeholder="{$lang->exam_time}" value="{($examitem->get('exam_time'))? $examitem->get('exam_time') : '0'}" class="iText" style="width:100px" /> {$lang->unit_sec} <span id="exam_time_txt"></span>
+                    <p class="info">{$lang->about_time}</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <label for="exam_join_point">{$lang->exam_join_point}</label>
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <input type="number" name="exam_join_point" id="exam_join_point" placeholder="{$lang->exam_join_point}" value="{($examitem->get('join_point'))? $examitem->get('join_point') : '0'}" class="iText" style="width:80px" />{$point_config->point_name}
+                    <p class="info">{$lang->about_join_point}</p>
+                </div>
+            </td>
+        </tr>
+        <tr cond="$module_info->exam_pass_point_option">
+            <td class="bg">
+                <div class="ta_l">
+                    <label for="exam_pass_point">{$lang->exam_pass_point}</label>
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <input type="number" name="exam_pass_point" id="exam_pass_point" placeholder="{$lang->exam_pass_point}" value="{($examitem->get('pass_point'))? $examitem->get('pass_point') : '0'}" class="iText" style="width:80px" />{$point_config->point_name}
+                    <p class="info">
+                        {sprintf($lang->about_pass_point,$pass_point_min,$pass_point_max)}
+                        <block cond="$module_info->exam_pass_point_minus=='Y'"><br />* {$lang->about_use_point_minus}</block>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr cond="$module_info->exam_pass_group_option">
+            <td class="bg">
+                <div class="ta_l">
+                    {$lang->exam_pass_group}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <label for="group_{$key}" class="x_inline" loop="$group_list => $key,$val">
+                        <input type="checkbox" name="exam_pass_group_list[]" value="{$key}" id="group_{$key}" checked="checked"|cond="$examitem->isPassGroup($key)" />
+                        {$val}
+                    </label>
+                    <p class="info">{$lang->about_pass_group}</p>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+        </table>
+
+        <div class="list_footer">
+            <div class="btn_area">
+                <div class="btn_area_l">
+                    <a href="{getUrl('act','','document_srl','')}" class="btn">
+                        <i class="xe-arrow-left"></i>
+                        {$lang->cmd_back}
+                    </a>
+                </div>
+                <div class="btn_area_r">
+                    <button type="submit" class="btn">
+                        <i class="xe-pen"></i>
+                        {$lang->cmd_registration}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+(function($){
+    $(function(){
+        var unit_sec = '{$lang->unit_sec}';
+        var unit_min = '{$lang->unit_min}';
+        var unit_hour = '{$lang->unit_hours}';
+        $(".inputDate").datetimepicker({
+            format:'Y-m-d H:i:s',
+            lang:'kr',
+            onShow:function(currentDateTime,$input) {
+                if($input.val()) {
+                    var str = $input.val().replace(/[^0-9]/g,"");
+                    this.setOptions({
+                        defaultDate: str.substr(0,4)+'/'+str.substr(4,2)+'/'+str.substr(6,2),
+                        defaultTime: str.substr(8,2)+':00'
+                    });
+                } else {
+                    var today = new Date();
+                    this.setOptions({
+                        defaultDate: today.getFullYear()+"/"+(today.getMonth()+1)+"/"+today.getDate(),
+                        defaultTime: today.getHours()+':00'
+                    });
+                }
+            },
+            onChangeDateTime:function(dp,$input){
+    			$input.prev('input[type="hidden"]').val($input.val().replace(/[^0-9]/g,""));
+            }
+        });
+		$(".dateRemover").click(function() {
+			$(this).prev('input').val('');
+			$(this).prev().prev('input').val('');
+			return false;
+        });
+        $("input[name=exam_time]").keyup(function() {
+            var sec = $(this).val().replace(/[^0-9]/gi,"");
+            if(!sec) {
+                $("#exam_time_txt").text("");
+                return;
+            } else {
+                var hour = Math.floor(sec/3600);
+                var minute = Math.floor(sec%3600/60);
+                var mod = Math.floor(sec%3600%60);
+                var str = '';
+                if(hour>=1) str+= hour+unit_hour+" ";
+                if(minute>=1) str+= minute+unit_min+" ";
+                if(mod>=1) str+= mod+unit_sec+" ";
+                $("#exam_time_txt").css( { 'color':'blue','font-weight':'bold' }).text("=> "+str);
+            }
+        });
+/*
+        $("input[name=exam_image]").change(function(){
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#exam_image_preview').html("<img src='"+e.target.result+"' alt='' />");
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+*/
+    });
+})(jQuery);
+</script>
+
+<include target="_footer.html" />

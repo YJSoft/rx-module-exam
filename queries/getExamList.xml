@@ -1,0 +1,29 @@
+<query id="getExamList" action="select">
+    <tables>
+        <table name="exam" />
+    </tables>
+    <columns>
+        <column name="*" />
+    </columns>
+    <conditions>
+        <condition operation="in" column="module_srl" var="module_srl" filter="number" />
+        <condition operation="notin" column="module_srl" var="exclude_module_srl" filter="number" pipe="and" />
+        <condition operation="in" column="category_srl" var="category_srl" pipe="and" />
+        <condition operation="equal" column="member_srl" var="member_srl" filter="number" pipe="and" />
+        <condition operation="in" column="status" var="statusList" pipe="and" />
+        <group pipe="and">
+            <condition operation="like" column="title" var="title" />
+            <condition operation="like" column="user_name" var="user_name" pipe="or" />
+            <condition operation="like" column="nick_name" var="nick_name" pipe="or" />
+            <condition operation="like_prefix" column="regdate" var="s_regdate" pipe="or" />
+            <condition operation="like_prefix" column="last_update" var="s_last_update" pipe="or" />
+            <condition operation="like_prefix" column="ipaddress" var="s_ipaddress" pipe="or" />
+        </group>
+    </conditions>
+    <navigation>
+        <index var="sort_index" default="document_srl" order="order_type" />
+        <list_count var="list_count" default="20" />
+        <page_count var="page_count" default="10" />
+        <page var="page" default="1" />
+    </navigation>
+</query>

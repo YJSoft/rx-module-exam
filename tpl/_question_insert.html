@@ -1,0 +1,75 @@
+<form action="./" class="exam_form modal" onsubmit="return procRuleset(this, completeInsertQuestion)" ruleset="insertQuestion">
+    <input type="hidden" name="module" value="exam" />
+    <input type="hidden" name="act" value="procExamQuestionInsert" />
+    <input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+    <input type="hidden" name="document_srl" value="{$examitem->document_srl}" />
+    <input type="hidden" name="question_srl" value="{$questionitem->question_srl}" />
+    <input type="hidden" name="q_answer" id="q_answer" value="{$questionitem->get('answer')}" />
+	<input type="hidden" name="q_description_content" value="{htmlspecialchars($questionitem->description, ENT_COMPAT | ENT_HTML401, 'UTF-8', false)}" />
+    <h3>{$lang->cmd_question_write}</h3>
+	<div class="f_box">
+        <div class="title">{$lang->q_level}</div>
+        <div class="list">
+            <block loop="$lang->qLevelList=>$key,$val">
+            <label for="q_level{$key}">
+                <input type="radio" name="q_level" id="q_level{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_level')" /> {$val}
+            </label> &nbsp;&nbsp;
+            </block>
+        </div>
+    </div>
+	<div class="f_box">
+        <div class="title">{$lang->q_type}</div>
+        <div class="list">
+            <block loop="$lang->qTypeList=>$key,$val">
+            <label for="q_type{$key}">
+                <input type="radio" name="q_type" id="q_type{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_type')" /> {$val}
+            </label> &nbsp;&nbsp;
+            </block>
+        </div>
+    </div>
+	<div class="f_box">
+        <div class="title">
+            <label for="q_title">{$lang->q_title}</label>
+        </div>
+        <div class="list">
+            <input type="text" name="q_title" id="q_title" value="{$questionitem->get('title')}" />
+        </div>
+    </div>
+    <div class="f_box">
+        <div class="title">{$lang->q_description}</div>
+        <div class="list">
+            <label for="use_description">
+                <input type="checkbox" name="use_description" id="use_description" value="Y" checked="checked"|cond="$questionitem->get('use_description')=='Y'" /> {$lang->use_description}
+            </label>
+            <div id="description_box" style="display:none"|cond="$questionitem->get('use_description')!='Y'">
+                {$lang->q_description_title} <input type="text" name="q_description_title" value="{$questionitem->description_title}" class="w250" /><br />
+                {$editor}
+            </div>
+        </div>
+    </div>
+    <div class="f_box">
+        <div class="title">{$lang->q_answer}</div>
+        <div class="list">
+            <div id="answer_type0" style="display:none"|cond="$questionitem->get('question_type')">
+                <block loop="$lang->numIconList=>$i,$icon">
+                <a href="#" class="answer_marking on"|cond="$questionitem->get('answer')==$i" class="answer_marking"|cond="$questionitem->get('answer')!=$i" data-value="{$i}">{$icon}</a>
+                <input type="text" name="q_answer{$i}" value="{$questionitem->getAnswer($i)}" /><br />
+                </block>
+            </div>
+            <div id="answer_type1" style="display:none"|cond="!$questionitem->get('question_type')">
+                <input type="text" name="q_answer6" value="{$questionitem->get('answer')}"|cond="$questionitem->get('question_type')" /><br />
+            </div>
+        </div>
+    </div>
+    <div class="f_box">
+        <div class="title">
+            <label for="q_content">{$lang->q_content}</label>
+        </div>
+        <div class="list">
+            <input type="text" name="q_content" id="q_content" value="{$questionitem->get('content')}" />
+        </div>
+    </div>
+    <div class="f_box">
+        <input type="submit" value="{$lang->cmd_save}" class="btn" />
+    </div>
+</form>

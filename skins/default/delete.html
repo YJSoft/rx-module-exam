@@ -1,0 +1,89 @@
+<include target="_header.html" />
+
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/exam_delete/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<div class="exam_list ">
+    <form ruleset="deleteExam" action="./" method="post" enctype="multipart/form-data" class="board_write">
+        <input type="hidden" name="module" value="exam" />
+        <input type="hidden" name="act" value="procExamDelete" />
+        <input type="hidden" name="page" value="{$page}" />
+        <input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+        <input type="hidden" name="success_return_url" value="{getRequestUriByServerEnviroment()}" />
+        <input type="hidden" name="xe_validator_id" value="modules/exam/exam_delete/1" />
+        <input type="hidden" name="document_srl" value="{$examitem->document_srl}" />
+
+        <table class="tbl_exam_list ">
+        <caption>시험지 삭제</caption>
+        <colgroup>
+        <col style="width:150px" />
+        <col>
+        </colgroup>
+        <tbody>
+        <tr>
+            <td colspan="2">
+                <div class="ta_l">
+                    {$lang->about_exam_delete}<br /><br />
+                    {$lang->confirm_delete}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    {$lang->exam_title}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    {$examitem->getTitle()}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    {$lang->exam_question_count}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    {$examitem->getQuestionCount()}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    {$lang->exam_join_count}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    {$examitem->getJoinCount()}
+                </div>
+            </td>
+        </tr>
+        </tbody>
+        </table>
+
+        <div class="list_footer">
+            <div class="btn_area">
+                <div class="btn_area_l">
+                    <a href="{getUrl('act','','document_srl','')}" class="btn">
+                        <i class="xe-arrow-left"></i>
+                        {$lang->cmd_back}
+                    </a>
+                </div>
+                <div class="btn_area_r">
+                    <button type="submit" class="btn">
+                        <i class="xe-pen"></i>
+                        {$lang->cmd_delete}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<include target="_footer.html" />

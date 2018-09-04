@@ -1,0 +1,63 @@
+<!-- 출제된 문제가 없을때 -->
+<div cond="!$examitem->getQuestionCount()" class="paper_message">
+    <h2>{$lang->no_question_list}</h2>
+</div>
+<!--// 출제된 문제가 없을때 -->
+
+<block cond="$examitem->getQuestionCount()">
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/exam_join/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<form ruleset="examJoin" id="examJoin" action="./" method="post">
+<input type="hidden" name="module" value="exam" />
+<input type="hidden" name="act" value="procExamJoin" />
+<input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+<input type="hidden" name="success_return_url" value="{getRequestUriByServerEnviroment()}" />
+<input type="hidden" name="xe_validator_id" value="modules/exam/exam_join/1" />
+<input type="hidden" name="document_srl" value="{$document_srl}" />
+<input type="hidden" name="valid_check" value="Y" />
+    <div loop="$examitem->getQuestions()=>$no,$qitem" class="qitem">
+        <div class="qtitle">
+            <div class="txt"><span>{$no}</span>. {$qitem->getTitle()}</div>
+        </div>
+        <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">
+            <legend cond="$qitem->getDescriptionTitle()">{$qitem->getDescriptionTitle()}</legend>
+            {$qitem->getDescription()}
+        </fieldset>
+        <p cond="$qitem->getQType()" class="qanswer">
+            <label for="answer{$no}">정　답: <input type="text" name="answer{$no}" id="answer{$no}" value="" class="underInput" /></label>
+        </p>
+        <ul cond="!$qitem->getQType()" class="qanswer_list">
+        <input type="hidden" name="answer{$no}" id="answer{$no}" value="" />
+        <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i)">
+            <div class="txt"><a href="#" class="ans_check" data-value="{$no},{$i},{($qitem->getAnswerCount()>1)?'Y':'N';}">{$icon} {$qitem->getAnswer($i)}</a></div>
+            <div class="marking"><img src="img/ans_marking.png" width="24" height="24" alt="" /></div>
+        </li>
+        </ul>
+    </div>
+    <div class="paper_message_area" style="margin-top:20px">
+        <input type="submit" class="exam_btn1" value="답안지 제출" />
+    </div>
+</form>
+</block>
+
+<script type="text/javascript">
+var msg_not_answer_text = '{$lang->msg_not_answer_text}';
+var msg_not_answer_radio = '{$lang->msg_not_answer_radio}';
+
+<block cond="($examitem->isTime() && $examitem->get('exam_time'))">
+jQuery(function($) {
+    var max_time = $('#examTimer').attr('data-value');
+    $('#examTimer').flipcountdown({
+        tick:function(){
+            if(!max_time) {
+                $("input[name=valid_check]").val('N');
+                $("#examJoin").submit();
+            }
+            max_time--;
+            return max_time;
+        }
+    });
+});
+</block>
+</script>

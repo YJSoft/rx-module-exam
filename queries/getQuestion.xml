@@ -1,0 +1,11 @@
+<query id="getQuestion" action="select">
+    <tables>
+        <table name="exam_question" />
+    </tables>
+    <columns>
+        <column name="*" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="question_srl" var="question_srl" filter="number" notnull="notnull" />
+    </conditions>
+</query>

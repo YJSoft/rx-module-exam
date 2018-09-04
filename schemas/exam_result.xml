@@ -1,0 +1,14 @@
+<table name="exam_result">
+    <column name="log_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+    <column name="module_srl" type="number" size="11" default="0" notnull="notnull" index="idx_module_srl" />
+    <column name="document_srl" type="number" size="11" default="0" notnull="notnull" index="idx_document_srl" />
+    <column name="member_srl" type="number" size="11" default="0" notnull="notnull" index="idx_member_srl" />
+    <column name="answer" type="bigtext" notnull="notnull" />
+    <column name="correct_count" type="number" size="11" default="0" notnull="notnull" />
+    <column name="wrong_count" type="number" size="11" default="0" notnull="notnull" />
+    <column name="exam_time" type="number" size="11" default="0" notnull="notnull" />
+    <column name="score" type="number" size="3" default="0" notnull="notnull" />
+    <column name="status" type="char" size="1" default="P" notnull="notnull" />
+    <column name="regdate" type="date" index="idx_regdate" />
+    <column name="ipaddress" type="varchar" size="128" notnull="notnull" index="idx_ipaddress" />
+</table>

@@ -1,0 +1,25 @@
+<query id="updateQuestion" action="update">
+    <tables>
+        <table name="exam_question" />
+    </tables>
+    <columns>
+        <column name="question_level" var="question_level" default="0" filter="number" />
+        <column name="question_type" var="question_type" default="0" filter="number" />
+        <column name="title" var="title" />
+        <column name="content" var="content" default="" />
+        <column name="answer" var="answer" />
+        <column name="answer1" var="answer1" default="" />
+        <column name="answer2" var="answer2" default="" />
+        <column name="answer3" var="answer3" default="" />
+        <column name="answer4" var="answer4" default="" />
+        <column name="answer5" var="answer5" default="" />
+        <column name="use_description" var="use_description" default="N" />
+        <column name="description_title" var="description_title" default="" />
+        <column name="description" var="description" default="" />
+        <column name="answer_check_type" var="answer_check_type" filter="number" />
+        <column name="status" var="status" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="question_srl" var="question_srl" filter="number" notnull="notnull" />
+    </conditions>
+</query>

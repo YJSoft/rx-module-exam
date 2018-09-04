@@ -1,0 +1,30 @@
+<table name="exam">
+    <column name="document_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+    <column name="module_srl" type="number" size="11" default="0" notnull="notnull" index="idx_module_srl" />
+    <column name="category_srl" type="number" size="11" default="0" notnull="notnull" index="idx_category_srl" />
+    <column name="member_srl" type="number" size="11" default="0" notnull="notnull" index="idx_member_srl" />
+    <column name="user_name" type="varchar" size="40" notnull="notnull" />
+    <column name="nick_name" type="varchar" size="40" notnull="notnull" />
+    <column name="title" type="varchar" size="250" />
+    <column name="title_bold" type="char" size="1" default="N" notnull="notnull" />
+    <column name="title_color" type="varchar" size="7" />
+    <column name="content" type="bigtext" notnull="notnull" />
+    <column name="page_type" type="number" size="1" default="0" />
+    <column name="result_type" type="number" size="1" default="0" />
+    <column name="cutline" type="number" size="3" default="0" notnull="notnull" />
+    <column name="is_date" type="char" size="1" default="N" notnull="notnull" />
+    <column name="is_time" type="char" size="1" default="N" notnull="notnull" />
+    <column name="join_point" type="number" size="11" default="0" notnull="notnull" />
+    <column name="exam_time" type="number" size="11" default="0" notnull="notnull" />
+    <column name="question_count" type="number" size="11" default="0" notnull="notnull" />
+    <column name="join_count" type="number" size="11" default="0" notnull="notnull" index="idx_join_count" />
+    <column name="start_date" type="date" />
+    <column name="end_date" type="date" />
+    <column name="regdate" type="date" index="idx_regdate" />
+    <column name="last_update" type="date" index="idx_last_update" />
+    <column name="ipaddress" type="varchar" size="128" notnull="notnull" index="idx_ipaddress" />
+    <column name="list_order" type="number" size="11" notnull="notnull" index="idx_list_order" />
+    <column name="status" type="varchar" size="20" default="Y" />
+    <column name="pass_point" type="number" size="11" default="0" />
+    <column name="pass_group_list" type="varchar" size="80" default="" />
+</table>

@@ -1,0 +1,9 @@
+<query id="deleteExamQuestionByModuleSrl" action="delete">
+    <tables>
+        <table name="exam_question" />
+    </tables>
+    <conditions>
+        <condition operation="equal" column="module_srl" var="module_srl" filter="number" notnull="notnull" />
+        <condition operation="in" column="document_srl" var="document_srl" filter="number" pipe="and" />
+    </conditions>
+</query>

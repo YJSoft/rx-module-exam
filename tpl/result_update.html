@@ -1,0 +1,58 @@
+<include target="header.html" />
+
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/tpl/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<form ruleset="updateResult" class="x_form-horizontal" action="./" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="module" value="exam" />
+	<input type="hidden" name="act" value="procExamAdminUpdateResult" />
+	<input type="hidden" name="page" value="{$page}" />
+	<input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+	<input type="hidden" name="log_srl" value="{$resultitem->log_srl}" />
+	<input cond="$mid || $module_srl" type="hidden" name="success_return_url" value="{getUrl('act','dispExamAdminResultList','log_srl','')}" />
+	<input type="hidden" name="xe_validator_id" value="modules/exam/tpl/1" />
+	<section class="section">
+        <h1>{$resultitem->title}</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="correct_count">{$lang->exam_correct_count}</label>
+			<div class="x_controls">
+				<input type="number" name="correct_count" id="correct_count" value="{$resultitem->correct_count}" />
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="wrong_count">{$lang->exam_wrong_count}</label>
+			<div class="x_controls">
+				<input type="number" name="wrong_count" id="wrong_count" value="{$resultitem->wrong_count}" />
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="exam_time">{$lang->exam_result_time}</label>
+			<div class="x_controls">
+				<input type="number" name="exam_time" id="exam_time" value="{$resultitem->exam_time}" /> {$lang->unit_sec}
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="score">{$lang->exam_score}</label>
+			<div class="x_controls">
+				<input type="number" name="score" id="score" value="{$resultitem->score}" /> {$lang->unit_score}
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label">{$lang->status}</label>
+			<div class="x_controls">
+				<select name="status">
+					<option loop="$lang->resultStatusList=>$key,$val" value="{$key}" selected="selected"|cond="$key==$resultitem->status">{$val}</option>
+				</select>
+			</div>
+		</div>
+    </section>
+	<div class="x_clearfix btnArea">
+		<div class="x_pull-left">
+			<a href="{getUrl('act', 'dispExamAdminResultList','log_srl','')}" type="button" class="x_btn">{$lang->cmd_cancel}</a>
+		</div>
+		<div class="x_pull-right">
+			<button class="x_btn x_btn-primary" type="submit">{$lang->cmd_save}</button>
+		</div>
+	</div>
+</form>
+<style type="text/css">.g11n{vertical-align:top !important}</style>

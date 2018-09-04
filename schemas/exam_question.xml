@@ -1,0 +1,23 @@
+<table name="exam_question">
+    <column name="question_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+    <column name="module_srl" type="number" size="11" default="0" notnull="notnull" index="idx_module_srl" />
+    <column name="document_srl" type="number" size="11" default="0" notnull="notnull" index="idx_document_srl" />
+    <column name="list_order" type="number" size="11" notnull="notnull" index="idx_list_order" />
+    <column name="question_level" type="number" size="1" default="0" />
+    <column name="question_type" type="number" size="1" default="0" />
+    <column name="title" type="varchar" size="250" />
+    <column name="content" type="text" notnull="notnull" />
+    <column name="answer" type="text" notnull="notnull" />
+    <column name="answer1" type="text" notnull="notnull" />
+    <column name="answer2" type="text" notnull="notnull" />
+    <column name="answer3" type="text" notnull="notnull" />
+    <column name="answer4" type="text" notnull="notnull" />
+    <column name="answer5" type="text" notnull="notnull" />
+    <column name="answer_check_type" type="number" size="1" default="0" />
+    <column name="use_description" type="char" size="1" default="N" notnull="notnull" />
+    <column name="description_title" type="varchar" size="250" />
+    <column name="description" type="text" notnull="notnull" />
+    <column name="regdate" type="date" index="idx_regdate" />
+    <column name="ipaddress" type="varchar" size="128" notnull="notnull" index="idx_ipaddress" />
+    <column name="status" type="varchar" size="20" default="Y" />
+</table>

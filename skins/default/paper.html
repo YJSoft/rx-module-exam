@@ -1,0 +1,20 @@
+<h3>{$examitem->getTitle()}</h3>
+<div class="sc_tp">
+    <div class="fl">
+        <block cond="$examitem->isGranted()">
+        <a href="{getUrl('act','dispExamEditMode')}" class="btn">{$lang->cmd_change_editmode}</a>
+        </block>
+    </div>
+    <p class="qcnt">
+        총 <span id="total_q_count">{$examitem->getQuestionCount()}</span> 문항
+    </p>
+    <p class="fr">
+        <label for="member_name">이 름 : <input type="text" name="member_name" id="member_name" value="{$logged_info->nick_name}" class="underInput" /></label>
+        <label for="member_score">점 수 : <input type="text" name="member_score" id="member_score" value="" readonly="readonly" class="underInput" /></label>
+    </p>
+</div>
+<div id="examTimer" class="cd" cond="$examitem->isTime() && $examitem->get('exam_time')" data-value="{$examitem->get('exam_time')}"></div>
+<div id="questions" class="questions">
+    <include target="_paper_message.html" cond="!$mode" />
+    <include target="_paper_questions.html" cond="$mode=='join'" />
+</div>

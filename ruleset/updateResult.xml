@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ruleset version="1.5.0">
+    <customrules />
+    <fields>
+		<field name="log_srl" required="true" />
+		<field name="correct_count" rule="number" />
+		<field name="wrong_count" rule="number" />
+		<field name="exam_time" rule="number" />
+		<field name="score" rule="number" />
+    </fields>
+</ruleset>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ruleset version="1.5.0">
+    <customrules>
+		<rule name="mid" type="regex" test="/^[a-zA-Z]+[0-9a-zA-Z_]*$/"  />
+    </customrules>
+    <fields>
+		<field name="exam_name" required="true" length=":40" rule="mid">
+            <title xml:lang="ko"><![CDATA[모듈 이름]]></title>
+        </field>
+		<field name="browser_title" required="true" length=":250" />
+    </fields>
+</ruleset>

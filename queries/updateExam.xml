@@ -1,0 +1,28 @@
+<query id="updateExam" action="update">
+    <tables>
+        <table name="exam" />
+    </tables>
+    <columns>
+        <column name="category_srl" var="category_srl" default="0" filter="number" />
+        <column name="title" var="title" notnull="notnull" />
+        <column name="title_bold" var="title_bold" default="" />
+        <column name="title_color" var="title_color" default="" />
+        <column name="content" var="content" default="" />
+        <column name="page_type" var="page_type" filter="number" />
+        <column name="result_type" var="result_type" filter="number" />
+        <column name="cutline" var="cutline" default="0" filter="number" />
+        <column name="is_time" var="is_time" default="N" />
+        <column name="is_date" var="is_date" default="N" />
+        <column name="exam_time" var="exam_time" default="0" filter="number" />
+        <column name="join_point" var="join_point" default="0" filter="number" />
+        <column name="start_date" var="start_date" default="" />
+        <column name="end_date" var="end_date" default="" />
+        <column name="last_update" default="curdate()" />
+        <column name="status" var="status" />
+        <column name="pass_point" var="pass_point" default="0" />
+        <column name="pass_group_list" var="pass_group_list" default="" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="document_srl" var="document_srl" filter="number" notnull="notnull" />
+    </conditions>
+</query>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ruleset version="1.5.0">
+    <customrules>
+		<rule name="chkbox" type="enum" test="Y,N"  />
+        <rule name="less_cutline" type="expr" test="$$ &lt; 101">
+            <message xml:lang="ko">%s의 값은 100점 이하로 입력하여 주세요.</message>
+        </rule>
+    </customrules>
+    <fields>
+		<field name="q_title" required="true" />
+        <field name="q_description_content">
+            <if test="$use_description=='Y'" attr="required" value="true" />
+        </field>
+    </fields>
+</ruleset>

@@ -1,0 +1,15 @@
+<query id="getQuestionList" action="select">
+    <tables>
+        <table name="exam_question" />
+    </tables>
+    <columns>
+        <column name="*" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="status" var="status" pipe="and" />
+		<condition operation="equal" column="document_srl" var="document_srl" notnull="notnull" pipe="and" />
+    </conditions>
+    <navigation>
+		<index var="list_order" default="list_order" order="desc" />
+    </navigation>
+</query>
