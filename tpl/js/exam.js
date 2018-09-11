@@ -8,7 +8,7 @@ function completeSearch(ret_obj, response_tags, params, fo_obj)
  **/
 function examopen(url, target) {
 	if(typeof(target) == "undefined") target = "_blank";
-	if(typeof(xeVid)!='undefined' && url.indexOf(request_uri)>-1 && !url.getQuery('vid')) url = url.setQuery('vid',xeVid);
+	if(typeof(xeVid)!='undefined' && xeVid != null && url.indexOf(request_uri)>-1 && !url.getQuery('vid')) url = url.setQuery('vid',xeVid);
 	winopen(url, target, "width=910,height=700,scrollbars=yes,resizable=yes,toolbars=no");
 }
 /**
