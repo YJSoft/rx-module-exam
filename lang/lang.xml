@@ -437,4 +437,7 @@
 		<value xml:lang="ko"><![CDATA[이미 이 시험에 응시 하셨습니다.]]></value>
 	</item>
 
+	<item name="exam_no_end_date">
+		<value xml:lang="ko"><![CDATA[상시 시험]]></value>
+	</item>
 </lang>

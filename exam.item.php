@@ -355,7 +355,7 @@ class examItem extends Object
 	function getExamDate($format = 'Y.m.d H:i')
 	{
 		if($this->isDate()) $str = zdate($this->get('start_date'),$format).' ~ '.zdate($this->get('end_date'),$format);
-		else $str = 'X';
+		else $str = Context::getLang('exam_no_end_date');
 		return $str;
 	}
 	function getRegdate($format = 'Y.m.d H:i:s')
