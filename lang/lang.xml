@@ -18,6 +18,9 @@
 	<item name="exam_pass_point">
 		<value xml:lang="ko"><![CDATA[합격시 포인트]]></value>
 	</item>
+	<item name="exam_pass_point_list">
+		<value xml:lang="ko"><![CDATA[상금]]></value>
+	</item>
 	<item name="exam_pass_group">
 		<value xml:lang="ko"><![CDATA[합격시 그룹변경]]></value>
 	</item>

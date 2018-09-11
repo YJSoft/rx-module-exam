@@ -36,6 +36,7 @@
     <col cond="$val->type=='exam_question_count' && $val->idx==-1" style="width:80px" />
     <col cond="$val->type=='exam_join_count' && $val->idx==-1" style="width:80px" />
     <col cond="$val->type=='exam_join_point' && $val->idx==-1" style="width:80px" />
+    <col cond="$val->type=='exam_pass_point' && $val->idx==-1" style="width:80px" />
     </block>
     <col width="75" />
     <col width="75" />
@@ -48,14 +49,15 @@
     <th scope="col" cond="$val->type=='exam_srl' && $val->idx==-1"><div class="ta_c">{$lang->no}</div></th>
     <th scope="col" cond="($module_info->hide_category!='Y') && ($val->type=='category' && $val->idx==-1)"><div class="ta_c">{$lang->category}</div></th>
     <th scope="col" cond="$val->type=='exam_title' && $val->idx==-1"><div class="ta_c">{$lang->exam_title}</div></th>
-    <th scope="col" cond="$val->type=='nick_name' && $val->idx==-1"><div class="ta_l">{$lang->nick_name}</div></th>
+    <th scope="col" cond="$val->type=='nick_name' && $val->idx==-1"><div class="ta_c">{$lang->nick_name}</div></th>
     <th scope="col" cond="$val->type=='user_name' && $val->idx==-1"><div class="ta_c">{$lang->user_name}</div></th>
     <th scope="col" cond="$val->type=='regdate' && $val->idx==-1"><div class="ta_c">{$lang->regdate}</div></th>
     <th scope="col" cond="$val->type=='exam_date' && $val->idx==-1"><div class="ta_c">{$lang->exam_date}</div></th>
     <th scope="col" cond="$val->type=='last_update' && $val->idx==-1"><div class="ta_c">{$lang->last_update}</div></th>
-    <th scope="col" cond="$val->type=='exam_question_count' && $val->idx==-1"><div class="ta_l">{$lang->exam_question_count}</div></th>
-    <th scope="col" cond="$val->type=='exam_join_count' && $val->idx==-1"><div class="ta_l">{$lang->exam_join_count}</div></th>
-    <th scope="col" cond="$val->type=='exam_join_point' && $val->idx==-1"><div class="ta_l">{$lang->exam_join_point}</div></th>
+    <th scope="col" cond="$val->type=='exam_question_count' && $val->idx==-1"><div class="ta_c">{$lang->exam_question_count}</div></th>
+    <th scope="col" cond="$val->type=='exam_join_count' && $val->idx==-1"><div class="ta_c">{$lang->exam_join_count}</div></th>
+    <th scope="col" cond="$val->type=='exam_join_point' && $val->idx==-1"><div class="ta_c">{$lang->exam_join_point}</div></th>
+    <th scope="col" cond="$val->type=='exam_pass_point' && $val->idx==-1"><div class="ta_c">{$lang->exam_pass_point_list}</div></th>
     </block>
     <th scope="col" colspan="2"> </th>
     </tr>
@@ -76,8 +78,8 @@
     <block loop="$list_config=>$key,$val">
     <td cond="$val->type=='exam_srl' && $val->idx==-1"><div class="ta_c">{$no}</div></td>
     <td cond="($module_info->hide_category!='Y') && ($val->type=='category' && $val->idx==-1)"><div class="ta_l bd_tit"><a href="{getUrl('category',$examitem->get('category_srl'))}">{$category_list[$examitem->get('category_srl')]->title}</a></div></td>
-    <td cond="$val->type=='exam_title' && $val->idx==-1"><div class="ta_l bd_tit"><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl)}" onclick="examopen(this.href,'exam');return false">{$examitem->getTitle()}</a> {$examitem->printExtraImages(60*60*$module_info->duration_new)}</div></td>
-    <td cond="$val->type=='nick_name' && $val->idx==-1"><div class="ta_l"><span class="member_{$examitem->get('member_srl')}">{$examitem->getNickName()}</span></div></td>
+    <td cond="$val->type=='exam_title' && $val->idx==-1"><div class="ta_c bd_tit"><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl)}" onclick="examopen(this.href,'exam');return false">{$examitem->getTitle()}</a> {$examitem->printExtraImages(60*60*$module_info->duration_new)}</div></td>
+    <td cond="$val->type=='nick_name' && $val->idx==-1"><div class="ta_c"><span class="member_{$examitem->get('member_srl')}">{$examitem->getNickName()}</span></div></td>
     <td cond="$val->type=='user_name' && $val->idx==-1"><div class="ta_c"><span class="member_{$examitem->get('member_srl')}">{$examitem->getUserName()}</span></div></td>
     <td cond="$val->type=='regdate' && $val->idx==-1"><div class="ta_c">{$examitem->getRegdate('Y.m.d')}</div></td>
     <td cond="$val->type=='exam_date' && $val->idx==-1"><div class="ta_c">{$examitem->getExamDate()}</div></td>
@@ -85,6 +87,7 @@
     <td cond="$val->type=='exam_question_count' && $val->idx==-1"><div class="ta_c">{$examitem->getQuestionCount()}</div></td>
     <td cond="$val->type=='exam_join_count' && $val->idx==-1"><div class="ta_c">{$examitem->getJoinCount()}</div></td>
     <td cond="$val->type=='exam_join_point' && $val->idx==-1"><div class="ta_c">{$examitem->getJoinPoint()}</div></td>
+    <td cond="$val->type=='exam_pass_point' && $val->idx==-1"><div class="ta_c">{$examitem->getPassPoint()}P</div></td>
     </block>
     <td colspan="2"|cond="!$examitem->isGranted()">
         <div class="ta_c">

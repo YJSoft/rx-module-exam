@@ -2,10 +2,13 @@
 <module version="0.2">
     <title xml:lang="ko">시험</title>
     <description xml:lang="ko">시험지를 만들어 문제를 풀이할 수 있는 모듈 입니다.</description>
-    <version>0.8</version>
-    <date>2015-01-30</date>
+    <version>0.8.1-dev</version>
+    <date>2018-09-11</date>
     <category>member</category>
     <author email_address="admin@barch.kr" link="http://xeforum.kr/">
         <name xml:lang="ko">러키군</name>
+    </author>
+    <author email_address="yjsoft@yjsoft.pe.kr" link="https://yjsoft.pe.kr/">
+        <name xml:lang="ko">YJSoft</name>
     </author>
 </module>

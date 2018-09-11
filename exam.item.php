@@ -434,6 +434,10 @@ class examItem extends Object
 	{
 		return (int)$this->get('join_point');
 	}
+	function getPassPoint()
+	{
+		return (int)$this->get('pass_point');
+	}
 	function getQuestions()
 	{
 		if(!$this->getQuestionCount()) return;

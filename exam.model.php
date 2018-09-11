@@ -19,7 +19,7 @@ class examModel extends exam
 	public function getDefaultListConfig($module_srl)
 	{
 		// add virtual srl, title, registered date, update date, nickname, ID, name, readed count, voted count etc.
-		$virtual_vars = array( 'exam_srl','exam_title','exam_content','category','user_name','nick_name','exam_join_point','exam_date','regdate','last_update','exam_question_count','exam_join_count');
+		$virtual_vars = array( 'exam_srl','exam_title','exam_content','category','user_name','nick_name','exam_join_point','exam_pass_point','exam_date','regdate','last_update','exam_question_count','exam_join_count');
 		$extra_vars = array();
 		foreach($virtual_vars as $key)
 		{
