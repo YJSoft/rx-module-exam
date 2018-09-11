@@ -106,7 +106,7 @@ class examAdminController extends exam
 	public function procExamAdminDeleteModule()
 	{
 		$module_srl = Context::get('module_srl');
-		if(!$module_srl) return new Object(-1, 'msg_invalid_request');
+		if(!$module_srl) return $this->makeObject(-1, 'msg_invalid_request');
 
 		$oModuleController = getController('module');
 		$output = $oModuleController->deleteModule($module_srl);
@@ -145,7 +145,7 @@ class examAdminController extends exam
 		$module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
 		if($module_info->mid != $mid)
 		{
-			return new Object(-1, 'msg_invalid_request');
+			return $this->makeObject(-1, 'msg_invalid_request');
 		}
 
 		$module_info->hide_category = Context::get('hide_category') == 'Y' ? 'Y' : 'N';
@@ -245,13 +245,13 @@ class examAdminController extends exam
 		$oExamModel = getModel('exam');
 
 		$args = Context::getRequestVars();
-		if(!$args->log_srl) return new Object(-1, 'msg_not_founded');
-		if($args->score > 100) return new Object(-1, 'msg_invalid_exam_score');
+		if(!$args->log_srl) return $this->makeObject(-1, 'msg_not_founded');
+		if($args->score > 100) return $this->makeObject(-1, 'msg_invalid_exam_score');
 		if(!array_key_exists($args->status,Context::getLang('resultStatusList'))) unset($args->status);
 
 		// 기록 구해옴
 		$resultitem = $oExamModel->getExamResult($args->log_srl);
-		if(!$resultitem->log_srl) return new Object(-1,'msg_not_founded');
+		if(!$resultitem->log_srl) return $this->makeObject(-1,'msg_not_founded');
 
 		$new_args = new StdClass();
 		$new_args->log_srl = $resultitem->log_srl;
@@ -276,7 +276,7 @@ class examAdminController extends exam
 	 **/
 	public function deleteModuleAfter($module_srl)
 	{
-		if(!$module_srl) return new Object(-1, 'msg_invalid_request');
+		if(!$module_srl) return $this->makeObject(-1, 'msg_invalid_request');
 
 		$args = new StdClass();
 		$args->module_srl = $module_srl;

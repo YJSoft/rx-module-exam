@@ -17,16 +17,16 @@ class examController extends exam
 		// 권한 체크
 		if($this->module_info->module != "exam")
 		{
-			return new Object(-1, "msg_invalid_request");
+			return $this->makeObject(-1, "msg_invalid_request");
 		}
 		if (!$this->grant->create)
 		{
-			return new Object(-1, 'msg_not_permitted');
+			return $this->makeObject(-1, 'msg_not_permitted');
 		}
 
 		$logged_info = Context::get('logged_info');
 		$args = Context::getRequestVars();
-		if(!$args->exam_title) return new Object(-1, 'msg_not_exam_title');
+		if(!$args->exam_title) return $this->makeObject(-1, 'msg_not_exam_title');
 		$args->title = $args->exam_title;
 		$args->cutline = (int)$args->exam_cutline;
 		$args->join_point = (int)$args->exam_join_point;
@@ -127,11 +127,11 @@ class examController extends exam
 		// 권한 체크
 		if($this->module_info->module != "exam")
 		{
-			return new Object(-1, "msg_invalid_request");
+			return $this->makeObject(-1, "msg_invalid_request");
 		}
 		if (!$this->grant->create)
 		{
-			return new Object(-1, 'msg_not_permitted');
+			return $this->makeObject(-1, 'msg_not_permitted');
 		}
 
 		$module_srl = Context::get('module_srl');
@@ -144,17 +144,17 @@ class examController extends exam
 		// 해당 시험지가 존재하는지 체크
 		if(!$examitem->isExists())
 		{
-			return new Object(-1,'msg_not_examitem');
+			return $this->makeObject(-1,'msg_not_examitem');
 		}
 
 		// 해당 시험지에 대한 권한 체크
 		if(!$examitem->isGranted())
 		{
-			return new Object(-1, 'msg_not_permitted');
+			return $this->makeObject(-1, 'msg_not_permitted');
 		}
 		if($examitem->get('module_srl')!=$module_srl)
 		{
-			return new Object(-1, 'msg_invalid_request');
+			return $this->makeObject(-1, 'msg_invalid_request');
 		}
 
 		$output = $this->deleteExam($document_srl,$module_srl);
@@ -178,11 +178,11 @@ class examController extends exam
 		// 권한 체크
 		if($this->module_info->module != "exam")
 		{
-			return new Object(-1, "msg_invalid_request");
+			return $this->makeObject(-1, "msg_invalid_request");
 		}
 		if (!$this->grant->create)
 		{
-			return new Object(-1, 'msg_not_permitted');
+			return $this->makeObject(-1, 'msg_not_permitted');
 		}
 		$oExamModel = getModel('exam');
 
@@ -191,8 +191,8 @@ class examController extends exam
 		$question_srl = Context::get('question_srl');
 
 		$examitem = $oExamModel->getExam($document_srl);
-		if(!$examitem->isExists()) return new Object(-1, 'msg_not_founded');
-		if(!$examitem->isGranted()) return new Object(-1, 'msg_not_permitted');
+		if(!$examitem->isExists()) return $this->makeObject(-1, 'msg_not_founded');
+		if(!$examitem->isGranted()) return $this->makeObject(-1, 'msg_not_permitted');
 
 		// question_srl이 있으면 문제정보도 체크
 		$questionitem = $oExamModel->getQuestion($question_srl);
@@ -210,7 +210,7 @@ class examController extends exam
 		// 정답이 하나도 입력안되있을경우..
 		if($params->q_type==1)
 		{
-			if(!$params->q_answer6) return new Object(-1, 'msg_not_answer');
+			if(!$params->q_answer6) return $this->makeObject(-1, 'msg_not_answer');
 			$params->q_answer = $params->q_answer6;
 		} else {
 			// 1~5번중에 하나도 입력 안했으면 에러..!
@@ -223,10 +223,10 @@ class examController extends exam
 					break;
 				}
 			}
-			if(!$is_answer) return new Object(-1, 'msg_not_answer');
+			if(!$is_answer) return $this->makeObject(-1, 'msg_not_answer');
 
 			// 선택된 정답의 보기가 없으면 답 취소..
-			if(!$params->q_answer) return new Object(-1, 'msg_not_answer');
+			if(!$params->q_answer) return $this->makeObject(-1, 'msg_not_answer');
 			$ans_list = explode(",", $params->q_answer);
 			$new_ans_list = array();
 			foreach($ans_list as $kry=>$val)
@@ -280,7 +280,7 @@ class examController extends exam
 	{
 		if($this->module_info->module != "exam")
 		{
-			return new Object(-1, "msg_invalid_request");
+			return $this->makeObject(-1, "msg_invalid_request");
 		}
 		$oExamModel = getModel('exam');
 
@@ -290,13 +290,13 @@ class examController extends exam
 
 		// 권한 체크
 		$examitem = $oExamModel->getExam($document_srl);
-		if(!$examitem->isExists()) return new Object(-1, 'msg_not_founded');
-		if(!$examitem->isGranted()) return new Object(-1, 'msg_not_permitted');
+		if(!$examitem->isExists()) return $this->makeObject(-1, 'msg_not_founded');
+		if(!$examitem->isGranted()) return $this->makeObject(-1, 'msg_not_permitted');
 
 		// question_srl이 있으면 문제정보도 체크
 		$questionitem = $oExamModel->getQuestion($question_srl);
-		if(!$questionitem->isExists()) return new Object(-1, 'msg_not_founded 1');
-		if($questionitem->get('document_srl')!=$examitem->document_srl) return new Object(-1, 'msg_invalid_request');
+		if(!$questionitem->isExists()) return $this->makeObject(-1, 'msg_not_founded 1');
+		if($questionitem->get('document_srl')!=$examitem->document_srl) return $this->makeObject(-1, 'msg_invalid_request');
 
 		$args = new StdClass();
 		$args->question_srl = $question_srl;
@@ -314,41 +314,41 @@ class examController extends exam
 		// 권한 체크
 		if($this->module_info->module != "exam")
 		{
-			return new Object(-1, "msg_invalid_request");
+			return $this->makeObject(-1, "msg_invalid_request");
 		}
 		if (!$this->grant->join)
 		{
-			return new Object(-1, 'msg_not_permitted');
+			return $this->makeObject(-1, 'msg_not_permitted');
 		}
 		if(!checkCSRF())
 		{
-			return new Object(-1, 'msg_invalid_request');
+			return $this->makeObject(-1, 'msg_invalid_request');
 		}
 		$args = Context::getRequestVars();
-		if(!$args->document_srl || !$args->module_srl) return new Object(-1, 'msg_not_founded');
+		if(!$args->document_srl || !$args->module_srl) return $this->makeObject(-1, 'msg_not_founded');
 
 		// 응시한 시험정보 구해옴
 		$oExamModel = getModel('exam');
 		$examitem = $oExamModel->getExam($args->document_srl);
-		if(!$examitem->isExists()) return new Object(-1, 'msg_not_founded');
+		if(!$examitem->isExists()) return $this->makeObject(-1, 'msg_not_founded');
 
 		// 이미 응시했으면...
 		$logged_info = Context::get('logged_info');
 		$resultitem = $oExamModel->getExamResultByDocumentSrl($examitem->document_srl,$logged_info->member_srl);
-		if($resultitem->log_srl) return new Object(-1, 'msg_exists_result');
+		if($resultitem->log_srl) return $this->makeObject(-1, 'msg_exists_result');
 
 		// 시작시 생선한 세션이 존재하는지 체크
-		if(!$_SESSION['exam_joinlog'][$examitem->document_srl]) return new Object(-1, 'msg_not_session');
+		if(!$_SESSION['exam_joinlog'][$examitem->document_srl]) return $this->makeObject(-1, 'msg_not_session');
 
 		// 혹시나.. 출제된 문제가 없는데 전송된경우 체크
-		if(!$examitem->get('question_count')) return new Object(-1,'no_question_list');
+		if(!$examitem->get('question_count')) return $this->makeObject(-1,'no_question_list');
 
 		// 시험기간인지 체크함
 		$today = date("YmdHi");
 		if($examitem->isDate() && ($examitem->get('start_date') || $examitem->get('end_date')))
 		{
-			if($examitem->get('start_date') && zdate($examitem->get('start_date'),'YmdHi') > $today) return new Object(-1, 'msg_not_exam_date');
-			if($examitem->get('end_date') && $today > zdate($examitem->get('end_date'),'YmdHi')) return new Object(-1, 'msg_not_exam_date');
+			if($examitem->get('start_date') && zdate($examitem->get('start_date'),'YmdHi') > $today) return $this->makeObject(-1, 'msg_not_exam_date');
+			if($examitem->get('end_date') && $today > zdate($examitem->get('end_date'),'YmdHi')) return $this->makeObject(-1, 'msg_not_exam_date');
 		}
 		// 제한시간 체크
 		$start_date = $_SESSION['exam_joinlog'][$examitem->document_srl]['start_date'];
@@ -358,7 +358,7 @@ class examController extends exam
 			// 끝나는시간 (시작시간+제한시간 초)
 			$end_date = strtotime($start_date." +".$examitem->get('exam_time')." seconds");
 			$over_time = $now-$end_date;
-			if($over_time>10) return new Object(-1, 'msg_time_over'); // 처리시간으로 10초정도는 예외처리 둠
+			if($over_time>10) return $this->makeObject(-1, 'msg_time_over'); // 처리시간으로 10초정도는 예외처리 둠
 		}
 		$exam_time = $now-strtotime($start_date);
 
@@ -524,22 +524,22 @@ class examController extends exam
 	{
 		if(!$manual_inserted && !checkCSRF())
 		{
-			return new Object(-1, 'msg_invalid_request');
+			return $this->makeObject(-1, 'msg_invalid_request');
 		}
 
-		if(!$obj->title) return new Object(-1, 'msg_not_exam_title');
-		if($obj->cutline > 100) return new Object(-1, 'msg_invalid_exam_cutline');
+		if(!$obj->title) return $this->makeObject(-1, 'msg_not_exam_title');
+		if($obj->cutline > 100) return $this->makeObject(-1, 'msg_invalid_exam_cutline');
 
 		// 시험기간 설정시 시작일 또는 종료일을 입력했는지 체크
 		if($obj->is_date=="Y") {
-			if(!$obj->start_date && !$obj->end_date) return new Object(-1, 'msg_not_exam_date');
+			if(!$obj->start_date && !$obj->end_date) return $this->makeObject(-1, 'msg_not_exam_date');
 
 			// 종료일이 시작일보다 빠른지 체크
-			if(($obj->start_date && $obj->end_date) && ($obj->start_date > $obj->end_date)) return new Object(-1, 'msg_invalid_start_time');
+			if(($obj->start_date && $obj->end_date) && ($obj->start_date > $obj->end_date)) return $this->makeObject(-1, 'msg_invalid_start_time');
 		}
 		// 제한시간 설정시 시간 입력했는지 체크
 		if($obj->is_time=="Y") {
-			if(!$obj->exam_time) return new Object(-1, 'msg_not_exam_time');
+			if(!$obj->exam_time) return $this->makeObject(-1, 'msg_not_exam_time');
 		}
 		unset($obj->regdate);
 
@@ -564,7 +564,7 @@ class examController extends exam
 			$category_list = $oDocumentModel->getCategoryList($obj->module_srl);
 			if(count($category_list) > 0 && !$category_list[$obj->category_srl]->grant)
 			{
-				return new Object(-1, 'msg_not_permitted');
+				return $this->makeObject(-1, 'msg_not_permitted');
 			}
 			if(count($category_list) > 0 && !$category_list[$obj->category_srl]) $obj->category_srl = 0;
 		}
@@ -620,21 +620,21 @@ class examController extends exam
 	{
 		if(!$manual_updated && !checkCSRF())
 		{
-			return new Object(-1, 'msg_invalid_request');
+			return $this->makeObject(-1, 'msg_invalid_request');
 		}
 
-		if(!$source_obj->document_srl || !$obj->document_srl) return new Object(-1,'msg_invalied_request');
-		if(!$obj->title) return new Object(-1, 'msg_not_exam_title');
+		if(!$source_obj->document_srl || !$obj->document_srl) return $this->makeObject(-1,'msg_invalied_request');
+		if(!$obj->title) return $this->makeObject(-1, 'msg_not_exam_title');
 		// 시험기간 설정시 시작일 또는 종료일을 입력했는지 체크
 		if($obj->is_date=="Y") {
-			if(!$obj->start_date && !$obj->end_date) return new Object(-1, 'msg_not_exam_date');
+			if(!$obj->start_date && !$obj->end_date) return $this->makeObject(-1, 'msg_not_exam_date');
 
 			// 종료일이 시작일보다 빠른지 체크
-			if(($obj->start_date && $obj->end_date) && ($obj->start_date > $obj->end_date)) return new Object(-1, 'msg_invalid_start_time');
+			if(($obj->start_date && $obj->end_date) && ($obj->start_date > $obj->end_date)) return $this->makeObject(-1, 'msg_invalid_start_time');
 		}
 		// 제한시간 설정시 시간 입력했는지 체크
 		if($obj->is_time=="Y") {
-			if(!$obj->exam_time) return new Object(-1, 'msg_not_exam_time');
+			if(!$obj->exam_time) return $this->makeObject(-1, 'msg_not_exam_time');
 		}
 		if($obj->status) $obj->status = $this->getConfigStatus($obj->status,true);
 
@@ -725,7 +725,7 @@ class examController extends exam
 	function insertQuestion($obj)
 	{
 		unset($obj->regdate);
-		if(!$obj->module_srl || !$obj->document_srl) return new Object(-1, 'msg_not_founded');
+		if(!$obj->module_srl || !$obj->document_srl) return $this->makeObject(-1, 'msg_not_founded');
 		if(!$obj->question_srl) $obj->question_srl = getNextSequence();
 		$obj->list_order = $obj->question_srl * -1;
 		$output = executeQuery('exam.insertQuestion', $obj);
@@ -743,7 +743,7 @@ class examController extends exam
 	 */
 	function updateQuestion($obj)
 	{
-		if(!$obj->question_srl) return new Object(-1, 'msg_not_founded');
+		if(!$obj->question_srl) return $this->makeObject(-1, 'msg_not_founded');
 		$output = executeQuery('exam.updateQuestion', $obj);
 		return $output;
 	}
@@ -754,7 +754,7 @@ class examController extends exam
 	 */
 	function deleteQuestion($obj)
 	{
-		if(!$obj->question_srl || !$obj->document_srl) return new Object(-1, 'msg_not_founded');
+		if(!$obj->question_srl || !$obj->document_srl) return $this->makeObject(-1, 'msg_not_founded');
 		$output = executeQuery('exam.deleteQuestion', $obj);
 		if($output->toBool())
 		{
@@ -786,7 +786,7 @@ class examController extends exam
 	 */
 	function updateResult($obj)
 	{
-		if(!$obj->log_srl) return new Object(-1, 'msg_not_founded');
+		if(!$obj->log_srl) return $this->makeObject(-1, 'msg_not_founded');
 		$output = executeQuery('exam.updateResult', $obj);
 		return $output;
 	}
@@ -797,7 +797,7 @@ class examController extends exam
 	 */
 	function deleteResult($obj)
 	{
-		if(!$obj->log_srl || !$obj->document_srl) return new Object(-1, 'msg_not_founded');
+		if(!$obj->log_srl || !$obj->document_srl) return $this->makeObject(-1, 'msg_not_founded');
 		$output = executeQuery('exam.deleteResult', $obj);
 		if($output->toBool())
 		{

@@ -49,7 +49,7 @@ class exam extends ModuleObject
         // exam generated from the cache directory to use
 		FileHandler::makeDir('./files/cache/exam');
 
-		return new Object();
+		return $this->makeObject();
 	}
 
 	/**
@@ -156,7 +156,7 @@ class exam extends ModuleObject
 				$oModuleController->insertTrigger($trigger['name'],$trigger['module'],$trigger['type'],$trigger['func'],$trigger['position']);
 			}
 		}
-        return new Object(0,'success_updated');
+        return $this->makeObject(0,'success_updated');
 	}
 
 	/**
@@ -178,7 +178,7 @@ class exam extends ModuleObject
 			$res = $oModuleModel->deleteTrigger($trigger['name'],$trigger['module'],$trigger['type'],$trigger['func'],$trigger['position']);
 		}
 		
-		return new Object();
+		return $this->makeObject();
 	}
 	/**
 	 * Exam Status List
@@ -208,6 +208,15 @@ class exam extends ModuleObject
 		$list = Context::getLang('resultTypeList');
 		if(array_key_exists(strtolower($key), $list)) return ($key_return)? $key : $list[$key];
 		else return ($key_return)? 0 : $list[0];
+	}
+
+	/**
+	 * Return BaseObject or Object depend on PHP version
+	 * @return BaseObject|Object
+	 */
+	public function makeObject($code, $msg)
+	{
+		return class_exists('BaseObject') ? new BaseObject($code, $msg) : $this->makeObject($code, $msg);
 	}
 }
 /* End of file exam.class.php */
