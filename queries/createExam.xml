@@ -30,5 +30,6 @@
         <column name="status" var="status" default="Y" />
         <column name="pass_point" var="pass_point" default="0" />
         <column name="pass_group_list" var="pass_group_list" default="" />
+        <column name="total_point" var="total_point" default="0" />
     </columns>
 </query>

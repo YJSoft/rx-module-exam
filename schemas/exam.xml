@@ -27,4 +27,5 @@
     <column name="status" type="varchar" size="20" default="Y" />
     <column name="pass_point" type="number" size="11" default="0" />
     <column name="pass_group_list" type="varchar" size="80" default="" />
+    <column name="total_point" type="number" size="11" default="0" />
 </table>

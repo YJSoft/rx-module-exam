@@ -446,10 +446,7 @@ class examItem extends Object
 
 		$accessible = array();
 		$question_list = array();
-		if(!isset($virtual_number))
-		{
-			$virtual_number = 1;
-		}
+		$virtual_number = 1;
 
 		foreach($output->data as $key => $val)
 		{
@@ -554,9 +551,15 @@ class examItem extends Object
 		$module = $model->getModuleInfoByModuleSrl($this->get('module_srl'));
 		return $module->browser_title;
 	}
+	
 	function getBrowserTitle()
 	{
 		return $this->getModuleName();
+	}
+
+	function getAllQuestionPoint()
+	{
+		return $this->get('total_point') == 0 ? 100 : $this->get('total_point');
 	}
 }
 /* End of file exam.item.php */

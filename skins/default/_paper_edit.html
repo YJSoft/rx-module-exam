@@ -5,7 +5,7 @@
 <div cond="$examitem->getQuestionCount()" loop="$examitem->getQuestions()=>$no,$qitem" class="qitem">
     <div class="qtitle">
         <div class="txt">
-            <span>{$no}</span>. {$qitem->getTitle()} <span cond="!$qitem->getQType()" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
+            <span>{$no}</span>. {$qitem->getTitle()}  [{$qitem->getPoint()}점] <span cond="!$qitem->getQType()" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
             <a href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$qitem->question_srl)}" class="btn">{$lang->cmd_question_edit}</a>
             <a href="#" data-value="{$examitem->document_srl}|{$qitem->question_srl}" class="btn question_delete">{$lang->cmd_question_delete}</a>
         </div>

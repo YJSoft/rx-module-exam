@@ -440,4 +440,7 @@
 	<item name="exam_no_end_date">
 		<value xml:lang="ko"><![CDATA[상시 시험]]></value>
 	</item>
+	<item name="q_point">
+		<value xml:lang="ko"><![CDATA[배점]]></value>
+	</item>
 </lang>

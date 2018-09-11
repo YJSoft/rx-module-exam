@@ -65,6 +65,8 @@ class exam extends ModuleObject
 		// 합격시 지급할 포인트 필드 추가(v0.5 추가)
 		if(!$oDB->isColumnExists("exam", "pass_point")) return true;
 		if(!$oDB->isColumnExists("exam", "pass_group_list")) return true;
+		if(!$oDB->isColumnExists("exam_question", "point")) return true;
+		if(!$oDB->isColumnExists("exam", "total_point")) return true;
 
 		// 트리거 확인해서 추가안된 항목이 있으면 true 리턴
 		$oModuleModel = getModel('module');
@@ -76,6 +78,7 @@ class exam extends ModuleObject
 				return true;
 			}
 		}
+
         return false;
 	}
 
@@ -145,6 +148,16 @@ class exam extends ModuleObject
 					$_output = executeQuery('exam.updateResultConverter', $val);
 				}
 			}
+		}
+		
+		if(!$oDB->isColumnExists("exam_question", "point"))
+		{
+			$oDB->addColumn("exam_question", "point", "number", 11, 0, true);
+		}
+
+		if(!$oDB->isColumnExists("exam", "total_point"))
+		{
+			$oDB->addColumn("exam", "total_point", "number", 11, 0, true);
 		}
 
         // 트리거 확인 및 추가

@@ -7,6 +7,7 @@
     </div>
     <p class="qcnt">
         총 <span id="total_q_count">{$examitem->getQuestionCount()}</span> 문항
+        총 <span id="total_q_point">{$examitem->getAllQuestionPoint()}</span> 점
     </p>
     <p class="fr">
         <label for="member_name">이 름 : <input type="text" name="member_name" id="member_name" value="{$logged_info->nick_name}" class="underInput" /></label>

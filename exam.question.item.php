@@ -178,6 +178,10 @@ class questionItem extends Object
 	{
 		return $this->getRegdate('D, d M Y H:i:s') . ' ' . $GLOBALS['_time_zone'];
 	}
+
+	function getPoint() {
+		return $this->get('point') ? $this->get('point') : 0;
+	}
 }
 /* End of file exam.question.item.php */
 /* Location: ./modules/exam/exam.question.item.php */

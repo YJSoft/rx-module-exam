@@ -186,7 +186,7 @@ class examController extends exam
 		}
 		$oExamModel = getModel('exam');
 
-		// 시험지 정볼르 구해와서, 문제 출제 궈난이 있는지 체크
+		// 시험지 정보를 구해와서, 문제 출제 권한이 있는지 체크
 		$document_srl = Context::get('document_srl');
 		$question_srl = Context::get('question_srl');
 
@@ -246,11 +246,12 @@ class examController extends exam
 		$args->description = removeHackTag($params->q_description_content);
 		$args->answer = $params->q_answer;
 		$args->answer_check_type = (int)$params->answer_check_type;
+		$args->point = (int) $params->q_point;
 		for($i=1;$i<=5;$i++)
 		{
 			$args->{'answer'.$i} = $params->{'q_answer'.$i};
 		}
-
+		
 		// update
 		if($is_mode=='update')
 		{
@@ -269,7 +270,29 @@ class examController extends exam
 			$output = $this->insertQuestion($args);
 		}
 
-		if(!$output->toBool()) return $output;
+		if(!$output->toBool()) return $this->makeObject(-1,"Failed to insert/update Question");
+		if($questionitem->point != $args->point)
+		{
+			$total_point = 0;
+			$question_list = $oExamModel->getQuestionList($document_srl);
+			foreach($question_list->data as $key => $val)
+			{
+				$total_point += $val->point;
+			}
+	
+			$output = $this->updateTotalPoint($document_srl, $total_point);
+			if(!$output->toBool()) return $this->makeObject(-1,"Failed to update total_point");
+	
+			//remove from cache
+			$oCacheHandler = CacheHandler::getInstance('object');
+			if($oCacheHandler->isSupport())
+			{
+				//remove document item from cache
+				$cache_key = 'exam_item:'. getNumberingPath($document_srl) . $document_srl;
+				$oCacheHandler->delete($cache_key);
+			}
+		}
+
 		$this->setMessage('success_saved');
 		$this->setRedirectUrl(getNotEncodedUrl('', 'mid', $this->mid,'document_srl',$examitem->document_srl,'act','dispExamEditMode'));
 	}
@@ -367,6 +390,7 @@ class examController extends exam
 		$correct_count = 0;
 		$wrong_count = 0;
 		$score = 0;
+
 		$default_score = ceil(1 / $examitem->get('question_count') * 100); //문제당 기본 배점(1/총문제수*100)
 		foreach($examitem->getQuestions() as $no => $qitem)
 		{
@@ -422,24 +446,39 @@ class examController extends exam
 					$check = 'O';
 				}
 			}
-
-			// check에 따라 처리
-			if($check=='O') {
-				$_score = $default_score;
-				$score += $_score;
-				$correct_count++;
-			} elseif($check=="P") {
-				$_score = ceil(($default_score/$q_answer_count)*$cnt);
-				$score += $_score;
-				$correct_count++;
+			
+			//총 배점이 0점이라면 기존 시험이므로 기존 방식대로 채점한다
+			if($examitem->getAllQuestionPoint() == 0) {
+				if($check=='O') {
+					$_score = $default_score;
+					$score += $_score;
+					$correct_count++;
+				} elseif($check=="P") {
+					$_score = ceil(($default_score/$q_answer_count)*$cnt);
+					$score += $_score;
+					$correct_count++;
+				} else {
+					$wrong_count++;
+				}
 			} else {
-				$wrong_count++;
+				if($check=='O') {
+					$score += $qitem->get('point');
+					$correct_count++;
+				} elseif($check=="P") {
+					$_score = ceil(($cnt/$q_answer_count)*$qitem->get('point'));
+					$score += $_score;
+					$correct_count++;
+				} else {
+					$wrong_count++;
+				}
 			}
+
 			$qitem->add('score',$_score);
 			$qitem->add('my_answer',$answer);
 			$qitem->add('my_answer_result',$check);
 			$answers[$no] = $qitem;
 		}
+		
 		$answers = serialize($answers);
 
 		// 커트라인 이상일경우 P/..N
@@ -747,6 +786,7 @@ class examController extends exam
 		$output = executeQuery('exam.updateQuestion', $obj);
 		return $output;
 	}
+	
 	/**
 	 * 시험 문제 삭제
 	 * @param object $object
@@ -844,6 +884,25 @@ class examController extends exam
 
 		return $output;
 	}
+
+	/**
+	 * 해당 시험의 총 배점
+	 * @param int $document_srl
+	 * @param int $total_point
+	 * @return object
+	 */
+	function updateTotalPoint($document_srl, $total_point = 0)
+	{
+		$oExamModel = getModel('exam');
+
+		$args = new stdClass;
+		$args->document_srl = $document_srl;
+		$args->total_point = $total_point;
+		$output = executeQuery('exam.updateExamTotalPoint', $args);
+
+		return $output;
+	}
+
 	/**
 	 * 해당 카테고리의 개수 업데이트
 	 * @param int $module_srl

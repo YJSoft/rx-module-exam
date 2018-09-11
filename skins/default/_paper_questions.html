@@ -18,7 +18,7 @@
 <input type="hidden" name="valid_check" value="Y" />
     <div loop="$examitem->getQuestions()=>$no,$qitem" class="qitem">
         <div class="qtitle">
-            <div class="txt"><span>{$no}</span>. {$qitem->getTitle()}</div>
+            <div class="txt"><span>{$no}</span>. {$qitem->getTitle()} [{$qitem->getPoint()}점]</div>
         </div>
         <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">
             <legend cond="$qitem->getDescriptionTitle()">{$qitem->getDescriptionTitle()}</legend>
