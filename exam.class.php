@@ -214,12 +214,12 @@ class exam extends ModuleObject
 	}
 	function getConfigPageType($key=0,$key_return=false) {
 		$list = Context::getLang('pageTypeList');
-		if(array_key_exists(strtolower($key), $list)) return ($key_return)? $key : $list[$key];
+		if(array_key_exists($key, $list) || $list->offsetExists($key)) return ($key_return)? $key : $list[$key];
 		else return ($key_return)? 0 : $list[0];
 	}
 	function getConfigResultType($key=0,$key_return=false) {
 		$list = Context::getLang('resultTypeList');
-		if(array_key_exists(strtolower($key), $list)) return ($key_return)? $key : $list[$key];
+		if(array_key_exists($key, $list) || $list->offsetExists($key)) return ($key_return)? $key : $list[$key];
 		else return ($key_return)? 0 : $list[0];
 	}
 
