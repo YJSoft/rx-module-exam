@@ -446,4 +446,7 @@
 	<item name="q_point">
 		<value xml:lang="ko"><![CDATA[배점]]></value>
 	</item>
+	<item name="exam_writer">
+		<value xml:lang="ko"><![CDATA[출제자]]></value>
+	</item>
 </lang>
