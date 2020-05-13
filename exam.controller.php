@@ -242,7 +242,7 @@ class examController extends exam
 		$args->title = htmlspecialchars($params->q_title, ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
 		$args->content = $params->q_content;
 		$args->use_description = ($params->use_description=='Y')? 'Y' : 'N';
-		$args->description_title = htmlspecialchars($params->description_title, ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		$args->description_title = htmlspecialchars($params->q_description_title, ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
 		$args->description = removeHackTag($params->q_description_content);
 		$args->answer = $params->q_answer;
 		$args->answer_check_type = (int)$params->answer_check_type;
