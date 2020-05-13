@@ -229,7 +229,7 @@ class exam extends ModuleObject
 	 */
 	public function makeObject($code, $msg)
 	{
-		return class_exists('BaseObject') ? new BaseObject($code, $msg) : $this->makeObject($code, $msg);
+		return class_exists('BaseObject') ? new BaseObject($code, $msg) : new Object($code, $msg);
 	}
 }
 /* End of file exam.class.php */
