@@ -230,7 +230,7 @@
             </div>
             <div class="x_controls" style="display:none"|cond="$module_info->exam_pass_group_option<2">
                 <label for="group_{$key}" class="x_inline" loop="$group_list => $key,$val">
-                    <input type="checkbox" name="exam_pass_group_list[]" value="{$key}" id="group_{$key}" checked="checked"|cond="in_array($key,$module_info->exam_pass_group_list)" />
+                    <input type="checkbox" name="exam_pass_group_list[]" value="{$key}" id="group_{$key}" checked="checked"|cond="is_array($module_info->exam_pass_group_list) && in_array($key,$module_info->exam_pass_group_list)" />
                     {$val->title}
                 </label><br />
                 <p class="x_help-inline">{$lang->about_pass_group}</p>

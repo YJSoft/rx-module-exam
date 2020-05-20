@@ -23,7 +23,7 @@ class examModel extends exam
 		$extra_vars = array();
 		foreach($virtual_vars as $key)
 		{
-			$extra_vars[$key] = new ExtraItem($module_srl, -1, in_array($key,'user_name','nick_name') ? Context::getLang('exam_writer') . " " . Context::getLang($key) : Context::getLang($key), $key, 'N', 'N', 'N', null);
+			$extra_vars[$key] = new ExtraItem($module_srl, -1, in_array($key,array('user_name','nick_name')) ? Context::getLang('exam_writer') . " " . Context::getLang($key) : Context::getLang($key), $key, 'N', 'N', 'N', null);
 		}
 		return $extra_vars;
 	}
