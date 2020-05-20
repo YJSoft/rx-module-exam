@@ -420,19 +420,7 @@ class examView extends exam
 
 			// 지문에서 사용할 에디터 로드
 			$oEditorModel = getModel('editor');
-			$option = new stdClass();
-			$option->primary_key_name = 'question_srl';
-			$option->content_key_name = 'q_description_content';
-			$option->allow_fileupload = TRUE;
-			$option->enable_autosave = FALSE;
-			$option->enable_default_component = TRUE;
-			$option->enable_component = FALSE;
-			$option->resizable = TRUE;
-			$option->disable_html = FALSE;
-			$option->height = 80;
-			$option->skin = $this->module_info->editor_skin;
-			$option->colorset = $this->module_info->editor_colorset;
-			$editor = $oEditorModel->getEditor($question_srl, $option);
+			$editor = $oEditorModel->getModuleEditor('exam', $this->module_srl, $question_srl, 'question_srl', 'q_description_content');
 			Context::set('editor', $editor);
 		}
 
