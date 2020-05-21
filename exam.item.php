@@ -352,17 +352,64 @@ class examItem extends Object
 
 		return $content;
 	}
-	function getExamDate($format = 'Y.m.d H:i')
+	function getExamDate($format = 'Y.m.d H:i', $short = FALSE)
 	{
-		if($this->isDate()) $str = zdate($this->get('start_date'),$format).' ~ '.zdate($this->get('end_date'),$format);
-		else $str = Context::getLang('exam_no_end_date');
+		if($this->isDate())
+		{
+			if(!$short)
+			{
+				$str = zdate($this->get('start_date'),$format).' ~ '.zdate($this->get('end_date'),$format);
+			}
+			else
+			{
+				$start_date = $this->get('start_date');
+				$end_date = $this->get('end_date');
+				// 조건 설정 : 시작과 종료의 년도가 현재 년도와 같은지
+				$this_year = substr($start_date, 0, 4) === date('Y') && substr($end_date, 0, 4) === date('Y');
+
+				// 시작과 종료 모두 H시 정각이라면
+				if ( substr($start_date, 10, 2) === '00' && substr($end_date, 10, 2) === '00' )
+				{
+					// 시작 시각은 시까지만 출력
+					$startline = $this_year ? zdate($start_date, 'm.d H시'): zdate($start_date, 'Y.m.d H시');
+					$str = $startline . ' ~ ';
+					// 시작과 종료가 같은 시각이라면
+					if ( substr($start_date, 0, 10) === substr($end_date, 0, 10) ) $str = $startline;
+					// 일자까지 같다면
+					elseif ( substr($start_date, 0, 8) === substr($end_date, 0, 8) ) $str .= zdate($end_date, 'H시');
+					// 년도만 같다면
+					elseif ( substr($startline, 0, 4) === substr($end_date, 0, 4) ) $str .= zdate($end_date, 'm.d H시');
+					// 년도가 다르다면
+					else $str .= $this_year ? zdate($end_date, 'm.d. H시') : zdate($end_date, 'Y.m.d. H시');
+				}
+				else
+				{
+					// 시작 시각은 분까지 출력
+					$startline = $this_year ? zdate($start_date, 'm.d H시i분'): zdate($start_date, 'Y.m.d H시i분');
+					$str = $startline . ' ~ ';
+					// 시작과 종료가 같은 시각이라면
+					if ( substr($start_date, 0, 12) === substr($end_date, 0, 12) ) $str = $startline;
+					// 시까지 같다면
+					elseif ( substr($start_date, 0, 10) === substr($end_date, 0, 10) ) $str .= zdate($end_date, 'i분');
+					// 일자까지 같다면
+					elseif ( substr($start_date, 0, 8) === substr($end_date, 0, 8) ) $str .= zdate($end_date, 'H시i분');
+					// 년도만 같다면
+					elseif ( substr($startline, 0, 4) === substr($end_date, 0, 4) ) $str .= zdate($end_date, 'm.d H시i분');
+					// 년도가 다르다면
+					else $str .= $this_year ? zdate($end_date, 'm.d H시i분'): zdate($end_date, 'Y.m.d H시i분');
+				}
+			}
+		}
+		else
+		{
+			$str = Context::getLang('exam_no_end_date');
+		}
 		return $str;
 	}
 	function getRegdate($format = 'Y.m.d H:i:s')
 	{
 		return zdate($this->get('regdate'), $format);
 	}
-
 	function getRegdateTime()
 	{
 		$regdate = $this->get('regdate');
