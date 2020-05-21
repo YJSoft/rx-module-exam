@@ -46,7 +46,7 @@ class examView extends exam
 		// 접근 권한 체크
 		if (!$this->grant->access)
 		{
-			return $this->dispExamMessage('msg_not_permitted');
+			return $this->makeObject(-1, 'msg_not_permitted');
 		}
 		// 분류 목록 구해와서 세팅
 		$this->dispExamCategoryList();
@@ -188,7 +188,7 @@ class examView extends exam
 		// 권한 체크
 		if (!$this->grant->create)
 		{
-			return $this->dispExamMessage('msg_not_permitted');
+			return $this->makeObject(-1, 'msg_not_permitted');
 		}
 		// examitem 얻기
 		$documentSrl = Context::get('document_srl');
@@ -317,7 +317,7 @@ class examView extends exam
 		// 해당 시험지에 대한 권한 체크
 		if(!$examitem->isGranted())
 		{
-			return $this->dispExamMessage('msg_not_permitted');
+			return $this->makeObject(-1, 'msg_not_permitted');
 		}
 		Context::set('examitem',$examitem);
 
@@ -438,7 +438,7 @@ class examView extends exam
 		$is_logged = Context::get('is_logged');
 		if (!$this->grant->access || !$is_logged)
 		{
-			return $this->dispExamMessage('msg_not_permitted');
+			return $this->makeObject(-1, 'msg_not_permitted');
 		}
 		$logged_info = Context::get('logged_info');
 
@@ -495,6 +495,7 @@ class examView extends exam
 	}
 	/**
 	 * @brief 시험 모듈내 메세지를 출력함
+	 * @DEPRECATED This function is deprecated and will be removed at 1.0
 	 **/
 	function dispExamMessage($msg_code)
 	{
