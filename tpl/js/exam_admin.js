@@ -27,6 +27,7 @@ jQuery(function($) {
         }
    });
 	$(document).on('click', 'a.answer_marking', function(e){
+        e.preventDefault();
         var ans_list = ($('#q_answer').val())? $('#q_answer').val().split(',') : new Array();
         var idx = ans_list.indexOf($(this).attr('data-value'));
 
