@@ -563,7 +563,7 @@ class examItem extends Object
 
 	function getAllQuestionPoint()
 	{
-		return $this->get('total_point') == 0 ? 100 : $this->get('total_point');
+		return $this->get('total_point');
 	}
 }
 /* End of file exam.item.php */

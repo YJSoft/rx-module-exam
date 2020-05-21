@@ -307,7 +307,7 @@ class examController extends exam
 		}
 		$oExamModel = getModel('exam');
 
-		// 시험지 정볼르 구해와서, 문제 출제 궈난이 있는지 체크
+		// 시험지 정볼르 구해와서, 문제 출제 권한이 있는지 체크
 		$document_srl = Context::get('document_srl');
 		$question_srl = Context::get('question_srl');
 
@@ -318,15 +318,30 @@ class examController extends exam
 
 		// question_srl이 있으면 문제정보도 체크
 		$questionitem = $oExamModel->getQuestion($question_srl);
-		if(!$questionitem->isExists()) return $this->makeObject(-1, 'msg_not_founded 1');
+		if(!$questionitem->isExists()) return $this->makeObject(-1, 'msg_not_founded');
 		if($questionitem->get('document_srl')!=$examitem->document_srl) return $this->makeObject(-1, 'msg_invalid_request');
 
+		// 질문 삭제
 		$args = new StdClass();
 		$args->question_srl = $question_srl;
 		$args->document_srl = $document_srl;
-
 		$output = $this->deleteQuestion($args);
-		if(!$output->toBool()) return $output;
+		if(!$output->toBool()) return $this->makeObject(-1, "msg_invalid_request");
+		
+		// 전체 배점을 수정
+		$total_point = $examitem->getAllQuestionPoint() - $questionitem->get('point');
+		$output = $this->updateTotalPoint($document_srl, $total_point);
+		if(!$output->toBool()) return $this->makeObject(-1, "msg_invalid_request");
+
+		// 캐시 삭제
+		$oCacheHandler = CacheHandler::getInstance('object');
+		if($oCacheHandler->isSupport())
+		{
+			//remove document item from cache
+			$cache_key = 'exam_item:'. getNumberingPath($document_srl) . $document_srl;
+			$oCacheHandler->delete($cache_key);
+		}
+
 		$this->setMessage('success_deleted');
 	}
 	/**
