@@ -17,7 +17,7 @@ class examAdminModel extends exam
 		// Search option
 		$args = new stdClass();
 		$args->module_srl = Context::get('module_srl');
-		$args->status = (Context::get('status') && array_key_exists(Context::get('status'),Context::getLang('resultStatusList')))? Context::get('status') : '';
+		$args->status = (Context::get('status') && isset(Context::getLang('resultStatusList')[Context::get('status')]))? Context::get('status') : '';
 		$search_target = trim(Context::get('search_target'));
 		$search_target2 = trim(Context::get('search_target2'));
 		$search_target3 = trim(Context::get('search_target3'));

@@ -350,7 +350,7 @@ class examModel extends exam
 		if($obj->status)
 		{
 			$statusList = $this->getResultStatusList();
-			if(!array_key_exists(strtoupper($obj->status),$statusList)) unset($obj->status);
+			if(!isset($statusList[strtoupper($obj->status)])) unset($obj->status);
 		}
 		$args = new StdClass();
 		$args->list_count = ($obj->list_count)? $obj->list_count : 20;
