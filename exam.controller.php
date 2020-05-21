@@ -329,7 +329,7 @@ class examController extends exam
 		if(!$output->toBool()) return $this->makeObject(-1, "msg_invalid_request");
 		
 		// 전체 배점을 수정
-		$total_point = $examitem->getAllQuestionPoint() - $questionitem->get('point');
+		$total_point = $examitem->getAllQuestionPoint() - $questionitem->getPoint();
 		$output = $this->updateTotalPoint($document_srl, $total_point);
 		if(!$output->toBool()) return $this->makeObject(-1, "msg_invalid_request");
 
