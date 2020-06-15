@@ -57,7 +57,7 @@
 				<td class="nowr">{$resultitem->exam_timeText}</td>
 				<td class="nowr">{$lang->resultStatusList[$resultitem->status]}</td>
                 <td class="nowr">{zdate($resultitem->regdate, 'Y-m-d')}</td>
-				<td class="nowr"><a href="{getUrl('','mid',$module_info->mid->mid,'act','dispExamCorrectCheck','log_srl',$resultitem->log_srl)}" onclick="examopen(this.href,'exam2');return false">{$lang->exam_result_type}</a></td>
+				<td class="nowr"><a href="{getUrl('','mid',$module_info->mid,'act','dispExamCorrectCheck','log_srl',$resultitem->log_srl)}" onclick="examopen(this.href,'exam2');return false">{$lang->exam_result_type}</a></td>
 				<td class="nowr"><a href="{getUrl('', 'module', 'admin', 'act', 'dispExamAdminResultUpdate','module_srl',$module_srl,'log_srl', $resultitem->log_srl)}">{$lang->cmd_modify}</a></td>
 				<td><input type="checkbox" name="cart" value="{$resultitem->log_srl."\t".$resultitem->title."\t".$resultitem->nick_name."\t".$resultitem->score."\t".$lang->resultStatusList[$resultitem->status]}" /></td>
 			</tr>
