@@ -4,7 +4,7 @@
  * @author 러키군 (admin@barch.kr)
  * @brief  exam module questionItem class
  */
-class questionItem extends Object
+class questionItem extends BaseObject
 {
 	/**
 	 * question number
