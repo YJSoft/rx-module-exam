@@ -19,7 +19,9 @@
 		<permission action="procExamAdminSaveCategorySettings" target="manager" />
 	</permissions>
 	<actions>
-		<action name="dispExamIndex" type="view" index="true" />
+		<action name="dispExamIndex" type="view" index="true">
+			<route route="$document_srl:int" priority="100" />
+		</action>
 		<action name="dispExamList" type="view" />
 		<action name="dispExamCreate" type="view" />
 		<action name="dispExamDelete" type="view" />
