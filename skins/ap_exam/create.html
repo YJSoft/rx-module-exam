@@ -1,0 +1,170 @@
+<include target="_header.html" />
+
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/exam_create/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<div class="exam_list">
+    <form ruleset="createExam" action="./" method="post" enctype="multipart/form-data" class="create_exam">
+        <input type="hidden" name="module" value="exam" />
+        <input type="hidden" name="act" value="procExamCreate" />
+        <input type="hidden" name="page" value="{$page}" />
+        <input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+        <input type="hidden" name="success_return_url" value="{getRequestUriByServerEnviroment()}" />
+        <input type="hidden" name="xe_validator_id" value="modules/exam/exam_create/1" />
+        <input cond="$document_srl" type="hidden" name="document_srl" value="{$document_srl}" />
+        <input type="hidden" name="page_type" value="0" />
+
+		<header class="create_header">
+			<h1>{$document_srl ? $lang->cmd_exam_config : $lang->cmd_exam_write;}</h1>
+			<div class="btn_area">
+				<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close">{$lang->cmd_cancel}</a>
+				<a href="javascript:void(0);" class="exam_btn btn_submit" onclick="jQuery('.create_exam').submit();return false;">{$lang->cmd_registration}</a>
+			</div>
+		</header>
+
+		<section class="create_body">
+			<div class="create_category" cond="$module_info->hide_category!='Y' && $category_list">
+				<select name="category_srl">
+					<option value="">{$lang->category}</option>	
+					<option loop="$category_list => $val" disabled="disabled"|cond="!$val->grant" value="{$val->category_srl}" selected="selected"|cond="$val->grant&&$val->selected||$val->category_srl==$examitem->get('category_srl')">
+						{str_repeat("&nbsp;&nbsp;",$val->depth)} {$val->title} ({$val->document_count})
+					</option>
+				</select>
+			</div>
+			<div class="create_title<!--@if($module_info->hide_category!='Y' && $category_list)--> use_category<!--@end-->">
+				<input type="text" name="exam_title" id="exam_title" placeholder="{$lang->exam_title}" value="{$examitem->getTitle()}"|cond="$examitem->getTitle()" />
+			</div>
+		</section>
+
+        <table class="tbl_exam_list">
+        <caption>시험지 생성</caption>
+        <tbody>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    {$lang->exam_result_type} <span class="req">*</span>
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <block loop="$lang->resultTypeList=>$key,$val">
+                        <label for="result_type{$key}">
+                            <input type="radio" name="result_type" id="result_type{$key}" value="{$key}" checked="checked"|cond="$key==$examitem->get('result_type')" /> {$val}
+                        </label> &nbsp;&nbsp;
+                    </block>
+                    <p class="info">{$lang->about_resulttype}</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <label for="exam_content">{$lang->exam_content}</label>
+                </div>
+            </td>
+            <td><div class="ta_l"><textarea name="exam_content" id="exam_content" rows="6">{($examitem->getContentText())? $examitem->getContentText() : ''}</textarea></div></td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <label for="exam_cutline">{$lang->exam_cutline}</label>
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <input type="number" name="exam_cutline" id="exam_cutline" placeholder="{$lang->exam_cutline}" value="{($examitem->get('cutline'))? $examitem->get('cutline') : '0'}" maxlength="3" class="iText" />{$lang->unit_score}
+                    <p class="info">{$lang->about_cutline}</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">{$lang->exam_date}</div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <label for="is_date">
+                        <input type="checkbox" name="is_date" id="is_date" value="Y" checked="checked"|cond="$examitem->get('is_date')=='Y'" /> {$lang->cmd_setup}
+                    </label>
+                    <input type="number" name="start_date" value="{$examitem->get('start_date')}" class="iText" maxlength="12" placeholder="YYYYmmddHHii" /> ~ 
+                    <input type="number" name="end_date" value="{$examitem->get('end_date')}" class="iText" maxlength="12" placeholder="YYYYmmddHHii" />
+                    <p class="info">{$lang->about_date}</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">{$lang->exam_time}</div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <label for="is_time">
+                        <input type="checkbox" name="is_time" id="is_time" value="Y" checked="checked"|cond="$examitem->get('is_time')=='Y'" /> {$lang->cmd_setup}
+                    </label>
+                    <input type="number" name="exam_time" id="exam_time" placeholder="{$lang->exam_time}" value="{($examitem->get('exam_time'))? $examitem->get('exam_time') : '0'}" class="iText" /> {$lang->unit_sec} <span id="exam_time_txt"></span>
+                    <p class="info">{$lang->about_time}</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    <label for="exam_join_point">{$lang->exam_join_point}</label>
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <input type="number" name="exam_join_point" id="exam_join_point" placeholder="{$lang->exam_join_point}" value="{($examitem->get('join_point'))? $examitem->get('join_point') : '0'}" class="iText" />{$point_config->point_name}
+                    <p class="info">{$lang->about_join_point}</p>
+                </div>
+            </td>
+        </tr>
+        <tr cond="$module_info->exam_pass_point_option">
+            <td class="bg">
+                <div class="ta_l">
+                    <label for="exam_pass_point">{$lang->exam_pass_point}</label>
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <input type="number" name="exam_pass_point" id="exam_pass_point" placeholder="{$lang->exam_pass_point}" value="{($examitem->get('pass_point'))? $examitem->get('pass_point') : '0'}" class="iText" />{$point_config->point_name}
+                    <p class="info">
+                        {sprintf($lang->about_pass_point,$pass_point_min,$pass_point_max)}
+                        <block cond="$module_info->exam_pass_point_minus=='Y'"><br />* {$lang->about_use_point_minus}</block>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr cond="$module_info->exam_pass_group_option">
+            <td class="bg">
+                <div class="ta_l">
+                    {$lang->exam_pass_group}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    <label for="group_{$key}" class="x_inline" loop="$group_list => $key,$val">
+                        <input type="checkbox" name="exam_pass_group_list[]" value="{$key}" id="group_{$key}" checked="checked"|cond="$examitem->isPassGroup($key)" />
+                        {$val}
+                    </label>
+                    <p class="info">{$lang->about_pass_group}</p>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+        </table>
+
+        <div class="list_footer">
+            <div class="btn_area">
+                <div class="btn_area_l">
+					<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close">{$lang->cmd_cancel}</a>
+                </div>
+                <div class="btn_area_r">
+					<a href="javascript:void(0);" class="exam_btn btn_submit" onclick="jQuery('.create_exam').submit();return false;">{$lang->cmd_registration}</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<include target="_footer.html" />

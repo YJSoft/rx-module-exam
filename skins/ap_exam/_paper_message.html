@@ -1,0 +1,46 @@
+<!-- 시험 응시 전 처리 -->
+<block cond="!$resultitem">
+	<div class="paper_message">
+		<h2>※ 시험 응시 전 아래 내용을 꼭! 확인하세요.</h2>
+		<ul class="sub_list">
+			<li cond="$examitem->isDate()">시험 응시 가능 날짜는 <strong>{$examitem->getExamDate()}</strong>입니다.</li>
+			<li cond="$examitem->get('join_point')">시험 응시료는 {$examitem->get('join_point')} {$point_config->point_name} 이며 시작시 바로 차감됩니다.</li>
+			<li cond="$examitem->get('cutline')">시험에서 <strong>{$examitem->get('cutline')}{$lang->unit_score} </strong>이상을 받으셔야 <strong>합격</strong>입니다.</li>
+			<li cond="$module_info->exam_pass_point_option && $examitem->get('pass_point')">합격하시면 <strong>{$examitem->get('pass_point')} {$point_config->point_name} </strong>가 지급됩니다.</li>
+			<li cond="$module_info->exam_pass_group_option && $examitem->get('passGroupList')">합격하시면 <strong>[{implode(", ",$examitem->get('passGroupList'))}]</strong>그룹 회원이 되실 수 있습니다.</li>
+			<li cond="$examitem->isTime()">시험 제한시간은 <strong>{$examitem->getTimeText()}</strong>이며 시간이 지나면 자동으로 제출됩니다.</li>
+			<li cond="!$examitem->isTime()">이 시험의 제한시간은 없습니다.</li>
+			<li>시험을 시작하시려면 아래 [응시하기] 버튼을 누르세요.</li>
+		</ul>
+		<div class="paper_message_area">
+			<a href="{getUrl('mode','join')}" class="exam_btn1 examJoin btn_submit"><i class="xi-tablet-pen"></i> 응시하기</a>
+		</div>
+	</div>
+</block>
+<!--// 시험 응시 전 처리 -->
+<!-- 시험 응시 후 처리 -->
+<block cond="$resultitem">
+    <!-- 답안제출 후 처리 -->
+    <!--@if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/exam_join/1')-->
+    <div class="paper_message {$XE_VALIDATOR_MESSAGE_TYPE}">
+        <h2>시험 보시느라 수고하셨습니다.</h2>
+		<div class="paper_message_area" cond="$resultitem->result_type>=1">
+			<a href="{getUrl('','mid',$mid,'act','disExamMyResult')}" class="exam_btn1" onclick="opener.location.href = this.href;window.close();return false;"><i class="xi-windows-search"></i> 시험 응시현황</a>
+			<a href="{getUrl('act','dispExamCorrectCheck','log_srl',$resultitem->log_srl,'document_srl','')}" class="exam_btn1 btn_submit"><i class="xi-chart-circle"></i> 정답 확인</a>
+		</div>
+        <ul class="sub_list" cond="!$resultitem->result_type">
+            <li>이 시험의 점수 및 결과는 공개되지 않도록 설정되어 있습니다.</li>
+        </ul>
+    </div>
+    <!--// 답안제출 후 처리 -->
+    <!--@else-->
+    <div class="paper_message">
+        <h2>이미 이 시험에 응시하셨습니다.</h2>
+        <div class="paper_message_area">
+            <a href="{getUrl('','mid',$mid,'act','disExamMyResult')}" class="exam_btn1" onclick="opener.location.href = this.href;window.close();return false;"><i class="xi-windows-search"></i> 시험 응시현황</a>
+            <a href="{getUrl('act','dispExamCorrectCheck','log_srl',$resultitem->log_srl,'document_srl','')}" class="exam_btn1 btn_submit"><i class="xi-chart-circle"></i> 채점 결과</a>
+        </div>
+    </div>
+    <!--@end-->
+</block>
+<!--// 시험 응시 후 처리 -->

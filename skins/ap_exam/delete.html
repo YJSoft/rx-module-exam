@@ -1,0 +1,87 @@
+<include target="_header.html" />
+
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/exam_delete/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<div class="exam_list ">
+    <form ruleset="deleteExam" action="./" method="post" enctype="multipart/form-data" class="delete_exam">
+        <input type="hidden" name="module" value="exam" />
+        <input type="hidden" name="act" value="procExamDelete" />
+        <input type="hidden" name="page" value="{$page}" />
+        <input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+        <input type="hidden" name="success_return_url" value="{getRequestUriByServerEnviroment()}" />
+        <input type="hidden" name="xe_validator_id" value="modules/exam/exam_delete/1" />
+        <input type="hidden" name="document_srl" value="{$examitem->document_srl}" />
+
+		<header class="delete_header">
+			<h1>{$lang->exam} {$lang->cmd_delete}</h1>
+			<div class="btn_area">
+				<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close">{$lang->cmd_cancel}</a>
+				<a href="javascript:void(0);" class="exam_btn btn_submit" onclick="jQuery('.delete_exam').submit();return false;">{$lang->cmd_delete}</a>
+			</div>
+		</header>
+
+        <table class="tbl_exam_list ">
+        <caption>{$lang->exam} {$lang->cmd_delete}</caption>
+        <tbody>
+        <tr>
+            <td colspan="2">
+                <div class="ta_l">
+                    <p>{$lang->about_exam_delete}</p>
+                    <p>{$lang->confirm_delete}</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    {$lang->exam_title}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    {$examitem->getTitle()}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    {$lang->exam_question_count}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    {$examitem->getQuestionCount()}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg">
+                <div class="ta_l">
+                    {$lang->exam_join_count}
+                </div>
+            </td>
+            <td>
+                <div class="ta_l">
+                    {$examitem->getJoinCount()}
+                </div>
+            </td>
+        </tr>
+        </tbody>
+        </table>
+
+        <div class="list_footer">
+            <div class="btn_area">
+                <div class="btn_area_l">
+					<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close">{$lang->cmd_cancel}</a>
+                </div>
+                <div class="btn_area_r">
+					<a href="javascript:void(0);" class="exam_btn btn_submit" onclick="jQuery('.delete_exam').submit();return false;">{$lang->cmd_delete}</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<include target="_footer.html" />

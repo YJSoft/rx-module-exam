@@ -1,0 +1,70 @@
+<include target="_header.html" />
+
+<div class="exam_list basic_type">
+    <table class="tbl_exam_list">
+    <caption>{$lang->cmd_my_exam_result}</caption>
+    <thead>
+		<tr>
+			<th scope="col"><div class="ta_c">{$lang->no}</div></th>
+			<th scope="col"><div class="ta_c">{$lang->exam_title}</div></th>
+			<th scope="col"><div class="ta_c">{$lang->category}</div></th>
+			<th scope="col"><div class="ta_c">{$lang->exam_score}</div></th>
+			<th scope="col"><div class="ta_c">{$lang->exam_status}</div></th>
+			<th scope="col"><div class="ta_c">{$lang->date}</div></th>
+			<th scope="col"> </th>
+		</tr>
+    </thead>
+    <tbody>
+		<tr cond="!$result_list">
+			<td colspan="7"><div class="ta_c">{$lang->no_result_list}</div></td>
+		</tr>
+		<tr cond="$result_list" loop="$result_list => $no, $resultitem">
+			<td><div class="ta_c">{$no}</div></td>
+			<td><div class="ta_c bd_tit">{$resultitem->title}</div></td>
+			<td><div class="ta_c">{getModel('document')->getCategory($resultitem->category_srl)->title}</div></td>
+			<td cond="$resultitem->result_type"><div class="ta_c">{$resultitem->score}</div></td>
+			<td cond="!$resultitem->result_type"><div class="ta_c">{$lang->exam_score_secert}</div></td>
+			<td><div class="ta_c bd_tit">{$lang->resultStatusList[$resultitem->status]}</div></td>
+			<td><div class="ta_c">{zdate($resultitem->regdate,'Y.m.d')}</div></td>
+			<td>
+				<div class="ta_c exam_manager_group">
+					<a href="{getUrl('','mid',$mid,'act','dispExamCorrectCheck','log_srl',$resultitem->log_srl)}" onclick="examopen(this.href,'exam2');return false" class="exam_manager"><i class="xi-pen"></i> {$lang->exam_result_type}</a>
+				</div>
+			</td>
+		</tr>
+    </tbody>
+    </table>
+</div>
+<div class="list_footer">
+    <div class="btn_area">
+        <div class="btn_area_l">
+            <a href="{getUrl('','mid',$mid)}" class="">
+                <span class="btn_txt">{$lang->cmd_list}</span>
+            </a>
+            <a href="{getUrl('act','dispExamAdminInsert')}" class="" cond="$grant->manager">
+                <span class="btn_txt">{$lang->cmd_setup}</span>
+            </a>
+        </div>
+        <div class="btn_area_r">
+            <a href="{getUrl('act','dispExamCreate','document_srl','')}" class="">
+                <i class="xi-plus"></i>
+                <span class="btn_txt">{$lang->cmd_exam_write}</span>
+            </a>
+        </div>
+    </div>
+    <!-- PAGINATE -->
+    <div class="exam_paginate" cond="$result_list && $page_navigation->total_page > 1">
+		<a href="{getUrl('page','','document_srl','')}" class="pg_btn" title="{$lang->first_page}">
+			<i class="xi-angle-left"><span class="blind">{$lang->first_page}</span></i>
+		</a> 
+		<block loop="$page_no=$page_navigation->getNextPage()">
+			<strong cond="$page==$page_no">{$page_no}</strong> 
+			<a cond="$page!=$page_no" href="{getUrl('page',$page_no,'document_srl','')}">{$page_no}</a>
+		</block>
+        <a href="{getUrl('page', $page_navigation->last_page, 'document_srl', '')}" class="pg_btn" title="{$lang->last_page}">
+            <i class="xi-angle-right"><span class="blind">{$lang->last_page}</span></i>
+        </a>
+    </div>
+    <!-- /PAGINATE -->
+</div>
+<include target="_footer.html" />

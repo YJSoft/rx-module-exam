@@ -1,0 +1,36 @@
+<div class="paper_header">
+	<h3>{$examitem->getTitle()}<span cond="$module_info->hide_category !== 'Y' && $examitem->get('category_srl')"> ({getModel('document')->getCategory($examitem->get('category_srl'))->title})</span></h3>
+	<div class="paper_command" cond="$mode !== 'write'">
+		{@
+			$ref = false;
+			$referrer = $_SERVER['HTTP_REFERER'];
+			if ( strpos($referrer, '/index.php?') === false ) :
+				$url = preg_replace('/^https?:\/\//', '', $referrer);
+				$arr = explode('/', $url);
+				if ( !in_array('category', $arr) && array_key_exists(2, $arr) ) :
+					$ref = true;
+				endif;
+				if ( in_array('category', $arr) && array_key_exists(4, $arr) ) :
+					$ref = true;
+				endif;
+			else :
+				if ( strpos($referrer, 'document_srl') !== false ) :
+					$ref = true;
+				endif;
+			endif;
+		}
+		<a href="{getUrl('mode','write','question_srl','')}" class="exam_btn btn_submit"><i class="xi-cube"></i> 출제</a>
+		<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close" cond="!$ref"><i class="xi-check"></i> {$lang->cmd_complete}</a>
+		<a href="{getUrl('act','','mode','')}" class="exam_btn btn_close" cond="$ref"><i class="xi-check"></i> {$lang->cmd_complete}</a>
+	</div>
+	<div class="sc_tp" cond="$act !== 'dispExamEditMode'">
+		<p class="qcnt">
+			총 <span id="total_q_count">{$examitem->getQuestionCount()}</span> 문항
+			총 <span id="total_q_point">{$examitem->getAllQuestionPoint()}</span> 점
+		</p>
+	</div>
+</div>
+<div id="questions" class="questions">
+    <include target="_paper_q_write.html" cond="$mode === 'write'" />
+    <include target="_paper_edit.html" cond="$mode !== 'write'" />
+</div>

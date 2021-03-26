@@ -1,0 +1,57 @@
+<div class="paper_header">
+	<h3>{$resultitem->title}<span cond="$module_info->hide_category !== 'Y' && $resultitem->category_srl"> ({getModel('document')->getCategory($resultitem->category_srl)->title})</span></h3>
+	<div class="paper_command">
+		<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close"><i class="xi-eye"></i> {$lang->cmd_confirm}</a>
+	</div>
+	<div class="sc_tp">
+		<p class="qcnt">
+			총 <span id="total_q_count">{$resultitem->correct_count+$resultitem->wrong_count}</span> 문항 중 {$resultitem->correct_count}개 정답
+		</p>
+		<p class="fr">
+			<label for="member_name">이 름 : <input type="text" value="{$member_info->nick_name}" readonly="readonly" class="underInput" /></label>
+			<label for="member_score">점 수 : <input type="text" value="{($resultitem->result_type>=1)? (int)$resultitem->score : $lang->exam_score_secert; }" readonly="readonly" style="color:red;font-weight:bold;text-align:center" class="underInput" /></label>
+		</p>
+	</div>
+</div>
+
+<div cond="$resultitem->result_type<2 && !$grant->manager" class="paper_message">
+    <h2>이 시험의 채점 결과는 공개되지 않습니다..</h2>
+    <div class="paper_message_area">
+        <a href="{getUrl('','mid',$mid,'act','disExamMyResult')}" class="exam_btn1" onclick="opener.location.href = this.href;window.close();return false;">시험 응시현황</a>
+    </div>
+</div>
+<div cond="$resultitem->result_type>1 || $grant->manager" id="questions" class="questions">
+    <div loop="$resultitem->answer=>$no,$qitem" class="qitem">
+        <div class="qtitle">
+            <div class="txt">
+                <div class="q_number">
+                    <img src="img/check_{strtolower($qitem->get('my_answer_result'))}.png" width="55" height="45" alt="" />
+                </div>
+                <span>{$no}</span>. {$qitem->getTitle()}
+                <span cond="!$qitem->getQType() && $resultitem->result_type>2" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
+            </div>
+        </div>
+        <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">
+            <legend cond="$qitem->getDescriptionTitle()">{$qitem->getDescriptionTitle()}</legend>
+            {$qitem->getDescription()}
+        </fieldset>
+        <p cond="$qitem->getQType()" class="qanswer">
+            <label for="my_answer{$no}">제　출: <input type="text" id="my_answer{$no}" value="{$qitem->get('my_answer')}" readonly="readonly" class="underInput" /></label>
+            <label cond="$resultitem->result_type>2" for="answer{$no}">정　답: <input type="text" id="answer{$no}" value="{$qitem->getAnswer()}" readonly="readonly" class="underInput" /></label>
+        </p>
+        <ul cond="!$qitem->getQType()" class="qanswer_list">
+        {@ $answerList = explode(",", $qitem->get('my_answer')); }
+        <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i)">
+             <div class="txt">
+                {$icon} {$qitem->getAnswer($i)}
+            </div>
+            <div cond="in_array($i,$answerList)" class="marking show">
+            </div>
+        </li>
+        </ul>
+		<fieldset cond="$resultitem->result_type>1 && $qitem->getContent()" class="qcontent">
+			<legend>[ 해설 ]</legend>
+			{$qitem->getContent()}
+		</fieldset>
+    </div>
+</div>

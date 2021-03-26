@@ -1,0 +1,133 @@
+<include target="_header.html" />
+
+<div class="exam_list basic_type">
+    <table class="tbl_exam_list">
+    <caption>{$lang->exam} {$lang->cmd_list}</caption>
+    <thead>
+    <!-- LIST HEADER -->
+    <tr>
+		<block loop="$list_config=>$key,$val">
+		<th scope="col" cond="$val->type=='exam_srl' && $val->idx==-1"><div class="ta_c">{$lang->no}</div></th>
+		<th scope="col" cond="($module_info->hide_category!='Y') && ($val->type=='category' && $val->idx==-1)"><div class="ta_c">{$lang->category}</div></th>
+		<th scope="col" cond="$val->type=='exam_title' && $val->idx==-1"><div class="ta_c">{$lang->exam_title}</div></th>
+		<th scope="col" cond="$val->type=='nick_name' && $val->idx==-1"><div class="ta_c">{$lang->exam_writer}</div></th>
+		<th scope="col" cond="$val->type=='user_name' && $val->idx==-1"><div class="ta_c">{$lang->exam_writer}</div></th>
+		<th scope="col" cond="$val->type=='regdate' && $val->idx==-1"><div class="ta_c">{$lang->regdate}</div></th>
+		<th scope="col" cond="$val->type=='exam_date' && $val->idx==-1"><div class="ta_c">{$lang->exam_date}</div></th>
+		<th scope="col" cond="$val->type=='last_update' && $val->idx==-1"><div class="ta_c">{$lang->last_update}</div></th>
+		<th scope="col" cond="$val->type=='exam_question_count' && $val->idx==-1"><div class="ta_c">{$lang->exam_question_count}</div></th>
+		<th scope="col" cond="$val->type=='exam_join_count' && $val->idx==-1"><div class="ta_c">{$lang->exam_join_count}</div></th>
+		<th scope="col" cond="$val->type=='exam_join_point' && $val->idx==-1"><div class="ta_c">{$lang->exam_join_point}</div></th>
+		<th scope="col" cond="$val->type=='exam_pass_point' && $val->idx==-1"><div class="ta_c">{$lang->exam_pass_point_list}</div></th>
+		</block>
+		<th scope="col" colspan="2"></th>
+    </tr>
+    <!-- /LIST HEADER -->
+    </thead>
+    <tbody>
+    <!-- LIST -->
+    <tr cond="!$exam_list">
+        {@
+            $td_cnt = count($list_config)+2;
+            if($list_config['exam_content']) $td_cnt = $td_cnt-1;
+            if($grant->manager) $td_cnt = $td_cnt+1;
+        }
+        <td colspan="{$td_cnt}"><div class="ta_c">{$lang->no_exam_list}</div></td>
+    </tr>
+    <tr cond="$exam_list" loop="$exam_list=>$no,$examitem">
+		<block loop="$list_config=>$key,$val">
+		<td cond="$val->type=='exam_srl' && $val->idx==-1"><div class="ta_c">{$no}</div></td>
+		<td cond="($module_info->hide_category!='Y') && ($val->type=='category' && $val->idx==-1)"><div class="ta_c bd_tit"><a href="{getUrl('category',$examitem->get('category_srl'))}">{$category_list[$examitem->get('category_srl')]->title}</a></div></td>
+		<td cond="$val->type=='exam_title' && $val->idx==-1"><div class="ta_c bd_tit"><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl)}" onclick="examopen(this.href,'exam');return false">{$examitem->getTitle()}</a> {$examitem->printExtraImages(60*60*$module_info->duration_new)}</div></td>
+		<td cond="$val->type=='nick_name' && $val->idx==-1"><div class="ta_c"><span class="member_{$examitem->get('member_srl')}">{$examitem->getNickName()}</span></div></td>
+		<td cond="$val->type=='user_name' && $val->idx==-1"><div class="ta_c"><span class="member_{$examitem->get('member_srl')}">{$examitem->getUserName()}</span></div></td>
+		<td cond="$val->type=='regdate' && $val->idx==-1"><div class="ta_c">{zdate($examitem->get('regdate'),'Y') === date('Y') ? getTimeGap($examitem->get('regdate'), 'm.d') : getTimeGap($examitem->get('regdate'))}</div></td>
+		<td cond="$val->type=='exam_date' && $val->idx==-1"><div class="ta_c">{$examitem->getExamDate('Y.m.d H:i', true)}</div></td>
+		<td cond="$val->type=='last_update' && $val->idx==-1"><div class="ta_c">{zdate($examitem->get('last_update'),'Y') === date('Y') ? getTimeGap($examitem->get('last_update'), 'm.d') : getTimeGap($examitem->get('last_update'))}</div></td>
+		<td cond="$val->type=='exam_question_count' && $val->idx==-1"><div class="ta_c">{$examitem->getQuestionCount()}</div></td>
+		<td cond="$val->type=='exam_join_count' && $val->idx==-1"><div class="ta_c">{$examitem->getJoinCount()}</div></td>
+		<td cond="$val->type=='exam_join_point' && $val->idx==-1"><div class="ta_c">{$examitem->getJoinPoint()}P</div></td>
+		<td cond="$val->type=='exam_pass_point' && $val->idx==-1"><div class="ta_c">{$examitem->getPassPoint()}P</div></td>
+		</block>
+		<td>
+			<div class="ta_c">
+				<a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl)}" onclick="examopen(this.href,'exam');return false" class="exam_open"><i class="xi-pen"></i> {$lang->exam_join}</a>
+			</div>
+		</td>
+		<td>
+			<div class="exam_manager_group ta_c" cond="$examitem->isGranted()">
+				<a href="javascript:void(0);" class="exam_manager"><i class="xi-bars"></i> {$lang->cmd_management}</a>
+				<div class="exam_manager_wrap">
+					<ul class="exam_manager_list">
+						<li><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl,'act','dispExamCreate')}">{$lang->cmd_exam_config}</a></li>
+						<li><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl,'act','dispExamEditMode','mode','write')}" onclick="examopen(this.href,'exam');return false">{$lang->cmd_question_write}</a></li>
+						<li><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl,'act','dispExamEditMode')}" onclick="examopen(this.href,'exam');return false">{$lang->exam} {$lang->cmd_edit}</a></li>
+						<li><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl,'act','dispExamDelete')}">{$lang->exam} {$lang->cmd_delete}</a></li>
+					</ul> 
+				</div>
+			</div>
+		</td>
+    </tr>
+    <!-- /LIST -->
+    </tbody>
+    </table>
+</div>
+<div class="list_footer">
+    <div class="btn_area">
+        <div class="btn_area_l">
+            <a href="{getUrl('','mid',$mid)}" class="">
+                <span class="btn_txt">{$lang->cmd_list}</span>
+            </a>
+            <a href="javascript:void(0);" class="btn_search">
+                <i class="xi-magnifier"></i>
+				<span class="btn_txt">{$lang->cmd_search}</span>
+            </a>
+			<div class="exam_search_area">
+				<div class="exam_search">
+					<h3>{$lang->cmd_search}<i class="xi-close"></i></h3>
+					<form action="{getUrl()}" method="get" onsubmit="return procFilter(this, search)" id="exam_search" no-error-return-url="true">
+						<input type="hidden" name="mid" value="{$mid}" />
+						<input type="hidden" name="vid" value="{$vid}" />
+						<input type="hidden" name="category" value="{$category}" />
+						<div class="search_select">
+							<select name="search_target">
+								<option loop="$search_option=>$key,$val" cond="array_key_exists($key, $list_config)" value="{$key}" selected="selected"|cond="$search_target==$key">{$val}</option>
+							</select>
+						</div>
+						<div class="search_con">
+							<input type="text" name="search_keyword" value="{htmlspecialchars($search_keyword)}" title="{$lang->cmd_search}" class="search_input" />
+						</div>
+						<div class="btn_search">
+							<a href="javascript:void(0);" class="exam_btn btn_close" type="button">{$lang->cmd_cancel}</a>
+							<a href="javascript:void(0);" class="exam_btn btn_submit" type="submit">{$lang->cmd_search}</a>
+						</div>
+					</form>
+				</div>
+			</div>
+            <a href="{getUrl('act','dispExamAdminInsert')}" class="" cond="$grant->manager">
+                <span class="btn_txt">{$lang->cmd_setup}</span>
+            </a>
+        </div>
+        <div class="btn_area_r">
+            <a href="{getUrl('act','dispExamCreate','document_srl','')}" class="">
+                <i class="xi-plus"></i>
+                <span class="btn_txt">{$lang->cmd_exam_write}</span>
+            </a>
+        </div>
+    </div>
+    <!-- PAGINATE -->
+    <div class="exam_paginate" cond="$exam_list && $page_navigation->total_page > 1">
+		<a href="{getUrl('page','','document_srl','')}" class="pg_btn" title="{$lang->first_page}">
+			<i class="xi-angle-left"><span class="blind">{$lang->first_page}</span></i>
+		</a> 
+		<block loop="$page_no=$page_navigation->getNextPage()">
+			<strong cond="$page==$page_no">{$page_no}</strong> 
+			<a cond="$page!=$page_no" href="{getUrl('page',$page_no,'document_srl','')}">{$page_no}</a>
+		</block>
+        <a href="{getUrl('page', $page_navigation->last_page, 'document_srl', '')}" class="pg_btn" title="{$lang->last_page}">
+            <i class="xi-angle-right"><span class="blind">{$lang->last_page}</span></i>
+        </a>
+    </div>
+    <!-- /PAGINATE -->
+</div>
+<include target="_footer.html" />

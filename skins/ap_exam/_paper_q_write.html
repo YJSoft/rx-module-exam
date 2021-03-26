@@ -1,0 +1,155 @@
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/q_write/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+    <p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<form ruleset="insertQuestion" action="./" method="post" class="create_question" enctype="multipart/form-data">
+    <input type="hidden" name="module" value="exam" />
+    <input type="hidden" name="act" value="procExamQuestionInsert" />
+    <input type="hidden" name="xe_validator_id" value="modules/exam/q_write/1" />
+    <input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+    <input type="hidden" name="document_srl" value="{$examitem->document_srl}" />
+    <input type="hidden" name="question_srl" value="{$question_srl}"|cond="$question_srl"  />
+    <input type="hidden" name="q_answer" id="q_answer" value="{$questionitem->get('answer')}" />
+	<input type="hidden" name="q_description_content" value="{escape($questionitem->description)}" />
+
+	<header class="q_create_header">
+		<h1>{$question_srl ? $lang->cmd_question_edit : $lang->cmd_question_write;}</h1>
+		<div class="btn_area">
+			<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close">{$lang->cmd_cancel}</a>
+			<a href="javascript:void(0);" class="exam_btn btn_close btn_load" data-msrl="{$module_info->module_srl}">{$lang->cmd_load}</a>
+			<a href="javascript:void(0);" class="exam_btn btn_submit" onclick="jQuery('.create_question').submit();return false;">{$lang->cmd_save}</a>
+		</div>
+		<div class="question_load_area"></div>
+	</header>
+
+    <table class="tbl_q_write ">
+    <tbody>
+    <tr>
+        <td class="bg">
+            <div class="ta_l">{$lang->q_level}</div>
+        </td>
+        <td>
+            <div class="ta_l">
+                <block loop="$lang->qLevelList=>$key,$val">
+                <label for="q_level{$key}">
+                    <input type="radio" name="q_level" id="q_level{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_level')" /> {$val}
+                </label> &nbsp;&nbsp;
+                </block>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="bg">
+            <div class="ta_l">{$lang->q_type}</div>
+        </td>
+        <td>
+            <div class="ta_l">
+                <block loop="$lang->qTypeList=>$key,$val">
+                <label for="q_type{$key}">
+                    <input type="radio" name="q_type" id="q_type{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_type')" /> {$val}
+                </label> &nbsp;&nbsp;
+                </block>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="bg">
+            <div class="ta_l">
+                <label for="q_title">{$lang->q_title}</label> <span class="req">*</span>
+            </div>
+        </td>
+        <td>
+            <div class="ta_l">
+                <input type="text" name="q_title" id="q_title" value="{$questionitem->get('title')}" class="iText" />
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="bg">
+            <div class="ta_l">{$lang->q_description}</div>
+        </td>
+        <td>
+            <div class="q_description">
+                <label for="use_description">
+                    <input type="checkbox" name="use_description" id="use_description" value="Y" checked="checked"|cond="$questionitem->get('use_description')=='Y'" /> {$lang->use_description}
+                </label>
+                <label for="q_description_title"><span>{$lang->q_description_title}</span><input type="text" name="q_description_title" id="q_description_title" value="{$questionitem->description_title}" class="iText" /></label>
+            </div>
+        </td>
+    </tr>
+	<tr>
+		<td class="q_editor" colspan="2">
+			{$editor}
+		</td>
+	</tr>
+    <tr>
+        <td class="bg">
+            <div class="ta_l">
+                {$lang->q_answer} <span class="req">*</span>
+            </div>
+        </td>
+        <td>
+            <div class="ta_l">
+                {@ $answerList = $questionitem->getAnswerList(); }
+                <div id="answer_type0" class="q_answers" style="display:none"|cond="$questionitem->get('question_type')">
+                    <block loop="$lang->numIconList=>$i,$icon">
+                    <a href="#" class="answer_marking<!--@if(in_array($i, $answerList))--> on<!--@end-->" data-value="{$i}">{$icon}</a>
+                    <input type="text" name="q_answer{$i}" value="{$questionitem->getAnswer($i)}" class="iText" /><br />
+                    </block>
+                </div>
+                <div id="answer_type1" style="display:none"|cond="!$questionitem->get('question_type')">
+                    <input type="text" name="q_answer6" value="{$questionitem->get('answer')}"|cond="$questionitem->get('question_type')" class="iText" /><br />
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr id="answer_check_type" style="display:none"|cond="$questionitem->get('question_type') || count($answerList)<2">
+        <td class="bg">
+            <div class="ta_l">{$lang->q_answerCheckType}</div>
+        </td>
+        <td>
+            <div class="ta_l">
+                <select name="answer_check_type">
+                <option loop="$lang->answerCheckList=>$key,$val" value="{$key}" selected="selected"|cond="$questionitem->get('answer_check_type')==$key">{$val}</option>
+                </select>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="bg">
+            <div class="ta_l"><label for="q_content">{$lang->q_content}</label></div>
+        </td>
+        <td>
+            <div class="ta_l">
+				<textarea name="q_content" id="q_content" rows="6">{$questionitem->get('content')}</textarea>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="bg">
+            <div class="ta_l"><label for="q_point">{$lang->q_point}</label></div>
+        </td>
+        <td>
+            <div class="ta_l">
+                <input type="text" name="q_point" id="q_point" value="{$questionitem->get('point')}" class="iText" />
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    </table>
+
+	<div class="list_footer">
+		<div class="btn_area">
+			<div class="btn_area_l">
+				<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close">
+					{$lang->cmd_cancel}
+				</a>
+			</div>
+			<div class="btn_area_r">
+				<a href="javascript:void(0);" class="exam_btn btn_submit" onclick="jQuery('.create_question').submit();return false;">
+					{$lang->cmd_save}
+				</a>
+			</div>
+		</div>
+	</div>
+</form>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin version="0.2">
+    <title xml:lang="ko">시험지 기본 스킨2</title>
+    <description xml:lang="ko">시험 모듈의 기본 스킨2입니다.</description>
+    <version>0.2</version>
+    <date>2020-05-19</date>
+    <author email_address="admin@barch.kr" link="http://www.xeforum.kr/">
+        <name xml:lang="ko">러키군</name>
+    </author>
+    <author email_address="cydemo@gmail.com" link="https://xetown.com/">
+        <name xml:lang="ko">cydemo</name>
+    </author>
+    <license>LGPL v2</license>
+</skin>
