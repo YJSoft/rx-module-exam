@@ -192,7 +192,7 @@ class examAdminController extends exam
 			{
 				case 'modify':
 					{
-						if(array_key_exists($status,Context::getLang('resultStatusList')))
+						if(isset(Context::getLang('resultStatusList')->{$status}))
 						{
 							$args->status = $var->status;
 							$output = executeQuery('exam.updateResultStatus', $args);
@@ -218,6 +218,9 @@ class examAdminController extends exam
 					}
 			}
 		}
+
+		// commit
+		$oDB->commit();
 
 		// Send a message
 		$message = $var->message;
@@ -247,7 +250,7 @@ class examAdminController extends exam
 		$args = Context::getRequestVars();
 		if(!$args->log_srl) return $this->makeObject(-1, 'msg_not_founded');
 		if($args->score > 100) return $this->makeObject(-1, 'msg_invalid_exam_score');
-		if(!array_key_exists($args->status,Context::getLang('resultStatusList'))) unset($args->status);
+		if(!isset(Context::getLang('resultStatusList')->{$args->status})) unset($args->status);
 
 		// 기록 구해옴
 		$resultitem = $oExamModel->getExamResult($args->log_srl);
