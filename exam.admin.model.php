@@ -17,7 +17,7 @@ class examAdminModel extends exam
 		// Search option
 		$args = new stdClass();
 		$args->module_srl = Context::get('module_srl');
-		$args->status = (Context::get('status') && isset(Context::getLang('resultStatusList')[Context::get('status')]))? Context::get('status') : '';
+		$args->status = (Context::get('status') && isset(Context::getLang('resultStatusList')->{Context::get('status')}))? Context::get('status') : '';
 		$search_target = trim(Context::get('search_target'));
 		$search_target2 = trim(Context::get('search_target2'));
 		$search_target3 = trim(Context::get('search_target3'));
@@ -34,7 +34,7 @@ class examAdminModel extends exam
 					$args->document_srl = preg_replace("/[^0-9]/","",$search_keyword);
 					break;
 				case 'member_srl' :
-					$args->user_name = preg_replace("/[^0-9]/","",$search_keyword);
+					$args->member_srl = preg_replace("/[^0-9]/","",$search_keyword);
 					break;
 				case 'correct_count' :
 					$args->correct_count = preg_replace("/[^0-9]/","",$search_keyword);
@@ -69,11 +69,8 @@ class examAdminModel extends exam
 				case 'document_srl' :
 					$args->document_srl = preg_replace("/[^0-9]/","",$search_keyword2);
 					break;
-				case 'user_name' :
-					$args->user_name = str_replace(' ','%',$search_keyword2);
-					break;
-				case 'nick_name' :
-					$args->nick_name = str_replace(' ','%',$search_keyword2);
+				case 'member_srl' :
+					$args->member_srl = preg_replace("/[^0-9]/","",$search_keyword2);
 					break;
 				case 'correct_count' :
 					$args->correct_count = preg_replace("/[^0-9]/","",$search_keyword2);
@@ -108,11 +105,8 @@ class examAdminModel extends exam
 				case 'document_srl' :
 					$args->document_srl = preg_replace("/[^0-9]/","",$search_keyword3);
 					break;
-				case 'user_name' :
-					$args->user_name = str_replace(' ','%',$search_keyword3);
-					break;
-				case 'nick_name' :
-					$args->nick_name = str_replace(' ','%',$search_keyword3);
+				case 'member_srl' :
+					$args->member_srl = preg_replace("/[^0-9]/","",$search_keyword3);
 					break;
 				case 'correct_count' :
 					$args->correct_count = preg_replace("/[^0-9]/","",$search_keyword3);
