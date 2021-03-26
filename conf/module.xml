@@ -4,13 +4,13 @@
 		<grant name="create" default="member">
 			<title xml:lang="ko">시험지 생성</title>
 		</grant>
-        <grant name="join" default="member">
+		<grant name="join" default="member">
 			<title xml:lang="ko">시험 응시</title>
 		</grant>
 	</grants>
 	<permissions>
 		<permission action="dispExamQuestionAdmin" target="member" />
-        <permission action="dispExamAdminInsert" target="manager" />
+		<permission action="dispExamAdminInsert" target="manager" />
 		<permission action="dispExamAdminDelete" target="manager" />
 		<permission action="dispExamAdminGrantConfig" target="manager" />
 		<permission action="dispExamAdminSkinConfig" target="manager" />
@@ -28,29 +28,32 @@
 		<action name="dispExamEditMode" type="view" />
 		<action name="disExamMyResult" type="view" />
 		<action name="dispExamCorrectCheck" type="view" />
-        <action name="dispExamMessage" type="view" />
+		<action name="dispExamMessage" type="view" />
+
+		<action name="getQuestions" type="model" />
 
 		<action name="procExamCreate" type="controller" ruleset="createExam" />
 		<action name="procExamDelete" type="controller" ruleset="deleteExam" />
 		<action name="procExamQuestionInsert" type="controller" ruleset="insertQuestion" />
 		<action name="procExamQuestionDelete" type="controller" />
+		<action name="procExamQuestionSwap" type="controller" />
 		<action name="procExamJoin" type="controller" ruleset="examJoin" />
 
-        <action name="dispExamAdminList" type="view" admin_index="true" />
-        <action name="dispExamAdminInsert" type="view"  />
-        <action name="dispExamAdminDelete" type="view"  />
-        <action name="dispExamAdminCategoryList" type="view"  />
-        <action name="dispExamAdminGrantConfig" type="view"  />
-        <action name="dispExamAdminSkinConfig" type="view"  />
-        <action name="dispExamAdminMobileSkinConfig" type="view"  />
-        <action name="dispExamAdminResultList" type="view"  />
-        <action name="dispExamAdminResultUpdate" type="view"  />
+		<action name="dispExamAdminList" type="view" admin_index="true" />
+		<action name="dispExamAdminInsert" type="view"  />
+		<action name="dispExamAdminDelete" type="view"  />
+		<action name="dispExamAdminCategoryList" type="view" permission="manager" />
+		<action name="dispExamAdminGrantConfig" type="view"  />
+		<action name="dispExamAdminSkinConfig" type="view"  />
+		<action name="dispExamAdminMobileSkinConfig" type="view"  />
+		<action name="dispExamAdminResultList" type="view" permission="manager" />
+		<action name="dispExamAdminResultUpdate" type="view" permission="manager" />
 
-        <action name="procExamAdminInsertModule" type="controller" ruleset="insertModule" />
-        <action name="procExamAdminDeleteModule" type="controller" ruleset="deleteModule" />
-        <action name="procExamAdminSaveCategorySettings" type="controller" />
-		<action name="procExamAdminSelectedResultManage" type="controller" ruleset="updateSeletecdResultInfo" />
-		<action name="procExamAdminUpdateResult" type="controller" ruleset="updateResult" />
-    </actions>
+		<action name="procExamAdminInsertModule" type="controller" ruleset="insertModule" permission="manager" />
+		<action name="procExamAdminDeleteModule" type="controller" ruleset="deleteModule" permission="manager" />
+		<action name="procExamAdminSaveCategorySettings" type="controller" permission="manager" />
+		<action name="procExamAdminSelectedResultManage" type="controller" ruleset="updateSeletecdResultInfo" permission="manager" />
+		<action name="procExamAdminUpdateResult" type="controller" ruleset="updateResult" permission="manager" />
+	</actions>
 	<menus />
 </module>
