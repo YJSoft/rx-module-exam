@@ -1,0 +1,29 @@
+<query id="getQuestions" action="select">
+    <tables>
+        <table name="exam_question" alias="question" />
+        <table name="exam" alias="exam" />
+    </tables>
+    <columns>
+        <column name="question.*" />
+        <column name="exam.title" alias="document_title" />
+		<query id="getCategoryTitle" alias="category_title">
+			<tables>
+				<table name="document_categories" alias="category" />
+			</tables>
+			<columns>
+				<column name="category.title" />
+			</columns>
+			<conditions>
+				<condition operation="equal" column="category.category_srl" default="exam.category_srl" />
+			</conditions>
+		</query>
+    </columns>
+    <conditions>
+        <condition operation="equal" column="question.module_srl" var="module_srl" filter="number" pipe="and" />
+		<condition operation="equal" column="exam.document_srl" var="question.document_srl" notnull="notnull" pipe="and" />
+        <condition operation="equal" column="question.status" var="status" pipe="and" />
+    </conditions>
+    <navigation>
+		<index var="question.list_order" default="question.list_order" order="ASC" />
+    </navigation>
+</query>
