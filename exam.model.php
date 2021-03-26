@@ -196,6 +196,25 @@ class examModel extends exam
 		}
 	}
 	/**
+	 * 모듈 내의 모든 문제를 구함
+	 * @param int $module_srl
+	 * @return object
+	 */
+	function getQuestions($module_srl = 0, $status = 'Y')
+	{
+		// get a list of questions
+		$args = new stdClass;
+		$args->module_srl = $module_srl ? $module_srl : Context::get('module_srl');
+		if ( !Context::get('grant')->manager ) $args->status = $status ? $status : Context::get('status');
+		$output = executeQueryArray('exam.getQuestions', $args);
+
+		// return if an error occurs in the query results
+		if ( !$output->toBool() ) return;
+
+		$this->add('question_list', $output->data);
+		return $output->data;
+	}
+	/**
 	 * 특정 문제의 정보를 구함
 	 * @param int $question_srl
 	 * @return questionitem
