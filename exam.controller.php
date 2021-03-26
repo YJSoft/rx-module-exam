@@ -352,6 +352,68 @@ class examController extends exam
 		$this->setMessage('success_deleted');
 	}
 	/**
+	 * @brief 시험지에 문제 순서 변경 처리
+	 */
+	public function procExamQuestionSwap()
+	{
+		// 권한 체크
+		if ( $this->module_info->module !== 'exam' ) return $this->makeObject(-1, 'msg_invalid_request');
+		if ( !$this->grant->create ) return $this->makeObject(-1, 'msg_not_permitted');
+		$oExamModel = getModel('exam');
+
+		// 선택된 문제 번호로 php 변수에 데이터 담아두기
+		$selected_srl = Context::get('selected_srl');
+		$selected_item = $oExamModel->getQuestion($selected_srl);
+
+		// 표적화된 문제번호로 php 변수에 데이터 담아두기
+		$targeted_srl = Context::get('targeted_srl');
+		$targeted_item = $oExamModel->getQuestion($targeted_srl);
+
+		// 선택 문제에 표적 문제의 데이터를 이전
+		$args = new StdClass;
+		$args->question_srl = $selected_srl;
+		$args->question_level = $targeted_item->get('question_level');
+		$args->question_type = $targeted_item->get('question_type');
+		$args->title = $targeted_item->get('title');
+		$args->content = $targeted_item->get('content');
+		$args->answer = $targeted_item->get('answer');
+		for ( $i = 1; $i <= 5; $i++ )
+		{
+			$args->{'answer'.$i} = $targeted_item->get('answer'.$i);
+		}
+		$args->answer_check_type = $targeted_item->get('answer_check_type');
+		$args->use_description = $targeted_item->get('use_description');
+		$args->description_title = $targeted_item->get('description_title');
+		$args->description = $targeted_item->get('description');
+		$args->regdate = $targeted_item->get('regdate');
+		$args->ipaddress = $targeted_item->get('ipaddress');
+		$args->status = $targeted_item->get('status');
+		$args->point = $targeted_item->get('point');
+		$output = $this->updateQuestion($args);
+
+		// 표적 문제에 선택 문제의 데이터를 이전
+		$args = new StdClass;
+		$args->question_srl = $targeted_srl;
+		$args->question_level = $selected_item->get('question_level');
+		$args->question_type = $selected_item->get('question_type');
+		$args->title = $selected_item->get('title');
+		$args->content = $selected_item->get('content');
+		$args->answer = $selected_item->get('answer');
+		for ( $i = 1; $i <= 5; $i++ )
+		{
+			$args->{'answer'.$i} = $selected_item->get('answer'.$i);
+		}
+		$args->answer_check_type = $selected_item->get('answer_check_type');
+		$args->use_description = $selected_item->get('use_description');
+		$args->description_title = $selected_item->get('description_title');
+		$args->description = $selected_item->get('description');
+		$args->regdate = $selected_item->get('regdate');
+		$args->ipaddress = $selected_item->get('ipaddress');
+		$args->status = $selected_item->get('status');
+		$args->point = $selected_item->get('point');
+		$output = $this->updateQuestion($args);
+	}
+	/**
 	 * @brief 시험 결과를 처리하는 함수
 	 */
 	public function procExamJoin()
