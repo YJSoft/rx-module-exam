@@ -1,4 +1,4 @@
-# xe-module-exam
+# rx-module-exam
 XE 시험 모듈의 포크 버전
 
 ## develop 브랜치
