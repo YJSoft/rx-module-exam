@@ -231,7 +231,7 @@ class examController extends exam
 			$new_ans_list = array();
 			foreach($ans_list as $kry=>$val)
 			{
-				if(!$params->{'q_answer'.$val}) continue;
+				if($params->{'q_answer'.$val} == "") continue;
 				$new_ans_list[] = $val;
 			}
 			$params->q_answer = implode(",", $new_ans_list);
