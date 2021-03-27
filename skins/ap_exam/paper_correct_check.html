@@ -15,7 +15,7 @@
 </div>
 
 <div cond="$resultitem->result_type<2 && !$grant->manager" class="paper_message">
-    <h2>이 시험의 채점 결과는 공개되지 않습니다..</h2>
+    <h2>이 시험의 채점 결과는 공개되지 않습니다.</h2>
     <div class="paper_message_area">
         <a href="{getUrl('','mid',$mid,'act','disExamMyResult')}" class="exam_btn1" onclick="opener.location.href = this.href;window.close();return false;">시험 응시현황</a>
     </div>
@@ -41,7 +41,7 @@
         </p>
         <ul cond="!$qitem->getQType()" class="qanswer_list">
         {@ $answerList = explode(",", $qitem->get('my_answer')); }
-        <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i)">
+        <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i) != ''">
              <div class="txt">
                 {$icon} {$qitem->getAnswer($i)}
             </div>
