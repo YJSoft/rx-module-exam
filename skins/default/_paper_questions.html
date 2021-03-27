@@ -29,7 +29,7 @@
         </p>
         <ul cond="!$qitem->getQType()" class="qanswer_list">
         <input type="hidden" name="answer{$no}" id="answer{$no}" value="" />
-        <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i)">
+        <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i) != ''">
             <div class="txt"><a href="#" class="ans_check" data-value="{$no},{$i},{($qitem->getAnswerCount()>1)?'Y':'N';}">{$icon} {$qitem->getAnswer($i)}</a></div>
             <div class="marking"><img src="img/ans_marking.png" width="24" height="24" alt="" /></div>
         </li>
