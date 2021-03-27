@@ -39,7 +39,7 @@
         </p>
         <ul cond="!$qitem->getQType()" class="qanswer_list">
         {@ $answerList = explode(",", $qitem->get('my_answer')); }
-        <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i)">
+        <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i) != ''">
              <div class="txt">
                 {$icon} {$qitem->getAnswer($i)}
             </div>
