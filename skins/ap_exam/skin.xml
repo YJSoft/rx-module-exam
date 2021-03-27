@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <skin version="0.2">
-    <title xml:lang="ko">시험지 기본 스킨2</title>
-    <description xml:lang="ko">시험 모듈의 기본 스킨2입니다.</description>
+    <title xml:lang="ko">시험지 플랫 스킨</title>
+    <description xml:lang="ko">시험 모듈의 플랫 스킨입니다.</description>
     <version>0.3</version>
     <date>2021-03-26</date>
     <author email_address="cydemo@gmail.com" link="https://xetown.com/">
