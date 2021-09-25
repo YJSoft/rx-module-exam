@@ -1026,7 +1026,7 @@ class examController extends exam
 	 */
 	function triggerDeleteMember($obj)
 	{
-		$output = executeQuery('exam.deleteResultByMemberSrl.xml', $obj);
+		$output = executeQuery('exam.deleteResultByMemberSrl', $obj);
 		return $output;
 	}
 }
