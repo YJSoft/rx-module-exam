@@ -32,7 +32,7 @@ class examItem extends BaseObject
 	 * @param array columnList
 	 * @return void
 	 */
-	function examItem($document_srl = 0, $columnList = array())
+	function __construct($document_srl = 0, $columnList = array())
 	{
 		$this->document_srl = $document_srl;
 		$this->columnList = $columnList;
