@@ -2,8 +2,8 @@
 <module version="0.2">
     <title xml:lang="ko">시험</title>
     <description xml:lang="ko">시험지를 만들어 문제를 풀이할 수 있는 모듈 입니다.</description>
-    <version>0.8.5</version>
-    <date>2021-09-25</date>
+    <version>0.8.6</version>
+    <date>2023-06-30</date>
     <category>member</category>
     <author email_address="admin@barch.kr" link="http://xeforum.kr/">
         <name xml:lang="ko">러키군</name>
