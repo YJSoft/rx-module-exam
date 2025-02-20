@@ -13,7 +13,7 @@ class questionItem extends BaseObject
 	var $question_srl = 0;
 	var $columnList = array();
 
-	function questionItem($question_srl = 0, $columnList = array())
+	function __construct($question_srl = 0, $columnList = array())
 	{
 		$this->question_srl = $question_srl;
 		$this->columnList = $columnList;
