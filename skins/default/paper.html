@@ -14,7 +14,7 @@
         <label for="member_score">점 수 : <input type="text" name="member_score" id="member_score" value="" readonly="readonly" class="underInput" /></label>
     </p>
 </div>
-<div id="examTimer" class="cd" cond="$examitem->isTime() && $examitem->get('exam_time')" data-value="{$examitem->get('exam_time')}"></div>
+<div id="examTimer" class="cd" cond="$mode=='join' && $examitem->isTime() && $examitem->get('exam_time')" data-value="{$remaining_exam_time}"></div>
 <div id="questions" class="questions" data-exam-srl="{$examitem->document_srl}" data-member-srl="{(int)($logged_info->member_srl ?? 0)}" data-exam-completed="{($resultitem && $mode!='join')?'Y':'N'}">
     <include target="_paper_message.html" cond="!$mode" />
     <include target="_paper_questions.html" cond="$mode=='join'" />

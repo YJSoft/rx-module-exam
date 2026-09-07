@@ -427,6 +427,14 @@ class examView extends exam
 				}
 			}
 			$question_order = $join_session['question_order'] ?? array();
+			$remaining_exam_time = 0;
+			if($examitem->isTime() && $examitem->get('exam_time'))
+			{
+				$start_time = (int)($join_session['start_time'] ?? ztime($join_session['start_date'] ?? ''));
+				$elapsed_time = $start_time ? max(0, time() - $start_time) : 0;
+				$remaining_exam_time = max(0, (int)$examitem->get('exam_time') - $elapsed_time);
+			}
+			Context::set('remaining_exam_time', $remaining_exam_time);
 			Context::set('question_blocks', $examitem->getQuestionBlocks($question_order));
 		} else {
 			Context::set('mode', '');

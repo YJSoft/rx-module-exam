@@ -55,15 +55,17 @@ var msg_not_answer_radio = '{$lang->msg_not_answer_radio}';
 
 <block cond="($examitem->isTime() && $examitem->get('exam_time'))">
 jQuery(function($) {
-    var max_time = $('#examTimer').attr('data-value');
+    var max_time = parseInt($('#examTimer').attr('data-value'), 10) || 0;
+    var timer_submitted = false;
     $('#examTimer').flipcountdown({
         tick:function(){
-            if(!max_time) {
+            if(max_time <= 0 && !timer_submitted) {
+				timer_submitted = true;
                 $("input[name=valid_check]").val('N');
                 $("#examJoin").submit();
             }
-            max_time--;
-            return max_time;
+            if(max_time > 0) max_time--;
+            return Math.max(0, max_time);
         }
     });
 });

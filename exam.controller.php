@@ -805,12 +805,15 @@ class examController extends exam
 		$start_date = $_SESSION['exam_joinlog'][$examitem->document_srl]['start_date'];
 		$start_time = $_SESSION['exam_joinlog'][$examitem->document_srl]['start_time'] ?? ztime($start_date);
 		if(!$start_time) return $this->makeObject(-1, 'msg_not_session');
+		$force_empty_answers = false;
 		if($examitem->isTime() && $examitem->get('exam_time'))
 		{
 			// 끝나는시간 (시작시간+제한시간 초)
 			$end_date = $start_time + (int)$examitem->get('exam_time');
 			$over_time = $now-$end_date;
-			if($over_time>10) return $this->makeObject(-1, 'msg_time_over'); // 처리시간으로 10초정도는 예외처리 둠
+			// 만료 후 재접속한 경우 오류로 중단하지 않고 미응답 상태로 자동 채점한다.
+			// 정상적인 제출 처리시간은 기존과 같이 10초까지 허용한다.
+			if($over_time > 10) $force_empty_answers = true;
 		}
 		$exam_time = max(0, $now-$start_time);
 
@@ -824,7 +827,7 @@ class examController extends exam
 		$question_order = $_SESSION['exam_joinlog'][$examitem->document_srl]['question_order'] ?? array();
 		foreach($examitem->getQuestions($question_order) as $no => $qitem)
 		{
-			$answer = $args->{'answer'.$no} ?? ''; // 응시자가 선택(입력)한 답
+			$answer = $force_empty_answers ? '' : ($args->{'answer'.$no} ?? ''); // 응시자가 선택(입력)한 답
 			$q_answer = $qitem->get('answer'); // 문제 정답
 			$q_answer_count = $qitem->getAnswerCount(); // 정답 개수
 			$check = 'X'; // O정답, X오답, P부분정답
