@@ -96,7 +96,7 @@
 							</select>
 						</div>
 						<div class="search_con">
-							<input type="text" name="search_keyword" value="{htmlspecialchars($search_keyword)}" title="{$lang->cmd_search}" class="search_input" />
+							<input type="text" name="search_keyword" value="{escape($search_keyword)}" title="{$lang->cmd_search}" class="search_input" />
 						</div>
 						<div class="btn_search">
 							<a href="javascript:void(0);" class="exam_btn btn_close" type="button">{$lang->cmd_cancel}</a>

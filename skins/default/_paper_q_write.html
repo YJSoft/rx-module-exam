@@ -10,7 +10,7 @@
     <input type="hidden" name="document_srl" value="{$examitem->document_srl}" />
     <input type="hidden" name="question_srl" value="{$question_srl}"|cond="$question_srl"  />
     <input type="hidden" name="q_answer" id="q_answer" value="{$questionitem->get('answer')}" />
-	<input type="hidden" name="q_description_content" value="{htmlspecialchars($questionitem->description, ENT_COMPAT | ENT_HTML401, 'UTF-8', false)}" />
+	<input type="hidden" name="q_description_content" value="{escape($questionitem->description, false)}" />
 
     <table class="tbl_q_write ">
     <colgroup>

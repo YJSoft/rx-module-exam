@@ -201,11 +201,11 @@ class examItem extends BaseObject
 	}
 	function getUserName()
 	{
-		return htmlspecialchars($this->get('user_name'), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape($this->get('user_name'), false);
 	}
 	function getNickName()
 	{
-		return htmlspecialchars($this->get('nick_name'), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape($this->get('nick_name'), false);
 	}
 	// 시간치환 초를 시간으로 변환하는 함수
 	function getTimeText() {
@@ -233,8 +233,8 @@ class examItem extends BaseObject
 		if($this->get('title_bold')=='Y') $attrs[] = "font-weight:bold;";
 		if($this->get('title_color') && $this->get('title_color') != 'N') $attrs[] = "color:#".$this->get('title_color');
 
-		if(count($attrs)) return sprintf("<span style=\"%s\">%s</span>", implode(';',$attrs), htmlspecialchars($title, ENT_COMPAT | ENT_HTML401, 'UTF-8', false));
-		else return htmlspecialchars($title, ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		if(count($attrs)) return sprintf("<span style=\"%s\">%s</span>", implode(';',$attrs), escape($title, false));
+		else return escape($title, false);
 	}
 	function getContentText($strlen = 0)
 	{
@@ -249,7 +249,7 @@ class examItem extends BaseObject
 		$content = preg_replace_callback('/<object[^>]*>/is', array($this, '_addAllowScriptAccess'), $content);
 
 		if($strlen) return cut_str(strip_tags($content),$strlen,'...');
-		return htmlspecialchars($content);
+		return escape($content);
 	}
 	function _addAllowScriptAccess($m)
 	{
@@ -338,8 +338,8 @@ class examItem extends BaseObject
 		// Remove Tags
 		$content = preg_replace('!<([^>]*?)>!is','', $content);
 
-		// Replace < , >, "
-		$content = str_replace(array('&lt;','&gt;','&quot;','&nbsp;'), array('<','>','"',' '), $content);
+		// Convert HTML entities temporarily for truncation.
+		$content = html_entity_decode($content, ENT_QUOTES);
 
 		// Delete  a series of whitespaces
 		$content = preg_replace('/ ( +)/is', ' ', $content);
@@ -347,10 +347,7 @@ class examItem extends BaseObject
 		// Truncate string
 		$content = trim(cut_str($content, $str_size, $tail));
 
-		// Replace back < , <, "
-		$content = str_replace(array('<','>','"'),array('&lt;','&gt;','&quot;'), $content);
-
-		return $content;
+		return escape($content, false);
 	}
 	function getExamDate($format = 'Y.m.d H:i', $short = FALSE)
 	{

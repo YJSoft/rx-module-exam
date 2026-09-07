@@ -337,10 +337,10 @@ class examController extends exam
 		$args->question_level = $question_type === 2 ? 0 : (int)$params->q_level;
 		$args->question_type = $question_type;
 		$args->passage_srl = $question_type === 2 ? 0 : (int)$questionitem->get('passage_srl');
-		$args->title = htmlspecialchars($params->q_title ?? '', ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		$args->title = escape($params->q_title ?? '', false);
 		$args->content = $question_type === 2 ? '' : ($params->q_content ?? '');
 		$args->use_description = $question_type === 2 ? 'Y' : ((($params->use_description ?? '') == 'Y') ? 'Y' : 'N');
-		$args->description_title = $question_type === 2 ? '' : htmlspecialchars($params->q_description_title ?? '', ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		$args->description_title = $question_type === 2 ? '' : escape($params->q_description_title ?? '', false);
 		$args->description = removeHackTag($params->q_description_content ?? '');
 		$args->answer = $params->q_answer;
 		$args->answer_check_type = $question_type === 2 ? 0 : (int)$params->answer_check_type;
@@ -974,7 +974,7 @@ class examController extends exam
 		unset($obj->regdate);
 
 		// HTML 태그 제거
-		$obj->content = nl2br(htmlspecialchars($obj->content, ENT_COMPAT | ENT_HTML401, 'UTF-8', false));
+		$obj->content = nl2br(escape($obj->content, false));
 
 		// begin transaction
 		$oDB = &DB::getInstance();
@@ -1089,7 +1089,7 @@ class examController extends exam
 		if(!$obj->module_srl) $obj->module_srl = $source_obj->get('module_srl');
 
 		// HTML 태그 제거
-		$obj->content = nl2br(htmlspecialchars($obj->content, ENT_COMPAT | ENT_HTML401, 'UTF-8', false));
+		$obj->content = nl2br(escape($obj->content, false));
 
 		// 관리자가 아닐경우 Hack Tag 제거
 		if(($logged_info->is_admin ?? 'N') != 'Y') $obj->content = removeHackTag($obj->content);

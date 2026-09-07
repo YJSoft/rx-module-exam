@@ -12,7 +12,7 @@
                 </select>
             </div>
             <div class="search_con">
-                <input type="text" name="search_keyword" value="{htmlspecialchars($search_keyword)}" title="{$lang->cmd_search}" class="form-control search_input" />
+                <input type="text" name="search_keyword" value="{escape($search_keyword)}" title="{$lang->cmd_search}" class="form-control search_input" />
                 <button type="submit" class="btn btn-primary" aria-label="{$lang->cmd_search}"><i class="bi bi-search" aria-hidden="true"></i><span class="blind">{$lang->cmd_search}</span></button>
             </div>
         </form>

@@ -105,15 +105,15 @@ class questionItem extends BaseObject
 	}
 	function getTitle()
 	{
-		return htmlspecialchars(trim($this->get('title')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape(trim($this->get('title')), false);
 	}
 	function getContent()
 	{
-		return nl2br(htmlspecialchars(trim($this->get('content')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false));
+		return nl2br(escape(trim($this->get('content')), false));
 	}
 	function getDescriptionTitle()
 	{
-		return htmlspecialchars(trim($this->get('description_title')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape(trim($this->get('description_title')), false);
 	}
 	function getDescription()
 	{
@@ -129,27 +129,27 @@ class questionItem extends BaseObject
 	function getAnswer($i=0)
 	{
 		$val = ($i)? $this->get('answer'.$i) : $this->get('answer');
-		return htmlspecialchars(trim($val), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape(trim($val), false);
 	}
 	function getAnswer1()
 	{
-		return htmlspecialchars(trim($this->get('answer1')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape(trim($this->get('answer1')), false);
 	}
 	function getAnswer2()
 	{
-		return htmlspecialchars(trim($this->get('answer1')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape(trim($this->get('answer1')), false);
 	}
 	function getAnswer3()
 	{
-		return htmlspecialchars(trim($this->get('answer3')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape(trim($this->get('answer3')), false);
 	}
 	function getAnswer4()
 	{
-		return htmlspecialchars(trim($this->get('answer4')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape(trim($this->get('answer4')), false);
 	}
 	function getAnswer5()
 	{
-		return htmlspecialchars(trim($this->get('answer5')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		return escape(trim($this->get('answer5')), false);
 	}
 	function getAnswerCount() // 객관식일경우 답이 몇개인지 구해옴
 	{
@@ -158,7 +158,7 @@ class questionItem extends BaseObject
 	}
 	function getAnswerList() // 객관식일경우 답이 여러개일수 있으므로 배열로 리턴
 	{
-		return explode(",", htmlspecialchars(trim($this->get('answer')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false));
+		return explode(",", escape(trim($this->get('answer')), false));
 	}
 	function getRegdate($format = 'Y.m.d H:i:s')
 	{
