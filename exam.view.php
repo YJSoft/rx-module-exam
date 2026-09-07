@@ -361,15 +361,25 @@ class examView extends exam
 		// mode에 따라 체크
 		if($mode=="join")
 		{
+			if($resultitem && $examitem->get('allow_retake') !== 'Y')
+			{
+				return $this->stop('msg_exists_result');
+			}
 			// 시험기간인지 체크함
 			if($examitem->isDate())
 			{
-				$today = date("YmdHi");
-				if($examitem->get('start_date') && zdate($examitem->get('start_date'),'YmdHi') > $today) return $this->stop('msg_not_exam_date');
-				if($examitem->get('end_date') && $today > zdate($examitem->get('end_date'),'YmdHi')) return $this->stop('msg_not_exam_date');
+				$now = time();
+				if($examitem->get('start_date') && ztime($examitem->get('start_date')) > $now) return $this->stop('msg_not_exam_date');
+				if($examitem->get('end_date') && $now > ztime($examitem->get('end_date'))) return $this->stop('msg_not_exam_date');
+			}
+			$join_session = $_SESSION['exam_joinlog'][$examitem->document_srl] ?? null;
+			if($join_session && (int)($join_session['member_srl'] ?? 0) !== (int)$logged_info->member_srl)
+			{
+				unset($_SESSION['exam_joinlog'][$examitem->document_srl]);
+				$join_session = null;
 			}
 			// 응시료가 있을경우 차감함
-			if($examitem->get('join_point') && (!$_SESSION['exam_joinlog'][$examitem->document_srl] && !$examitem->isGranted()))
+			if($examitem->get('join_point') && (empty($_SESSION['exam_joinlog'][$examitem->document_srl]) && !$examitem->isGranted()))
 			{
 				$oPointModel = getModel('point');
 				$member_point = $oPointModel->getPoint($logged_info->member_srl);
@@ -378,8 +388,15 @@ class examView extends exam
 				$oPointController = getController('point');
 				$oPointController->setPoint($logged_info->member_srl, $examitem->get('join_point'), 'minus');
 			}
-			// 로그인 하고 있는동안 중복 차감을 막기위해 세션에 기록
-			$_SESSION['exam_joinlog'][$examitem->document_srl] = array("member_srl" => $logged_info->member_srl, "start_date" => date("YmdHis"));
+			// 동일한 응시 세션을 유지하여 응시료 중복 차감 및 제한시간 초기화를 막는다.
+			if(!$join_session)
+			{
+				$_SESSION['exam_joinlog'][$examitem->document_srl] = array(
+					"member_srl" => $logged_info->member_srl,
+					"start_date" => getInternalDateTime(),
+					"start_time" => time(),
+				);
+			}
 		} else {
 			Context::set('mode', '');
 		}
@@ -420,7 +437,7 @@ class examView extends exam
 
 			// 지문에서 사용할 에디터 로드
 			$oEditorModel = getModel('editor');
-			$editor = $oEditorModel->getModuleEditor('exam', $this->module_srl, $question_srl, 'question_srl', 'q_description_content');
+			$editor = $oEditorModel->getModuleEditor('document', $this->module_srl, $question_srl, 'question_srl', 'q_description_content');
 			Context::set('editor', $editor);
 		}
 
@@ -453,6 +470,18 @@ class examView extends exam
 		// 내가 본 시험 결과 구해옴
 		$oExamModel = getModel('exam');
 		$output = $oExamModel->getExamResultList($args);
+		if(!$output || !$output->toBool())
+		{
+			return $this->stop($output ? $output->getMessage() : 'msg_invalid_request');
+		}
+
+		$category_list = getModel('document')->getCategoryList($this->module_srl);
+		foreach(($output->data ?? array()) as $resultitem)
+		{
+			$resultitem->category_title = isset($category_list[$resultitem->category_srl])
+				? $category_list[$resultitem->category_srl]->title
+				: '';
+		}
 
 		Context::set('result_list', $output->data);
 		Context::set('total_count', $output->total_count);
@@ -461,7 +490,7 @@ class examView extends exam
 		Context::set('page_navigation', $output->page_navigation);
 
 		$security = new Security();
-		$security->encodeHTML('result_list..title..');
+		$security->encodeHTML('result_list..title..', 'result_list..category_title');
 
 		$this->setTemplateFile('my_result');
 	}
@@ -478,20 +507,92 @@ class examView extends exam
 
 		$oExamModel = getModel('exam');
 		$resultitem = $oExamModel->getExamResult($log_srl);
-		if(!$resultitem->member_srl) return $this->stop('msg_invalid_request');
+		if(!$resultitem || !$resultitem->member_srl) return $this->stop('msg_invalid_request');
+		$examitem = $oExamModel->getExam($resultitem->document_srl);
+		if(!$examitem->isExists() || $examitem->get('module_srl') != $this->module_srl) return $this->stop('msg_invalid_request');
+		$can_grade = $this->grant->manager || $examitem->isGranted();
 
-		// 응시자나 관리자가 아니면 에러
-		if(!$this->grant->manager && $resultitem->member_srl!=$logged_info->member_srl) return $this->stop('msg_not_permitted');
+		// 응시자, 출제자, 관리자가 아니면 에러
+		if(!$can_grade && (int)$resultitem->member_srl !== (int)($logged_info->member_srl ?? 0)) return $this->stop('msg_not_permitted');
 
 		// 응시자 정보 구해옴
 		$oMemberModel = getModel('member');
 		$member_info = $oMemberModel->getMemberInfoByMemberSrl($resultitem->member_srl);
+		$category = $resultitem->category_srl
+			? getModel('document')->getCategory($resultitem->category_srl)
+			: null;
+		$resultitem->category_title = $category ? $category->title : '';
+		$manual_total_point = 0;
+		foreach(($resultitem->answer ?? array()) as $qitem)
+		{
+			if(!is_object($qitem) || !method_exists($qitem, 'get'))
+			{
+				continue;
+			}
+			$manual_total_point += max(0, (int)$qitem->get('point'));
+		}
 
 		Context::set('resultitem', $resultitem);
 		Context::set('member_info', $member_info);
+		Context::set('examitem', $examitem);
+		Context::set('can_grade', $can_grade);
+		Context::set('manual_use_question_point', $manual_total_point > 0);
+		Context::set('manual_default_score', count($resultitem->answer ?? array()) ? ceil(100 / count($resultitem->answer)) : 0);
 
 		// 시험페이지 출력
 		$this->setTemplateFile('paper_correct_check');
+	}
+
+	/**
+	 * 출제자용 시험별 응시 결과 목록
+	 */
+	public function dispExamResultList()
+	{
+		$document_srl = (int)Context::get('document_srl');
+		$oExamModel = getModel('exam');
+		$examitem = $oExamModel->getExam($document_srl);
+		if(!$examitem->isExists() || $examitem->get('module_srl') != $this->module_srl)
+		{
+			return $this->stop('msg_not_founded');
+		}
+		if(!$this->grant->manager && !$examitem->isGranted())
+		{
+			return $this->stop('msg_not_permitted');
+		}
+
+		$args = new stdClass();
+		$args->document_srl = $document_srl;
+		$args->module_srl = $this->module_srl;
+		$args->page = Context::get('page');
+		$args->list_count = $this->list_count;
+		$args->page_count = $this->page_count;
+		$args->status = Context::get('search_status');
+		$output = $oExamModel->getExamResultList($args);
+		if(!$output || !$output->toBool())
+		{
+			return $this->stop($output ? $output->getMessage() : 'msg_invalid_request');
+		}
+
+		$result_list = $output->data ?? array();
+		$oMemberModel = getModel('member');
+		foreach($result_list as $key => $resultitem)
+		{
+			$member_info = $oMemberModel->getMemberInfoByMemberSrl($resultitem->member_srl);
+			$resultitem->nick_name = $member_info->nick_name ?? '';
+			$resultitem->user_name = $member_info->user_name ?? '';
+			$resultitem->exam_time_text = $oExamModel->getTimeText($resultitem->exam_time);
+			$result_list[$key] = $resultitem;
+		}
+
+		Context::set('examitem', $examitem);
+		Context::set('result_list', $result_list);
+		Context::set('total_count', $output->total_count ?? 0);
+		Context::set('page', $output->page ?? 1);
+		Context::set('page_navigation', $output->page_navigation ?? null);
+
+		$security = new Security();
+		$security->encodeHTML('result_list..user_name', 'result_list..nick_name', 'result_list..title..');
+		$this->setTemplateFile('result_list');
 	}
 	/**
 	 * @brief 시험 모듈내 메세지를 출력함

@@ -9,6 +9,40 @@ class examController extends exam
 	function init()
 	{
 	}
+
+	/**
+	 * 사용자가 입력한 날짜를 라이믹스 내부 시간대로 변환한다.
+	 *
+	 * @param string $date YYYYMMDDHHII 또는 YYYYMMDDHHIISS
+	 * @return string
+	 */
+	private function convertUserDateToInternal($date)
+	{
+		$date = preg_replace('/[^0-9]/', '', (string)$date);
+		if(!$date)
+		{
+			return '';
+		}
+		if(strlen($date) === 12)
+		{
+			$date .= '00';
+		}
+		if(strlen($date) !== 14)
+		{
+			return '';
+		}
+
+		$timezone = new \DateTimeZone(\Rhymix\Framework\DateTime::getTimezoneForCurrentUser());
+		$datetime = \DateTime::createFromFormat('!YmdHis', $date, $timezone);
+		$errors = \DateTime::getLastErrors();
+		if(!$datetime || ($errors && ($errors['warning_count'] || $errors['error_count'])))
+		{
+			return '';
+		}
+
+		return getInternalDateTime($datetime->getTimestamp(), 'YmdHis');
+	}
+
 	/**
 	 * @brief 시험지 생성을 처리하는 함수
 	 */
@@ -92,6 +126,15 @@ class examController extends exam
 		$args->result_type = $this->getConfigResultType($args->result_type, true);
 		$args->is_date = ($args->is_date=="Y")? "Y" : "N";
 		$args->is_time = ($args->is_time=="Y")? "Y" : "N";
+		$args->allow_retake = ($args->allow_retake==="Y")? "Y" : "N";
+		$start_date_input = trim((string)($args->start_date ?? ''));
+		$end_date_input = trim((string)($args->end_date ?? ''));
+		$args->start_date = $args->is_date === 'Y' ? $this->convertUserDateToInternal($start_date_input) : '';
+		$args->end_date = $args->is_date === 'Y' ? $this->convertUserDateToInternal($end_date_input) : '';
+		if($args->is_date === 'Y' && (($start_date_input && !$args->start_date) || ($end_date_input && !$args->end_date)))
+		{
+			return $this->makeObject(-1, 'msg_invalid_start_time');
+		}
 
 		$oExamModel = getModel('exam');
 		$examitem = $oExamModel->getExam($args->document_srl);
@@ -100,6 +143,13 @@ class examController extends exam
 		{
 			$is_update = TRUE;
 		}
+		if($is_update && !$examitem->isGranted())
+		{
+			return $this->makeObject(-1, 'msg_not_permitted');
+		}
+		// 시험지 설정만 수정할 때 기존 수동 배점 합계가 초기화되지 않도록 보존한다.
+		$args->total_point = $is_update ? (int)$examitem->get('total_point') : 0;
+		unset($args->exam_total_point);
 
 		// update
 		if($is_update)
@@ -415,6 +465,120 @@ class examController extends exam
 		$output = $this->updateQuestion($args);
 	}
 	/**
+	 * 객관식 복수답안을 채점한다.
+	 * 제출한 답안에 오답이 하나라도 포함되면 정답 유형과 관계없이 오답 처리한다.
+	 *
+	 * @param string $answer 응시자가 제출한 답안
+	 * @param array $q_answer_list 문제의 정답 목록
+	 * @param int $answer_check_type 0: 일부 일치, 1: 모두 일치, 2: 모두 일치 및 부분점수
+	 * @return array
+	 */
+	private function checkMultipleChoiceAnswer($answer, $q_answer_list, $answer_check_type)
+	{
+		$normalize_answer_list = static function($answer_list)
+		{
+			if(!is_array($answer_list))
+			{
+				$answer_list = explode(',', (string)$answer_list);
+			}
+
+			$answer_list = array_map('trim', $answer_list);
+			$answer_list = array_filter($answer_list, static function($value)
+			{
+				return $value !== '';
+			});
+
+			return array_values(array_unique($answer_list, SORT_STRING));
+		};
+
+		$answer_list = $normalize_answer_list($answer);
+		$q_answer_list = $normalize_answer_list($q_answer_list);
+		$matched_count = count(array_intersect($answer_list, $q_answer_list));
+		$q_answer_count = count($q_answer_list);
+		$has_wrong_answer = count(array_diff($answer_list, $q_answer_list)) > 0;
+
+		$check = 'X';
+		if(!$has_wrong_answer && $matched_count > 0)
+		{
+			$all_match = count($answer_list) === $q_answer_count;
+			if((int)$answer_check_type === 0)
+			{
+				$check = 'O';
+			}
+			elseif($all_match)
+			{
+				$check = 'O';
+			}
+			elseif((int)$answer_check_type === 2)
+			{
+				$check = 'P';
+			}
+		}
+
+		return array(
+			'check' => $check,
+			'matched_count' => $matched_count,
+			'answer_count' => $q_answer_count,
+		);
+	}
+
+	/**
+	 * 최초 합격자에게 설정된 포인트와 그룹 혜택을 적용한다.
+	 *
+	 * @param examItem $examitem
+	 * @param int $member_srl
+	 * @return BaseObject|Object
+	 */
+	private function grantPassBenefits($examitem, $member_srl)
+	{
+		if($this->module_info->exam_pass_point_option && $examitem->get('pass_point'))
+		{
+			$oPointModel = getModel('point');
+			$oPointController = getController('point');
+			if($this->module_info->exam_pass_point_minus === 'Y')
+			{
+				$writer_point = $oPointModel->getPoint($examitem->get('member_srl'));
+				if($writer_point >= $examitem->get('pass_point'))
+				{
+					$oPointController->setPoint($examitem->get('member_srl'), $examitem->get('pass_point'), 'minus');
+					$oPointController->setPoint($member_srl, $examitem->get('pass_point'), 'add');
+				}
+			}
+			else
+			{
+				$oPointController->setPoint($member_srl, $examitem->get('pass_point'), 'add');
+			}
+		}
+
+		if($this->module_info->exam_pass_group_option && $examitem->get('passGroupList'))
+		{
+			$new_group_list = $examitem->get('passGroupList');
+			if(count($new_group_list) > 0)
+			{
+				$args = new stdClass();
+				$args->member_srl = $member_srl;
+				$args->site_srl = 0;
+				$output = executeQuery('member.deleteMemberGroupMember', $args);
+				if(!$output->toBool())
+				{
+					return $output;
+				}
+				$oMemberController = getController('member');
+				foreach($new_group_list as $group_srl => $group_name)
+				{
+					$output = $oMemberController->addMemberToGroup($member_srl, $group_srl);
+					if(!$output->toBool())
+					{
+						return $output;
+					}
+				}
+			}
+		}
+
+		return $this->makeObject();
+	}
+
+	/**
 	 * @brief 시험 결과를 처리하는 함수
 	 */
 	public function procExamJoin()
@@ -439,36 +603,46 @@ class examController extends exam
 		$oExamModel = getModel('exam');
 		$examitem = $oExamModel->getExam($args->document_srl);
 		if(!$examitem->isExists()) return $this->makeObject(-1, 'msg_not_founded');
+		if((int)$examitem->get('module_srl') !== (int)$this->module_info->module_srl || (int)$args->module_srl !== (int)$this->module_info->module_srl)
+		{
+			return $this->makeObject(-1, 'msg_invalid_request');
+		}
 
 		// 이미 응시했으면...
 		$logged_info = Context::get('logged_info');
 		$resultitem = $oExamModel->getExamResultByDocumentSrl($examitem->document_srl,$logged_info->member_srl);
-		if($resultitem->log_srl) return $this->makeObject(-1, 'msg_exists_result');
+		if($resultitem && $resultitem->log_srl && $examitem->get('allow_retake') !== 'Y') return $this->makeObject(-1, 'msg_exists_result');
+		$has_passed_before = $oExamModel->hasPassedExam($examitem->document_srl, $logged_info->member_srl);
 
 		// 시작시 생선한 세션이 존재하는지 체크
-		if(!$_SESSION['exam_joinlog'][$examitem->document_srl]) return $this->makeObject(-1, 'msg_not_session');
+		if(empty($_SESSION['exam_joinlog'][$examitem->document_srl])) return $this->makeObject(-1, 'msg_not_session');
+		if((int)($_SESSION['exam_joinlog'][$examitem->document_srl]['member_srl'] ?? 0) !== (int)$logged_info->member_srl)
+		{
+			return $this->makeObject(-1, 'msg_not_session');
+		}
 
 		// 혹시나.. 출제된 문제가 없는데 전송된경우 체크
 		if(!$examitem->get('question_count')) return $this->makeObject(-1,'no_question_list');
 
 		// 시험기간인지 체크함
-		$today = date("YmdHi");
+		$now = time();
 		if($examitem->isDate() && ($examitem->get('start_date') || $examitem->get('end_date')))
 		{
-			if($examitem->get('start_date') && zdate($examitem->get('start_date'),'YmdHi') > $today) return $this->makeObject(-1, 'msg_not_exam_date');
-			if($examitem->get('end_date') && $today > zdate($examitem->get('end_date'),'YmdHi')) return $this->makeObject(-1, 'msg_not_exam_date');
+			if($examitem->get('start_date') && ztime($examitem->get('start_date')) > $now) return $this->makeObject(-1, 'msg_not_exam_date');
+			if($examitem->get('end_date') && $now > ztime($examitem->get('end_date'))) return $this->makeObject(-1, 'msg_not_exam_date');
 		}
 		// 제한시간 체크
 		$start_date = $_SESSION['exam_joinlog'][$examitem->document_srl]['start_date'];
-		$now = strtotime(date("YmdHis"));
+		$start_time = $_SESSION['exam_joinlog'][$examitem->document_srl]['start_time'] ?? ztime($start_date);
+		if(!$start_time) return $this->makeObject(-1, 'msg_not_session');
 		if($examitem->isTime() && $examitem->get('exam_time'))
 		{
 			// 끝나는시간 (시작시간+제한시간 초)
-			$end_date = strtotime($start_date." +".$examitem->get('exam_time')." seconds");
+			$end_date = $start_time + (int)$examitem->get('exam_time');
 			$over_time = $now-$end_date;
 			if($over_time>10) return $this->makeObject(-1, 'msg_time_over'); // 처리시간으로 10초정도는 예외처리 둠
 		}
-		$exam_time = $now-strtotime($start_date);
+		$exam_time = max(0, $now-$start_time);
 
 		// 문제 정답 체크
 		$answers = array();
@@ -479,52 +653,23 @@ class examController extends exam
 		$default_score = ceil(1 / $examitem->get('question_count') * 100); //문제당 기본 배점(1/총문제수*100)
 		foreach($examitem->getQuestions() as $no => $qitem)
 		{
-			$answer = $args->{'answer'.$no}; // 응시자가 선택(입력)한 답
+			$answer = $args->{'answer'.$no} ?? ''; // 응시자가 선택(입력)한 답
 			$q_answer = $qitem->get('answer'); // 문제 정답
 			$q_answer_count = $qitem->getAnswerCount(); // 정답 개수
 			$check = 'X'; // O정답, X오답, P부분정답
+			$cnt = 0;
+			$_score = 0;
 			// 객관식이고 복수정답일때 처리
 			if(!$qitem->getQType() && $q_answer_count>1)
 			{
-				$answer_list = explode(",", $answer);
-				$q_answer_list = $qitem->getAnswerList();
-				$answer_check_type = $qitem->get('answer_check_type');
-				// 모두일치하면 정답+부분점수(기본배점/맞은갯수)
-				if($answer_check_type==2)
-				{
-					$cnt = 0;
-					foreach($q_answer_list as $key => $val)
-					{
-						if(in_array($val, $answer_list))
-						{
-							$cnt++;
-						}
-					}
-					if($cnt) {
-						if($cnt==$q_answer_count) $check = 'O';
-						else $check = 'P';
-					}
-				} elseif($answer_check_type==1) // 모두일치하면 정답
-				{
-					$cnt = 0;
-					foreach($q_answer_list as $key => $val)
-					{
-						if(in_array($val, $answer_list))
-						{
-							$cnt++;
-						}
-					}
-					if($cnt==$q_answer_count) $check = 'O';
-				} else { // 하나만 일치해도 정답.
-					foreach($answer_list as $key => $val)
-					{
-						if(in_array($val, $q_answer_list))
-						{
-							$check = 'O';
-							break;
-						}
-					}
-				}
+				$multiple_answer_result = $this->checkMultipleChoiceAnswer(
+					$answer,
+					$qitem->getAnswerList(),
+					$qitem->get('answer_check_type')
+				);
+				$check = $multiple_answer_result['check'];
+				$cnt = $multiple_answer_result['matched_count'];
+				$q_answer_count = $multiple_answer_result['answer_count'];
 			} else { // 복수 정답이 아닐때..
 				if($answer==$q_answer)
 				{
@@ -547,7 +692,8 @@ class examController extends exam
 				}
 			} else {
 				if($check=='O') {
-					$score += $qitem->get('point');
+					$_score = $qitem->get('point');
+					$score += $_score;
 					$correct_count++;
 				} elseif($check=="P") {
 					$_score = ceil(($cnt/$q_answer_count)*$qitem->get('point'));
@@ -587,62 +733,127 @@ class examController extends exam
 		if(!$output->toBool()) return $output;
 		unset($_SESSION['exam_joinlog'][$examitem->document_srl]);
 
-		// 만약 합격했을경우 포인트 또는 그룹변경 처리!(v0.5 추가)
-		if($status=='P' && !$examitem->isGranted())
+		// 최초 합격일 경우에만 포인트 또는 그룹 변경 처리
+		if($status=='P' && !$has_passed_before && !$examitem->isGranted())
 		{
-			// 합격 포인트 지급!
-			if($this->module_info->exam_pass_point_option && $examitem->get('pass_point'))
-			{
-				$oPointModel = getModel('point');
-				$oPointController = getController('point');
-				// 차감설정 Y이면 작성자 감소
-				if($this->module_info->exam_pass_point_minus=='Y')
-				{
-					// 작성자의 포인트가 작으면 에러..
-					$writer_point = $oPointModel->getPoint($examitem->get('member_srl'));
-					if($writer_point >= $examitem->get('pass_point')) {
-						$oPointController->setPoint($examitem->get('member_srl'), $examitem->get('pass_point'), 'minus');
-						$oPointController->setPoint($logged_info->member_srl, $examitem->get('pass_point'), 'add');
-					}
-				} else {
-					$oPointController->setPoint($logged_info->member_srl, $examitem->get('pass_point'), 'add');
-				}
-			}
-			// 합격 그룹 변경
-			if($this->module_info->exam_pass_group_option && $examitem->get('passGroupList'))
-			{
-				$new_group_list = $examitem->get('passGroupList');
-				if(count($new_group_list) > 0)
-				{
-					$new_args = new StdClass();
-					$new_args->member_srl = $logged_info->member_srl;
-					$new_args->site_srl = 0;
-					// 기존 그룹 모두 삭제
-					$output = executeQuery('member.deleteMemberGroupMember', $new_args);
-					if(!$output->toBool())
-					{
-						$oDB->rollback();
-						return $output;
-					}
-					// 그룹 새로 추가
-					$oMemberController = getController('member');
-					foreach($new_group_list as $group_srl => $group_name)
-					{
-						$output = $oMemberController->addMemberToGroup($new_args->member_srl,$group_srl);
-						if(!$output->toBool())
-						{
-							$oDB->rollback();
-							return $output;
-						}
-					}
-				}
-			}
+			$output = $this->grantPassBenefits($examitem, $logged_info->member_srl);
+			if(!$output->toBool()) return $output;
 		}
 
 		// 성공 시 시험 목록으로 이동
 		$this->setMessage('success_saved');
 		$returnUrl = getNotEncodedUrl('', 'mid', $this->mid,'document_srl',$args->document_srl);
 		$this->setRedirectUrl($returnUrl);
+	}
+
+	/**
+	 * 출제자 또는 관리자가 응시 결과를 문항별로 수동 채점한다.
+	 */
+	public function procExamManualGrade()
+	{
+		if(!checkCSRF())
+		{
+			return $this->makeObject(-1, 'msg_invalid_request');
+		}
+
+		$args = Context::getRequestVars();
+		if(!$args->log_srl)
+		{
+			return $this->makeObject(-1, 'msg_not_founded');
+		}
+
+		$oExamModel = getModel('exam');
+		$resultitem = $oExamModel->getExamResult((int)$args->log_srl);
+		if(!$resultitem || !$resultitem->log_srl)
+		{
+			return $this->makeObject(-1, 'msg_not_founded');
+		}
+
+		$examitem = $oExamModel->getExam($resultitem->document_srl);
+		if(!$examitem->isExists() || $examitem->get('module_srl') != $this->module_srl)
+		{
+			return $this->makeObject(-1, 'msg_invalid_request');
+		}
+		if(!$this->grant->manager && !$examitem->isGranted())
+		{
+			return $this->makeObject(-1, 'msg_not_permitted');
+		}
+		$has_passed_before = $oExamModel->hasPassedExam($examitem->document_srl, $resultitem->member_srl);
+
+		$question_scores = (array)($args->question_score ?? array());
+		$answers = is_array($resultitem->answer) ? $resultitem->answer : array();
+		$question_count = count($answers);
+		$default_score = $question_count ? ceil(100 / $question_count) : 0;
+		$stored_total_point = 0;
+		foreach($answers as $qitem)
+		{
+			if(!is_object($qitem) || !method_exists($qitem, 'get'))
+			{
+				continue;
+			}
+			$stored_total_point += max(0, (int)$qitem->get('point'));
+		}
+		$use_question_point = $stored_total_point > 0;
+		$correct_count = 0;
+		$wrong_count = 0;
+		$total_score = 0;
+
+		foreach($answers as $no => $qitem)
+		{
+			if(!is_object($qitem) || !method_exists($qitem, 'get') || !method_exists($qitem, 'add'))
+			{
+				continue;
+			}
+			$max_score = $use_question_point ? max(0, (int)$qitem->get('point')) : $default_score;
+			$current_score = max(0, (int)$qitem->get('score'));
+			$question_score = array_key_exists($no, $question_scores) ? (int)$question_scores[$no] : $current_score;
+			$question_score = min(max(0, $question_score), $max_score);
+
+			if($question_score <= 0)
+			{
+				$check = 'X';
+				$wrong_count++;
+			}
+			elseif($question_score >= $max_score)
+			{
+				$check = 'O';
+				$correct_count++;
+			}
+			else
+			{
+				$check = 'P';
+				$correct_count++;
+			}
+
+			$qitem->add('score', $question_score);
+			$qitem->add('my_answer_result', $check);
+			$qitem->add('manual_graded', 'Y');
+			$answers[$no] = $qitem;
+			$total_score += $question_score;
+		}
+
+		$update_args = new stdClass();
+		$update_args->log_srl = $resultitem->log_srl;
+		$update_args->answer = serialize($answers);
+		$update_args->correct_count = $correct_count;
+		$update_args->wrong_count = $wrong_count;
+		$update_args->exam_time = (int)$resultitem->exam_time;
+		$update_args->score = $total_score;
+		$update_args->status = $total_score >= (int)$examitem->get('cutline') ? 'P' : 'N';
+
+		$output = $this->updateResult($update_args);
+		if(!$output->toBool())
+		{
+			return $output;
+		}
+		if($update_args->status === 'P' && !$has_passed_before && $resultitem->member_srl != $examitem->get('member_srl'))
+		{
+			$output = $this->grantPassBenefits($examitem, $resultitem->member_srl);
+			if(!$output->toBool()) return $output;
+		}
+
+		$this->setMessage('success_updated');
+		$this->setRedirectUrl(getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispExamCorrectCheck', 'log_srl', $resultitem->log_srl));
 	}
 	function insertExam($obj,$manual_inserted=FALSE)
 	{
@@ -652,7 +863,6 @@ class examController extends exam
 		}
 
 		if(!$obj->title) return $this->makeObject(-1, 'msg_not_exam_title');
-		if($obj->cutline > 100) return $this->makeObject(-1, 'msg_invalid_exam_cutline');
 
 		// 시험기간 설정시 시작일 또는 종료일을 입력했는지 체크
 		if($obj->is_date=="Y") {
@@ -749,6 +959,7 @@ class examController extends exam
 
 		if(!$source_obj->document_srl || !$obj->document_srl) return $this->makeObject(-1,'msg_invalied_request');
 		if(!$obj->title) return $this->makeObject(-1, 'msg_not_exam_title');
+		$logged_info = Context::get('logged_info');
 		// 시험기간 설정시 시작일 또는 종료일을 입력했는지 체크
 		if($obj->is_date=="Y") {
 			if(!$obj->start_date && !$obj->end_date) return $this->makeObject(-1, 'msg_not_exam_date');
@@ -960,7 +1171,7 @@ class examController extends exam
 	function updateJoinCount($document_srl, $join_count = 0)
 	{
 		$oExamModel = getModel('exam');
-		if(!$question_count) $join_count = $oExamModel->getJoinCount($document_srl);
+		if(!$join_count) $join_count = $oExamModel->getJoinCount($document_srl);
 
 		$args = new stdClass;
 		$args->document_srl = $document_srl;

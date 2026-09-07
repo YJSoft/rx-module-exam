@@ -21,7 +21,7 @@
 		<tr cond="$result_list" loop="$result_list => $no, $resultitem">
 			<td><div class="ta_c">{$no}</div></td>
 			<td><div class="ta_c bd_tit">{$resultitem->title}</div></td>
-			<td><div class="ta_c">{getModel('document')->getCategory($resultitem->category_srl)->title}</div></td>
+			<td><div class="ta_c">{$resultitem->category_title}</div></td>
 			<td cond="$resultitem->result_type"><div class="ta_c">{$resultitem->score}</div></td>
 			<td cond="!$resultitem->result_type"><div class="ta_c">{$lang->exam_score_secert}</div></td>
 			<td><div class="ta_c bd_tit">{$lang->resultStatusList[$resultitem->status]}</div></td>

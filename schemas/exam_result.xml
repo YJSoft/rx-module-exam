@@ -7,7 +7,7 @@
     <column name="correct_count" type="number" size="11" default="0" notnull="notnull" />
     <column name="wrong_count" type="number" size="11" default="0" notnull="notnull" />
     <column name="exam_time" type="number" size="11" default="0" notnull="notnull" />
-    <column name="score" type="number" size="3" default="0" notnull="notnull" />
+    <column name="score" type="number" size="11" default="0" notnull="notnull" />
     <column name="status" type="char" size="1" default="P" notnull="notnull" />
     <column name="regdate" type="date" index="idx_regdate" />
     <column name="ipaddress" type="varchar" size="128" notnull="notnull" index="idx_ipaddress" />

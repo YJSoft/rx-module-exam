@@ -24,6 +24,7 @@
     <caption>응시한 시험 리스트</caption>
     <colgroup>
     <col />
+	<col cond="$module_info->hide_category!='Y'" style="width:120px" />
     <col style="width:100px" />
     <col style="width:90px" />
     <col style="width:120px" />
@@ -32,6 +33,7 @@
     <thead>
     <tr>
     <th scope="col"><div class="ta_c">{$lang->exam_title}</div></th>
+	<th scope="col" cond="$module_info->hide_category!='Y'"><div class="ta_c">{$lang->category}</div></th>
     <th scope="col"><div class="ta_c">{$lang->exam_score}</div></th>
     <th scope="col"><div class="ta_c">{$lang->exam_status}</div></th>
     <th scope="col"><div class="ta_c">{$lang->date}</div></th>
@@ -40,10 +42,11 @@
     </thead>
     <tbody>
     <tr cond="!$result_list">
-        <td colspan="5"><div class="ta_c">{$lang->no_result_list}</div></td>
+		<td colspan="{($module_info->hide_category!='Y') ? 6 : 5}"><div class="ta_c">{$lang->no_result_list}</div></td>
     </tr>
     <tr cond="$result_list" loop="$result_list=>$no,$resultitem">
     <td><div class="ta_l bd_tit">{$resultitem->title}</div></td>
+	<td cond="$module_info->hide_category!='Y'"><div class="ta_c">{$resultitem->category_title}</div></td>
     <td cond="$resultitem->result_type"><div class="ta_c">{$resultitem->score}</div></td>
     <td cond="!$resultitem->result_type"><div class="ta_c">{$lang->exam_score_secert}</div></td>
     <td><div class="ta_c">{$lang->resultStatusList[$resultitem->status]}</div></td>

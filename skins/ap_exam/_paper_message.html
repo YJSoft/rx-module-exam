@@ -39,6 +39,7 @@
         <div class="paper_message_area">
             <a href="{getUrl('','mid',$mid,'act','disExamMyResult')}" class="exam_btn1" onclick="opener.location.href = this.href;window.close();return false;"><i class="xi-windows-search"></i> 시험 응시현황</a>
             <a href="{getUrl('act','dispExamCorrectCheck','log_srl',$resultitem->log_srl,'document_srl','')}" class="exam_btn1 btn_submit"><i class="xi-chart-circle"></i> 채점 결과</a>
+			<a cond="$examitem->get('allow_retake')=='Y'" href="{getUrl('mode','join','log_srl','')}" class="exam_btn1 examJoin btn_submit"><i class="xi-refresh"></i> {$lang->cmd_retake}</a>
         </div>
     </div>
     <!--@end-->

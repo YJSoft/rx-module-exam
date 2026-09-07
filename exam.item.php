@@ -354,57 +354,58 @@ class examItem extends BaseObject
 	}
 	function getExamDate($format = 'Y.m.d H:i', $short = FALSE)
 	{
-		if($this->isDate())
+		if(!$this->isDate())
 		{
-			if(!$short)
-			{
-				$str = zdate($this->get('start_date'),$format).' ~ '.zdate($this->get('end_date'),$format);
-			}
-			else
-			{
-				$start_date = $this->get('start_date');
-				$end_date = $this->get('end_date');
-				// 조건 설정 : 시작과 종료의 년도가 현재 년도와 같은지
-				$this_year = substr($start_date, 0, 4) === date('Y') && substr($end_date, 0, 4) === date('Y');
+			return Context::getLang('exam_no_end_date');
+		}
 
-				// 시작과 종료 모두 H시 정각이라면
-				if ( substr($start_date, 10, 2) === '00' && substr($end_date, 10, 2) === '00' )
-				{
-					// 시작 시각은 시까지만 출력
-					$startline = $this_year ? zdate($start_date, 'm.d H시'): zdate($start_date, 'Y.m.d H시');
-					$str = $startline . ' ~ ';
-					// 시작과 종료가 같은 시각이라면
-					if ( substr($start_date, 0, 10) === substr($end_date, 0, 10) ) $str = $startline;
-					// 일자까지 같다면
-					elseif ( substr($start_date, 0, 8) === substr($end_date, 0, 8) ) $str .= zdate($end_date, 'H시');
-					// 년도만 같다면
-					elseif ( substr($startline, 0, 4) === substr($end_date, 0, 4) ) $str .= zdate($end_date, 'm.d H시');
-					// 년도가 다르다면
-					else $str .= $this_year ? zdate($end_date, 'm.d. H시') : zdate($end_date, 'Y.m.d. H시');
-				}
-				else
-				{
-					// 시작 시각은 분까지 출력
-					$startline = $this_year ? zdate($start_date, 'm.d H시i분'): zdate($start_date, 'Y.m.d H시i분');
-					$str = $startline . ' ~ ';
-					// 시작과 종료가 같은 시각이라면
-					if ( substr($start_date, 0, 12) === substr($end_date, 0, 12) ) $str = $startline;
-					// 시까지 같다면
-					elseif ( substr($start_date, 0, 10) === substr($end_date, 0, 10) ) $str .= zdate($end_date, 'i분');
-					// 일자까지 같다면
-					elseif ( substr($start_date, 0, 8) === substr($end_date, 0, 8) ) $str .= zdate($end_date, 'H시i분');
-					// 년도만 같다면
-					elseif ( substr($startline, 0, 4) === substr($end_date, 0, 4) ) $str .= zdate($end_date, 'm.d H시i분');
-					// 년도가 다르다면
-					else $str .= $this_year ? zdate($end_date, 'm.d H시i분'): zdate($end_date, 'Y.m.d H시i분');
-				}
-			}
+		$start_date = $this->get('start_date');
+		$end_date = $this->get('end_date');
+		if(!$start_date && !$end_date)
+		{
+			return Context::getLang('exam_no_end_date');
+		}
+		if(!$short)
+		{
+			$start_text = $start_date ? zdate($start_date, $format) : '';
+			$end_text = $end_date ? zdate($end_date, $format) : '';
+			return $start_date && $end_date ? $start_text . ' ~ ' . $end_text : ($start_date ? $start_text . ' ~' : '~ ' . $end_text);
+		}
+
+		// 비교와 표시 모두 현재 사용자의 시간대를 기준으로 처리한다.
+		$start_local = $start_date ? zdate($start_date, 'YmdHi') : '';
+		$end_local = $end_date ? zdate($end_date, 'YmdHi') : '';
+		$current_year = zdate(getInternalDateTime(), 'Y');
+		if(!$start_date || !$end_date)
+		{
+			$target_date = $start_date ?: $end_date;
+			$target_local = $start_local ?: $end_local;
+			$target_format = substr($target_local, 10, 2) === '00' ? 'm.d H시' : 'm.d H시i분';
+			if(substr($target_local, 0, 4) !== $current_year) $target_format = 'Y.' . $target_format;
+			$target_text = zdate($target_date, $target_format);
+			return $start_date ? $target_text . ' ~' : '~ ' . $target_text;
+		}
+
+		$this_year = substr($start_local, 0, 4) === $current_year && substr($end_local, 0, 4) === $current_year;
+		$on_the_hour = substr($start_local, 10, 2) === '00' && substr($end_local, 10, 2) === '00';
+		$start_format = ($this_year ? '' : 'Y.') . ($on_the_hour ? 'm.d H시' : 'm.d H시i분');
+		$start_text = zdate($start_date, $start_format);
+		if($start_local === $end_local) return $start_text;
+
+		if($on_the_hour)
+		{
+			if(substr($start_local, 0, 8) === substr($end_local, 0, 8)) $end_format = 'H시';
+			elseif(substr($start_local, 0, 4) === substr($end_local, 0, 4)) $end_format = 'm.d H시';
+			else $end_format = 'Y.m.d H시';
 		}
 		else
 		{
-			$str = Context::getLang('exam_no_end_date');
+			if(substr($start_local, 0, 10) === substr($end_local, 0, 10)) $end_format = 'i분';
+			elseif(substr($start_local, 0, 8) === substr($end_local, 0, 8)) $end_format = 'H시i분';
+			elseif(substr($start_local, 0, 4) === substr($end_local, 0, 4)) $end_format = 'm.d H시i분';
+			else $end_format = 'Y.m.d H시i분';
 		}
-		return $str;
+		return $start_text . ' ~ ' . zdate($end_date, $end_format);
 	}
 	function getRegdate($format = 'Y.m.d H:i:s')
 	{

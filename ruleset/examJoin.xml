@@ -3,6 +3,6 @@
     <customrules />
     <fields>
 		<field name="document_srl" required="true" />
-		<field name="module_srl" rule="number,less_cutline" />
+		<field name="module_srl" rule="number" />
     </fields>
 </ruleset>

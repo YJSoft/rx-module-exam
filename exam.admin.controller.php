@@ -249,7 +249,6 @@ class examAdminController extends exam
 
 		$args = Context::getRequestVars();
 		if(!$args->log_srl) return $this->makeObject(-1, 'msg_not_founded');
-		if($args->score > 100) return $this->makeObject(-1, 'msg_invalid_exam_score');
 		if(!isset(Context::getLang('resultStatusList')->{$args->status})) unset($args->status);
 
 		// 기록 구해옴

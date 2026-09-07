@@ -11,9 +11,10 @@
     <column name="content" type="bigtext" notnull="notnull" />
     <column name="page_type" type="number" size="1" default="0" />
     <column name="result_type" type="number" size="1" default="0" />
-    <column name="cutline" type="number" size="3" default="0" notnull="notnull" />
+    <column name="cutline" type="number" size="11" default="0" notnull="notnull" />
     <column name="is_date" type="char" size="1" default="N" notnull="notnull" />
     <column name="is_time" type="char" size="1" default="N" notnull="notnull" />
+	<column name="allow_retake" type="char" size="1" default="N" notnull="notnull" />
     <column name="join_point" type="number" size="11" default="0" notnull="notnull" />
     <column name="exam_time" type="number" size="11" default="0" notnull="notnull" />
     <column name="question_count" type="number" size="11" default="0" notnull="notnull" />

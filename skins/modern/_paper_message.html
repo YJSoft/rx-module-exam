@@ -34,6 +34,7 @@
         <div class="paper_message_area">
             <a href="{getUrl('','mid',$mid,'act','disExamMyResult')}" class="exam_btn1" onclick="opener.location.href = this.href;window.close();return false;"><i class="bi bi-bar-chart" aria-hidden="true"></i> 시험 응시현황</a>
             <a href="{getUrl('act','dispExamCorrectCheck','log_srl',$resultitem->log_srl,'document_srl','')}" class="exam_btn1"><i class="bi bi-clipboard2-check" aria-hidden="true"></i> 채점 결과</a>
+			<a cond="$examitem->get('allow_retake')=='Y'" href="{getUrl('mode','join','log_srl','')}" class="exam_btn1 examJoin"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> {$lang->cmd_retake}</a>
         </div>
     </div>
     <!--@end-->

@@ -1,0 +1,13 @@
+<query id="getResultCount" action="select">
+	<tables>
+		<table name="exam_result" />
+	</tables>
+	<columns>
+		<column name="count(*)" alias="count" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="document_srl" var="document_srl" filter="number" notnull="notnull" />
+		<condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" pipe="and" />
+		<condition operation="equal" column="status" var="status" pipe="and" />
+	</conditions>
+</query>

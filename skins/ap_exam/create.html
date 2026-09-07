@@ -13,6 +13,7 @@
         <input type="hidden" name="xe_validator_id" value="modules/exam/exam_create/1" />
         <input cond="$document_srl" type="hidden" name="document_srl" value="{$document_srl}" />
         <input type="hidden" name="page_type" value="0" />
+		<input type="hidden" name="exam_total_point" value="{(int)$examitem->get('total_point')}" />
 
 		<header class="create_header">
 			<h1>{$document_srl ? $lang->cmd_exam_config : $lang->cmd_exam_write;}</h1>
@@ -72,11 +73,20 @@
             </td>
             <td>
                 <div class="ta_l">
-                    <input type="number" name="exam_cutline" id="exam_cutline" placeholder="{$lang->exam_cutline}" value="{($examitem->get('cutline'))? $examitem->get('cutline') : '0'}" maxlength="3" class="iText" />{$lang->unit_score}
+					<input type="number" name="exam_cutline" id="exam_cutline" placeholder="{$lang->exam_cutline}" value="{($examitem->get('cutline'))? $examitem->get('cutline') : '0'}" class="iText" />{$lang->unit_score}
                     <p class="info">{$lang->about_cutline}</p>
                 </div>
             </td>
         </tr>
+		<tr>
+			<td class="bg"><div class="ta_l">{$lang->allow_retake}</div></td>
+			<td>
+				<div class="ta_l">
+					<label for="allow_retake"><input type="checkbox" name="allow_retake" id="allow_retake" value="Y" checked="checked"|cond="$examitem->get('allow_retake')=='Y'" /> {$lang->cmd_setup}</label>
+					<p class="info">{$lang->about_allow_retake}</p>
+				</div>
+			</td>
+		</tr>
         <tr>
             <td class="bg">
                 <div class="ta_l">{$lang->exam_date}</div>
@@ -86,8 +96,8 @@
                     <label for="is_date">
                         <input type="checkbox" name="is_date" id="is_date" value="Y" checked="checked"|cond="$examitem->get('is_date')=='Y'" /> {$lang->cmd_setup}
                     </label>
-                    <input type="number" name="start_date" value="{$examitem->get('start_date')}" class="iText" maxlength="12" placeholder="YYYYmmddHHii" /> ~ 
-                    <input type="number" name="end_date" value="{$examitem->get('end_date')}" class="iText" maxlength="12" placeholder="YYYYmmddHHii" />
+					<input type="number" name="start_date" value="{zdate($examitem->get('start_date'),'YmdHi')}"|cond="$examitem->get('start_date')" class="iText" maxlength="12" placeholder="YYYYmmddHHii" /> ~
+					<input type="number" name="end_date" value="{zdate($examitem->get('end_date'),'YmdHi')}"|cond="$examitem->get('end_date')" class="iText" maxlength="12" placeholder="YYYYmmddHHii" />
                     <p class="info">{$lang->about_date}</p>
                 </div>
             </td>

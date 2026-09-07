@@ -7,6 +7,7 @@
         <column name="result.*" />
         <column name="exam.title" />
         <column name="exam.result_type" />
+		<column name="exam.category_srl" />
     </columns>
     <conditions>
         <condition operation="equal" column="result.member_srl" var="member_srl" />

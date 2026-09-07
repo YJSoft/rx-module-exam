@@ -1,0 +1,25 @@
+<include target="_header.html" />
+<div class="exam_list basic_type">
+	<h3>{$examitem->getTitle()} - {$lang->cmd_exam_result_list}</h3>
+	<table class="tbl_exam_list">
+		<thead><tr>
+			<th>{$lang->exam_participant}</th><th>{$lang->exam_score}</th><th>{$lang->status}</th><th>{$lang->exam_result_time}</th><th>{$lang->exam_result_regdate}</th><th>{$lang->manual_grade}</th>
+		</tr></thead>
+		<tbody>
+			<tr cond="!$result_list"><td colspan="6"><div class="ta_c">{$lang->no_result_list}</div></td></tr>
+			<tr loop="$result_list=>$no,$resultitem">
+				<td><a href="#popup_menu_area" class="member_{$resultitem->member_srl}">{$resultitem->nick_name}</a></td>
+				<td class="ta_c">{$resultitem->score}</td><td class="ta_c">{$lang->resultStatusList[$resultitem->status]}</td>
+				<td class="ta_c">{$resultitem->exam_time_text}</td><td class="ta_c">{zdate($resultitem->regdate,'Y.m.d H:i')}</td>
+				<td class="ta_c"><a class="exam_btn btn_submit" href="{getUrl('act','dispExamCorrectCheck','log_srl',$resultitem->log_srl)}" onclick="examopen(this.href,'exam2');return false"><i class="xi-check-circle"></i> {$lang->manual_grade}</a></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div class="exam_paginate" cond="$page_navigation && $page_navigation->total_page > 1">
+	<a href="{getUrl('page','')}" class="pg_btn">&laquo;</a>
+	<block loop="$page_no=$page_navigation->getNextPage()"><strong cond="$page==$page_no">{$page_no}</strong><a cond="$page!=$page_no" href="{getUrl('page',$page_no)}">{$page_no}</a></block>
+	<a href="{getUrl('page',$page_navigation->last_page)}" class="pg_btn">&raquo;</a>
+</div>
+<div class="list_footer"><a href="{getUrl('act','','document_srl','')}" class="exam_btn btn_close">{$lang->cmd_back}</a></div>
+<include target="_footer.html" />

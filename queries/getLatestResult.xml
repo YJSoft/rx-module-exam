@@ -1,0 +1,23 @@
+<query id="getLatestResult" action="select">
+	<tables>
+		<table name="exam_result" alias="result" />
+		<table name="exam" alias="exam" />
+	</tables>
+	<columns>
+		<column name="result.*" />
+		<column name="exam.title" />
+		<column name="exam.result_type" />
+		<column name="exam.category_srl" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="result.member_srl" var="member_srl" filter="number" />
+		<condition operation="equal" column="result.document_srl" var="document_srl" filter="number" notnull="notnull" pipe="and" />
+		<condition operation="equal" column="exam.document_srl" var="result.document_srl" notnull="notnull" pipe="and" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="result.log_srl" order="sort_order" />
+		<list_count var="list_count" default="1" />
+		<page_count var="page_count" default="1" />
+		<page var="page" default="1" />
+	</navigation>
+</query>

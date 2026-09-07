@@ -331,11 +331,12 @@ class examModel extends exam
 		{
 			return;
 		}
-		if($output->data[0])
+		$resultitem = $output->data[0] ?? null;
+		if($resultitem)
 		{
-			$output->data[0]->answer = unserialize($output->data[0]->answer);
+			$resultitem->answer = unserialize($resultitem->answer);
 		}
-		return $output->data[0];
+		return $resultitem;
 	}
 	/**
 	 *	시험의  응시현황을 구해옴 (문서번호+회원번호)
@@ -348,16 +349,41 @@ class examModel extends exam
 		$args->document_srl = $document_srl;
 		if($member_srl) $args->member_srl = $member_srl;
 
-		$output = executeQueryArray('exam.getResult', $args);
+		$args->sort_order = 'desc';
+		$args->list_count = 1;
+		$output = executeQueryArray('exam.getLatestResult', $args);
 		if(!$output->toBool())
 		{
 			return;
 		}
-		if($output->data[0])
+		$resultitem = $output->data[0] ?? null;
+		if($resultitem)
 		{
-			$output->data[0]->answer = unserialize($output->data[0]->answer);
+			$resultitem->answer = unserialize($resultitem->answer);
 		}
-		return $output->data[0];
+		return $resultitem;
+	}
+
+	/**
+	 * 회원이 해당 시험에 한 번이라도 합격했는지 확인한다.
+	 *
+	 * @param int $document_srl
+	 * @param int $member_srl
+	 * @return bool
+	 */
+	function hasPassedExam($document_srl, $member_srl)
+	{
+		if(!$document_srl || !$member_srl)
+		{
+			return false;
+		}
+		$args = new stdClass();
+		$args->document_srl = $document_srl;
+		$args->member_srl = $member_srl;
+		$args->status = 'P';
+		$output = executeQuery('exam.getResultCount', $args);
+
+		return $output->toBool() && isset($output->data->count) && (int)$output->data->count > 0;
 	}
 	/**
 	 *	나의 시험 응시현황 목록을 구해옴.
@@ -379,6 +405,7 @@ class examModel extends exam
 		$args->sort_order = 'desc';
 		$args->member_srl = $obj->member_srl;
 		$args->module_srl = $obj->module_srl;
+		$args->document_srl = $obj->document_srl ?? null;
 		$args->status = $obj->status;
 
 		if($obj->mid)

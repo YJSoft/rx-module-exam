@@ -1,5 +1,5 @@
 <div class="paper_header">
-	<h3>{$resultitem->title}<span cond="$module_info->hide_category !== 'Y' && $resultitem->category_srl"> ({getModel('document')->getCategory($resultitem->category_srl)->title})</span></h3>
+	<h3>{$resultitem->title}<span cond="$module_info->hide_category !== 'Y' && $resultitem->category_title"> ({$resultitem->category_title})</span></h3>
 	<div class="paper_command">
 		<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close"><i class="xi-eye"></i> {$lang->cmd_confirm}</a>
 	</div>
@@ -14,13 +14,18 @@
 	</div>
 </div>
 
-<div cond="$resultitem->result_type<2 && !$grant->manager" class="paper_message">
+<div cond="$resultitem->result_type<2 && !$can_grade" class="paper_message">
     <h2>이 시험의 채점 결과는 공개되지 않습니다.</h2>
     <div class="paper_message_area">
         <a href="{getUrl('','mid',$mid,'act','disExamMyResult')}" class="exam_btn1" onclick="opener.location.href = this.href;window.close();return false;">시험 응시현황</a>
     </div>
 </div>
-<div cond="$resultitem->result_type>1 || $grant->manager" id="questions" class="questions">
+<form ruleset="manualGrade" action="./" method="post">
+	<input type="hidden" name="module" value="exam" />
+	<input type="hidden" name="act" value="procExamManualGrade" />
+	<input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+	<input type="hidden" name="log_srl" value="{$resultitem->log_srl}" />
+<div cond="$resultitem->result_type>1 || $can_grade" id="questions" class="questions">
     <div loop="$resultitem->answer=>$no,$qitem" class="qitem">
         <div class="qtitle">
             <div class="txt">
@@ -28,7 +33,7 @@
                     <img src="img/check_{strtolower($qitem->get('my_answer_result'))}.png" width="55" height="45" alt="" />
                 </div>
                 <span>{$no}</span>. {$qitem->getTitle()}
-                <span cond="!$qitem->getQType() && $resultitem->result_type>2" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
+				<span cond="!$qitem->getQType() && ($resultitem->result_type>2 || $can_grade)" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
             </div>
         </div>
         <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">
@@ -37,7 +42,7 @@
         </fieldset>
         <p cond="$qitem->getQType()" class="qanswer">
             <label for="my_answer{$no}">제　출: <input type="text" id="my_answer{$no}" value="{$qitem->get('my_answer')}" readonly="readonly" class="underInput" /></label>
-            <label cond="$resultitem->result_type>2" for="answer{$no}">정　답: <input type="text" id="answer{$no}" value="{$qitem->getAnswer()}" readonly="readonly" class="underInput" /></label>
+			<label cond="$resultitem->result_type>2 || $can_grade" for="answer{$no}">정　답: <input type="text" id="answer{$no}" value="{$qitem->getAnswer()}" readonly="readonly" class="underInput" /></label>
         </p>
         <ul cond="!$qitem->getQType()" class="qanswer_list">
         {@ $answerList = explode(",", $qitem->get('my_answer')); }
@@ -49,9 +54,18 @@
             </div>
         </li>
         </ul>
-		<fieldset cond="$resultitem->result_type>1 && $qitem->getContent()" class="qcontent">
+		<fieldset cond="($resultitem->result_type>1 || $can_grade) && $qitem->getContent()" class="qcontent">
 			<legend>[ 해설 ]</legend>
 			{$qitem->getContent()}
 		</fieldset>
+		<div cond="$can_grade" class="manual_grade">
+			{@ $manual_max_score = $manual_use_question_point ? (int)$qitem->get('point') : $manual_default_score; }
+			<label for="question_score{$no}">{$lang->manual_grade_score}: <input type="number" name="question_score[{$no}]" id="question_score{$no}" value="{(int)$qitem->get('score')}" min="0" max="{$manual_max_score}" class="underInput" /> / {$manual_max_score}{$lang->unit_score}</label>
+		</div>
     </div>
 </div>
+<div cond="$can_grade" class="paper_message_area">
+	<p class="info">{$lang->about_manual_grade}</p>
+	<button type="submit" class="exam_btn1 btn_submit"><i class="xi-check-circle"></i> {$lang->manual_grade}</button>
+</div>
+</form>

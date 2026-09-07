@@ -102,6 +102,7 @@
                     <li><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl,'act','dispExamCreate')}">시험지 설정</a></li>
                     <li><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl,'act','dispExamEditMode','mode','write')}" onclick="examopen(this.href,'exam');return false">문제출제</a></li>
                     <li><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl,'act','dispExamEditMode')}" onclick="examopen(this.href,'exam');return false">편집모드</a></li>
+					<li><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl,'act','dispExamResultList')}">{$lang->cmd_exam_result_list}</a></li>
                     <li><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl,'act','dispExamDelete')}">시험지 삭제</a></li>
                 </ul>
             </div>
