@@ -34,6 +34,7 @@ class examAdminController extends exam
 		if(!in_array($args->order_type, array('asc', 'desc'))) $args->order_type = 'asc';
 		if(!$args->editor_skin) $args->editor_skin = 'default';
 		$args->allow_exam_reprivate = ($args->allow_exam_reprivate ?? '') === 'Y' ? 'Y' : 'N';
+		$args->lock_published_exam_questions = ($args->lock_published_exam_questions ?? '') === 'Y' ? 'Y' : 'N';
 
 		// if there is an existed module
 		if($args->module_srl) {

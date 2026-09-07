@@ -2,13 +2,26 @@
  * @편집모드에서 사용하는 자바스크립트
  **/
 jQuery(function($) {
+	$('form[data-invalidation-warning]').on('submit', function(event) {
+		var $form = $(this);
+		if($form.data('invalidation-confirmed')) return;
+		if(!confirm($form.attr('data-invalidation-warning'))) {
+			event.preventDefault();
+			return false;
+		}
+		$form.data('invalidation-confirmed', true);
+	});
+
     $('a.question_delete').click(function(event) {
         event.preventDefault();
         var val = $(this).attr('data-value').split('|');
         var document_srl = val[0];
         var question_srl = val[1];
         if(!document_srl || !question_srl) return;
-        if(!confirm('이 문제를 삭제하시겠습니까?')) return;
+		var message = '이 문제를 삭제하시겠습니까?';
+		var invalidationWarning = $('#questions').attr('data-invalidation-warning');
+		if(invalidationWarning) message += '\n\n' + invalidationWarning;
+		if(!confirm(message)) return;
 
         var params = new Array();
         params['mid'] = current_mid ;

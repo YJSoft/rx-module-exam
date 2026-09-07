@@ -6,8 +6,8 @@
 	<h4><i class="xi-documents"></i> {$lang->common_passage} · {$question_block->passage->getTitle()}</h4>
 	<p><span cond="$question_block->start">{sprintf($lang->passage_range_label, $question_block->start, $question_block->end)}</span><span cond="!$question_block->start">{$lang->no_passage_questions}</span></p>
 	<div class="qedit">
-		<a href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$question_block->passage->question_srl)}" class="exam_btn btn_close">{$lang->cmd_modify}</a>
-		<a href="#" data-value="{$examitem->document_srl}|{$question_block->passage->question_srl}" class="exam_btn btn_close question_delete">{$lang->cmd_delete}</a>
+		<a cond="!$question_edit_locked" href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$question_block->passage->question_srl)}" class="exam_btn btn_close">{$lang->cmd_modify}</a>
+		<a cond="!$question_edit_locked" href="#" data-value="{$examitem->document_srl}|{$question_block->passage->question_srl}" class="exam_btn btn_close question_delete">{$lang->cmd_delete}</a>
 	</div>
 	<div class="common-passage-content">{$question_block->passage->getDescription()}</div>
 </section>
@@ -17,10 +17,10 @@
             <span>{$no}</span>. {$qitem->getTitle()}  [{$qitem->getPoint()}점] <span class="question-level">{$lang->q_level}: {$lang->qLevelList[$qitem->getQLevel()]}</span> <span cond="!$qitem->getQType()" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
         </div>
 		<div class="qedit">
-			<a href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$qitem->question_srl)}" class="exam_btn btn_close">{$lang->cmd_modify}</a>
-			<a href="#" data-value="{$examitem->document_srl}|{$qitem->question_srl}" class="exam_btn btn_close question_delete">{$lang->cmd_delete}</a>
-			<a href="#" cond="$no !== 1" data-ssrl="{$qitem->question_srl}" data-tsrl="{$examitem->getQuestions()[$no-1]->question_srl}" class="exam_btn btn_close question_swap"><i class="xi-angle-up"></i> {$lang->cmd_move_up}</a>
-			<a href="#" cond="$no !== $examitem->getQuestionCount()" data-ssrl="{$qitem->question_srl}" data-tsrl="{$examitem->getQuestions()[$no+1]->question_srl}" class="exam_btn btn_close question_swap"><i class="xi-angle-down"></i> {$lang->cmd_move_down}</a>
+			<a cond="!$question_edit_locked" href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$qitem->question_srl)}" class="exam_btn btn_close">{$lang->cmd_modify}</a>
+			<a cond="!$question_edit_locked" href="#" data-value="{$examitem->document_srl}|{$qitem->question_srl}" class="exam_btn btn_close question_delete">{$lang->cmd_delete}</a>
+			<a href="#" cond="!$question_edit_locked && $no !== 1" data-ssrl="{$qitem->question_srl}" data-tsrl="{$examitem->getQuestions()[$no-1]->question_srl}" class="exam_btn btn_close question_swap"><i class="xi-angle-up"></i> {$lang->cmd_move_up}</a>
+			<a href="#" cond="!$question_edit_locked && $no !== $examitem->getQuestionCount()" data-ssrl="{$qitem->question_srl}" data-tsrl="{$examitem->getQuestions()[$no+1]->question_srl}" class="exam_btn btn_close question_swap"><i class="xi-angle-down"></i> {$lang->cmd_move_down}</a>
 		</div>
     </div>
     <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">

@@ -37,6 +37,11 @@ class examAdminView extends exam
 			$this->module_info->allow_exam_reprivate = 'N';
 			Context::set('module_info', $this->module_info);
 		}
+		if($this->module_info && !isset($this->module_info->lock_published_exam_questions))
+		{
+			$this->module_info->lock_published_exam_questions = 'Y';
+			Context::set('module_info', $this->module_info);
+		}
 
 		// get the module category list
 		$module_category = $oModuleModel->getModuleCategories();

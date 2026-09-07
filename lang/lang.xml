@@ -189,6 +189,21 @@
 	<item name="msg_exam_reprivate_not_allowed">
 		<value xml:lang="ko"><![CDATA[이미 공개한 시험은 비공개로 변경할 수 없습니다. 모듈 관리자 설정에서 재비공개를 허용해야 합니다.]]></value>
 	</item>
+	<item name="lock_published_exam_questions">
+		<value xml:lang="ko"><![CDATA[공개 시험 문제 변경 금지]]></value>
+	</item>
+	<item name="about_lock_published_exam_questions">
+		<value xml:lang="ko"><![CDATA[활성화하면 공개 상태인 시험의 문제 추가, 수정, 삭제 및 순서 변경을 금지합니다. 기본값은 활성화입니다.]]></value>
+	</item>
+	<item name="msg_published_exam_question_locked">
+		<value xml:lang="ko"><![CDATA[공개 상태인 시험의 문제는 변경할 수 없습니다. 모듈 관리자 설정에서 공개 시험 문제 변경 금지를 해제해야 합니다.]]></value>
+	</item>
+	<item name="about_question_change_invalidates_results">
+		<value xml:lang="ko"><![CDATA[이 시험에는 기존 응시 결과가 있습니다. 문제를 변경하면 기존 응시 결과가 모두 무효화되며 지급 또는 차감된 포인트는 유지됩니다.]]></value>
+	</item>
+	<item name="confirm_question_change_invalidates_results">
+		<value xml:lang="ko"><![CDATA[문제를 변경하면 기존 응시 결과가 모두 무효화됩니다. 지급 또는 차감된 포인트는 유지됩니다. 계속하시겠습니까?]]></value>
+	</item>
 	<item name="about_allow_retake">
 		<value xml:lang="ko"><![CDATA[응시자가 시험을 여러 번 응시할 수 있도록 허용합니다. 응시 이력은 매회 별도로 저장됩니다.]]></value>
 	</item>

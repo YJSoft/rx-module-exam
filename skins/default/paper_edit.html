@@ -4,8 +4,8 @@
         <block cond="$mode=='write'">
         <a href="{getUrl('mode','','question_srl','')}" class="btn">{$lang->cmd_back}</a>
         </block>
-        <block cond="$mode!='write'">
-        <a  href="{getUrl('mode','write','question_srl','')}" class="btn">{$lang->cmd_question_write}</a>
+		<block cond="$mode!='write'">
+        <a cond="!$question_edit_locked" href="{getUrl('mode','write','question_srl','')}" class="btn">{$lang->cmd_question_write}</a>
         <a href="{getUrl('act','','mode','','question_srl','')}" class="btn">{$lang->cmd_back}</a>
         </block>
     </div>
@@ -14,7 +14,9 @@
         총 <span id="total_q_point">{$examitem->getAllQuestionPoint()}</span> 점
     </p>
 </div>
-<div id="questions" class="questions">
+<div cond="$question_edit_locked" class="message error"><p>{$lang->msg_published_exam_question_locked}</p></div>
+<div cond="$question_edit_invalidates_results" class="message warning"><p>{$lang->about_question_change_invalidates_results}</p></div>
+<div id="questions" class="questions" data-invalidation-warning="{$lang->confirm_question_change_invalidates_results}"|cond="$question_edit_invalidates_results">
     <include target="_paper_q_write.html" cond="$mode=='write'" />
     <include target="_paper_edit.html" cond="$mode!='write'" />
 </div>

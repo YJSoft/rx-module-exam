@@ -125,6 +125,13 @@
 			</div>
 		</div>
 		<div class="x_control-group">
+			<label class="x_control-label" for="lock_published_exam_questions">{$lang->lock_published_exam_questions}</label>
+			<div class="x_controls">
+				<label class="x_inline" for="lock_published_exam_questions"><input type="checkbox" name="lock_published_exam_questions" id="lock_published_exam_questions" value="Y" checked="checked"|cond="$module_info->lock_published_exam_questions=='Y'" /> {$lang->use}</label>
+				<p class="x_help-block">{$lang->about_lock_published_exam_questions}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
 			<label class="x_control-label">{$lang->cmd_list_setting}</label>
 			<div class="x_controls">
 				{@$list = array_keys($list_config)}

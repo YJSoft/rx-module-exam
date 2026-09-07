@@ -6,8 +6,8 @@
 <div cond="$question_block->passage" class="common-passage">
 	<h4><strong>{$lang->common_passage}</strong> · {$question_block->passage->getTitle()}</h4>
 	<p><span cond="$question_block->start">{sprintf($lang->passage_range_label, $question_block->start, $question_block->end)}</span><span cond="!$question_block->start">{$lang->no_passage_questions}</span>
-		<a href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$question_block->passage->question_srl)}" class="btn">{$lang->cmd_question_edit}</a>
-		<a href="#" data-value="{$examitem->document_srl}|{$question_block->passage->question_srl}" class="btn question_delete">{$lang->cmd_question_delete}</a>
+		<a cond="!$question_edit_locked" href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$question_block->passage->question_srl)}" class="btn">{$lang->cmd_question_edit}</a>
+		<a cond="!$question_edit_locked" href="#" data-value="{$examitem->document_srl}|{$question_block->passage->question_srl}" class="btn question_delete">{$lang->cmd_question_delete}</a>
 	</p>
 	<div class="common-passage-content">{$question_block->passage->getDescription()}</div>
 </div>
@@ -15,8 +15,8 @@
     <div class="qtitle">
         <div class="txt">
             <span>{$no}</span>. {$qitem->getTitle()}  [{$qitem->getPoint()}점] <span class="question-level">{$lang->q_level}: {$lang->qLevelList[$qitem->getQLevel()]}</span> <span cond="!$qitem->getQType()" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
-            <a href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$qitem->question_srl)}" class="btn">{$lang->cmd_question_edit}</a>
-            <a href="#" data-value="{$examitem->document_srl}|{$qitem->question_srl}" class="btn question_delete">{$lang->cmd_question_delete}</a>
+            <a cond="!$question_edit_locked" href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$qitem->question_srl)}" class="btn">{$lang->cmd_question_edit}</a>
+            <a cond="!$question_edit_locked" href="#" data-value="{$examitem->document_srl}|{$qitem->question_srl}" class="btn question_delete">{$lang->cmd_question_delete}</a>
         </div>
     </div>
     <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">

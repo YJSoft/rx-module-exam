@@ -30,7 +30,10 @@ jQuery(function($) {
         var selected_srl = $(this).data('ssrl');
         var targeted_srl = $(this).data('tsrl');
         if ( !selected_srl || !targeted_srl ) return;
-        if ( !confirm('문제의 순서를 변경하시겠습니까?') ) return;
+		var message = '문제의 순서를 변경하시겠습니까?';
+		var invalidationWarning = $('#questions').attr('data-invalidation-warning');
+		if ( invalidationWarning ) message += '\n\n' + invalidationWarning;
+		if ( !confirm(message) ) return;
 
 		var params = {
 			selected_srl : selected_srl,

@@ -44,6 +44,53 @@ class examController extends exam
 	}
 
 	/**
+	 * 공개된 시험지의 문제 변경이 잠겨 있는지 확인한다.
+	 *
+	 * @param examItem $examitem
+	 * @return bool
+	 */
+	private function isPublishedQuestionEditLocked($examitem)
+	{
+		$lock_published_exam_questions = $this->module_info->lock_published_exam_questions ?? 'Y';
+		return $examitem->getStatus() === 'Y' && $lock_published_exam_questions === 'Y';
+	}
+
+	/**
+	 * 문제 변경 후 기존 응시 결과를 무효화한다. 포인트 및 그룹은 변경하지 않는다.
+	 *
+	 * @param examItem $examitem
+	 * @return BaseObject|Object
+	 */
+	private function invalidateResultsAfterQuestionChange($examitem)
+	{
+		$args = new stdClass();
+		$args->module_srl = (int)$examitem->get('module_srl');
+		$args->document_srl = (int)$examitem->document_srl;
+
+		$oDB = DB::getInstance();
+		$oDB->begin();
+		$output = executeQuery('exam.deleteExamResultByModuleSrl', $args);
+		if(!$output->toBool())
+		{
+			$oDB->rollback();
+			return $output;
+		}
+
+		$count_args = new stdClass();
+		$count_args->document_srl = (int)$examitem->document_srl;
+		$count_args->join_count = 0;
+		$output = executeQuery('exam.updateExamCount', $count_args);
+		if(!$output->toBool())
+		{
+			$oDB->rollback();
+			return $output;
+		}
+
+		$oDB->commit();
+		return $this->makeObject();
+	}
+
+	/**
 	 * @brief 시험지 생성을 처리하는 함수
 	 */
 	public function procExamCreate()
@@ -263,6 +310,7 @@ class examController extends exam
 		$examitem = $oExamModel->getExam($document_srl);
 		if(!$examitem->isExists()) return $this->makeObject(-1, 'msg_not_founded');
 		if(!$examitem->isGranted()) return $this->makeObject(-1, 'msg_not_permitted');
+		if($this->isPublishedQuestionEditLocked($examitem)) return $this->makeObject(-1, 'msg_published_exam_question_locked');
 
 		// question_srl이 있으면 문제정보도 체크
 		$questionitem = $oExamModel->getQuestion($question_srl);
@@ -435,6 +483,8 @@ class examController extends exam
 				$oCacheHandler->delete($cache_key);
 			}
 		}
+		$output = $this->invalidateResultsAfterQuestionChange($examitem);
+		if(!$output->toBool()) return $output;
 
 		$this->setMessage('success_saved');
 		$this->setRedirectUrl(getNotEncodedUrl('', 'mid', $this->mid,'document_srl',$examitem->document_srl,'act','dispExamEditMode'));
@@ -458,6 +508,7 @@ class examController extends exam
 		$examitem = $oExamModel->getExam($document_srl);
 		if(!$examitem->isExists()) return $this->makeObject(-1, 'msg_not_founded');
 		if(!$examitem->isGranted()) return $this->makeObject(-1, 'msg_not_permitted');
+		if($this->isPublishedQuestionEditLocked($examitem)) return $this->makeObject(-1, 'msg_published_exam_question_locked');
 
 		// question_srl이 있으면 문제정보도 체크
 		$questionitem = $oExamModel->getQuestion($question_srl);
@@ -489,6 +540,8 @@ class examController extends exam
 			$cache_key = 'exam_item:'. getNumberingPath($document_srl) . $document_srl;
 			$oCacheHandler->delete($cache_key);
 		}
+		$output = $this->invalidateResultsAfterQuestionChange($examitem);
+		if(!$output->toBool()) return $output;
 
 		$this->setMessage('success_deleted');
 	}
@@ -521,6 +574,10 @@ class examController extends exam
 		if(!$examitem->isExists() || !$examitem->isGranted())
 		{
 			return $this->makeObject(-1, 'msg_not_permitted');
+		}
+		if($this->isPublishedQuestionEditLocked($examitem))
+		{
+			return $this->makeObject(-1, 'msg_published_exam_question_locked');
 		}
 
 		// 선택 문제에 표적 문제의 데이터를 이전
@@ -569,7 +626,9 @@ class examController extends exam
 		$args->status = $selected_item->get('status');
 		$args->point = $selected_item->get('point');
 		$output = $this->updateQuestion($args);
-		return $output;
+		if(!$output->toBool()) return $output;
+
+		return $this->invalidateResultsAfterQuestionChange($examitem);
 	}
 	/**
 	 * 객관식 복수답안을 채점한다.

@@ -2,7 +2,7 @@
     <p>{$XE_VALIDATOR_MESSAGE}</p>
 </div>
 
-<form ruleset="insertQuestion" action="./" method="post" enctype="multipart/form-data">
+<form ruleset="insertQuestion" action="./" method="post" enctype="multipart/form-data" data-invalidation-warning="{$lang->confirm_question_change_invalidates_results}"|cond="$question_edit_invalidates_results">
     <input type="hidden" name="module" value="exam" />
     <input type="hidden" name="act" value="procExamQuestionInsert" />
     <input type="hidden" name="xe_validator_id" value="modules/exam/q_write/1" />

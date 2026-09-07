@@ -28,6 +28,10 @@ class examView extends exam
 		{
 			$this->module_info->allow_exam_reprivate = 'N';
 		}
+		if(!isset($this->module_info->lock_published_exam_questions))
+		{
+			$this->module_info->lock_published_exam_questions = 'Y';
+		}
 		if($this->module_info->exam_pass_group_list) $this->module_info->exam_pass_group_list = explode(",", $this->module_info->exam_pass_group_list);
 
 		// 템플릿 경로 지정
@@ -454,6 +458,14 @@ class examView extends exam
 		if(!$examitem->isExists()) return $this->stop('msg_not_founded');
 		if(!$examitem->isGranted()) return $this->stop('msg_not_permitted');
 		Context::set('examitem', $examitem);
+		$question_edit_locked = $examitem->getStatus() === 'Y' && $this->module_info->lock_published_exam_questions === 'Y';
+		$question_edit_invalidates_results = !$question_edit_locked && (int)$examitem->getJoinCount() > 0;
+		Context::set('question_edit_locked', $question_edit_locked);
+		Context::set('question_edit_invalidates_results', $question_edit_invalidates_results);
+		if($mode === 'write' && $question_edit_locked)
+		{
+			return $this->stop('msg_published_exam_question_locked');
+		}
 
 		// 문제출제 모드일때 필요한 변수들 세팅
 		if($mode=="write")

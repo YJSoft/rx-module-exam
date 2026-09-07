@@ -19,7 +19,7 @@
 				endif;
 			endif;
 		}
-		<a href="{getUrl('mode','write','question_srl','')}" class="exam_btn btn_submit"><i class="xi-cube"></i> 출제</a>
+		<a cond="!$question_edit_locked" href="{getUrl('mode','write','question_srl','')}" class="exam_btn btn_submit"><i class="xi-cube"></i> 출제</a>
 		<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close" cond="!$ref"><i class="xi-check"></i> {$lang->cmd_complete}</a>
 		<a href="{getUrl('act','','mode','')}" class="exam_btn btn_close" cond="$ref"><i class="xi-check"></i> {$lang->cmd_complete}</a>
 	</div>
@@ -30,7 +30,9 @@
 		</p>
 	</div>
 </div>
-<div id="questions" class="questions">
+<div cond="$question_edit_locked" class="message error"><p>{$lang->msg_published_exam_question_locked}</p></div>
+<div cond="$question_edit_invalidates_results" class="message warning"><p>{$lang->about_question_change_invalidates_results}</p></div>
+<div id="questions" class="questions" data-invalidation-warning="{$lang->confirm_question_change_invalidates_results}"|cond="$question_edit_invalidates_results">
     <include target="_paper_q_write.html" cond="$mode === 'write'" />
     <include target="_paper_edit.html" cond="$mode !== 'write'" />
 </div>
