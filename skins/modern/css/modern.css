@@ -1215,12 +1215,20 @@ body.color_scheme_dark .exam-modern .tbl_exam_list td,
 body.color_scheme_dark .exam-modern .tbl_exam_list th,
 body.color_scheme_dark .exam-paper-modern .qanswer_list .txt,
 body.color_scheme_dark .exam-paper-modern .qanswer_list .txt a,
-body.color_scheme_dark .exam-paper-modern .question-point,
-body.color_scheme_dark .exam-paper-modern .answer-key,
 body.color_scheme_dark .exam-paper-modern .sub_list,
 body.color_scheme_dark .exam-paper-modern .tbl_q_write td.bg,
 body.color_scheme_dark .exam-paper-modern .answer_marking {
     color: var(--exam-ink);
+}
+
+body.color_scheme_dark .exam-paper-modern .question-point {
+    background: #334155;
+    color: #e2e8f0;
+}
+
+body.color_scheme_dark .exam-paper-modern .answer-key {
+    background: #14532d;
+    color: #dcfce7;
 }
 
 body.color_scheme_dark .exam-paper-modern .description,
