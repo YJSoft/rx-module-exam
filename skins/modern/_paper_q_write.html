@@ -18,7 +18,7 @@
     <col>
     </colgroup>
     <tbody>
-    <tr>
+    <tr class="question-only" style="display:none"|cond="$questionitem->isPassage()">
         <td class="bg">
             <div class="ta_l">{$lang->q_level}</div>
         </td>
@@ -40,12 +40,24 @@
             <div class="ta_l">
                 <block loop="$lang->qTypeList=>$key,$val">
                 <label for="q_type{$key}">
-                    <input type="radio" name="q_type" id="q_type{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_type')" /> {$val}
+                    <input type="radio" name="q_type" id="q_type{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_type')" disabled="disabled"|cond="$key==2 && !$examitem->getQuestionCount() && !$questionitem->isPassage()" /> {$val}
                 </label> &nbsp;&nbsp;
                 </block>
+				<p class="info" cond="!$examitem->getQuestionCount() && !$questionitem->isPassage()">{$lang->msg_passage_requires_questions}</p>
             </div>
         </td>
     </tr>
+    <tr class="passage-only" style="display:none"|cond="!$questionitem->isPassage()">
+		<td class="bg"><div class="ta_l">{$lang->passage_question_range}</div></td>
+		<td>
+			<div class="ta_l">
+				<input type="number" name="passage_start" value="{$passage_start}"|cond="$passage_start" min="1" max="{$examitem->getQuestionCount()}"|cond="$examitem->getQuestionCount()" class="iText" style="width:90px" disabled="disabled"|cond="!$questionitem->isPassage()" /> ～
+				<input type="number" name="passage_end" value="{$passage_end}"|cond="$passage_end" min="1" max="{$examitem->getQuestionCount()}"|cond="$examitem->getQuestionCount()" class="iText" style="width:90px" disabled="disabled"|cond="!$questionitem->isPassage()" />
+				<p class="info">{$lang->about_passage_question_range}</p>
+				<p class="info" cond="!$examitem->getQuestionCount()">{$lang->msg_passage_requires_questions}</p>
+			</div>
+		</td>
+	</tr>
     <tr>
         <td class="bg">
             <div class="ta_l">
@@ -60,19 +72,22 @@
     </tr>
     <tr>
         <td class="bg">
-            <div class="ta_l">{$lang->q_description}</div>
+            <div class="ta_l question-only" style="display:none"|cond="$questionitem->isPassage()">{$lang->q_description}</div>
+			<div class="ta_l passage-only" style="display:none"|cond="!$questionitem->isPassage()">{$lang->passage_content}</div>
         </td>
         <td>
             <div class="ta_l">
-                <label for="use_description">
+				<div class="question-only" style="display:none"|cond="$questionitem->isPassage()">
+				<label for="use_description">
                     <input type="checkbox" name="use_description" id="use_description" value="Y" checked="checked"|cond="$questionitem->get('use_description')=='Y'" /> {$lang->use_description}
                 </label><br />
                 <label for="q_description_title">{$lang->q_description_title} <input type="text" name="q_description_title" id="q_description_title" value="{$questionitem->description_title}" class="iText" /></label><br />
+				</div>
                 {$editor}
             </div>
         </td>
     </tr>
-    <tr>
+    <tr class="question-only" style="display:none"|cond="$questionitem->isPassage()">
         <td class="bg">
             <div class="ta_l">
                 <span class="req">*</span> {$lang->q_answer}
@@ -93,7 +108,7 @@
             </div>
         </td>
     </tr>
-    <tr id="answer_check_type" style="display:none"|cond="$questionitem->get('question_type') || count($answerList)<2">
+    <tr id="answer_check_type" class="question-only" style="display:none"|cond="$questionitem->get('question_type') || count($answerList)<2">
         <td class="bg">
             <div class="ta_l">{$lang->q_answerCheckType}</div>
         </td>
@@ -105,7 +120,7 @@
             </div>
         </td>
     </tr>
-    <tr>
+    <tr class="question-only" style="display:none"|cond="$questionitem->isPassage()">
         <td class="bg">
             <div class="ta_l"><label for="q_content">{$lang->q_content}</label></div>
         </td>
@@ -115,7 +130,7 @@
             </div>
         </td>
     </tr>
-    <tr>
+    <tr class="question-only" style="display:none"|cond="$questionitem->isPassage()">
         <td class="bg">
             <div class="ta_l"><label for="q_point">{$lang->q_point}</label></div>
         </td>

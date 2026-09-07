@@ -99,6 +99,10 @@ class questionItem extends BaseObject
 	{
 		return (int)$this->get('question_type');
 	}
+	function isPassage()
+	{
+		return $this->getQType() === 2;
+	}
 	function getTitle()
 	{
 		return htmlspecialchars(trim($this->get('title')), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);

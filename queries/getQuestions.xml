@@ -22,6 +22,7 @@
         <condition operation="equal" column="question.module_srl" var="module_srl" filter="number" pipe="and" />
 		<condition operation="equal" column="exam.document_srl" var="question.document_srl" notnull="notnull" pipe="and" />
         <condition operation="equal" column="question.status" var="status" pipe="and" />
+		<condition operation="notequal" column="question.question_type" var="exclude_question_type" pipe="and" />
 		<group pipe="and">
 			<condition operation="equal" column="exam.status" var="visible_exam_status" />
 			<condition operation="equal" column="exam.member_srl" var="visible_exam_member_srl" filter="number" pipe="or" />

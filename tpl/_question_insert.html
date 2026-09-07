@@ -7,8 +7,8 @@
     <input type="hidden" name="q_answer" id="q_answer" value="{$questionitem->get('answer')}" />
 	<input type="hidden" name="q_description_content" value="{htmlspecialchars($questionitem->description, ENT_COMPAT | ENT_HTML401, 'UTF-8', false)}" />
     <h3>{$lang->cmd_question_write}</h3>
-	<div class="f_box">
-        <div class="title">{$lang->q_level}</div>
+	    <div class="f_box question-only">
+	        <div class="title">{$lang->q_level}</div>
         <div class="list">
             <block loop="$lang->qLevelList=>$key,$val">
             <label for="q_level{$key}">
@@ -17,16 +17,26 @@
             </block>
         </div>
     </div>
-	<div class="f_box">
-        <div class="title">{$lang->q_type}</div>
+	    <div class="f_box">
+	        <div class="title">{$lang->q_type}</div>
         <div class="list">
             <block loop="$lang->qTypeList=>$key,$val">
             <label for="q_type{$key}">
-                <input type="radio" name="q_type" id="q_type{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_type')" /> {$val}
+                <input type="radio" name="q_type" id="q_type{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_type')" disabled="disabled"|cond="$key==2 && !$examitem->getQuestionCount() && !$questionitem->isPassage()" /> {$val}
             </label> &nbsp;&nbsp;
             </block>
+			<p cond="!$examitem->getQuestionCount() && !$questionitem->isPassage()">{$lang->msg_passage_requires_questions}</p>
         </div>
     </div>
+	<div class="f_box passage-only" style="display:none"|cond="!$questionitem->isPassage()">
+		<div class="title">{$lang->passage_question_range}</div>
+		<div class="list">
+			<input type="number" name="passage_start" value="{$passage_start}"|cond="$passage_start" min="1" max="{$examitem->getQuestionCount()}"|cond="$examitem->getQuestionCount()" disabled="disabled"|cond="!$questionitem->isPassage()" /> ～
+			<input type="number" name="passage_end" value="{$passage_end}"|cond="$passage_end" min="1" max="{$examitem->getQuestionCount()}"|cond="$examitem->getQuestionCount()" disabled="disabled"|cond="!$questionitem->isPassage()" />
+			<p>{$lang->about_passage_question_range}</p>
+			<p cond="!$examitem->getQuestionCount()">{$lang->msg_passage_requires_questions}</p>
+		</div>
+	</div>
 	<div class="f_box">
         <div class="title">
             <label for="q_title">{$lang->q_title}</label>
@@ -36,7 +46,7 @@
         </div>
     </div>
     <div class="f_box">
-        <div class="title">{$lang->q_description}</div>
+	        <div class="title">{$lang->q_description}</div>
         <div class="list">
             <label for="use_description">
                 <input type="checkbox" name="use_description" id="use_description" value="Y" checked="checked"|cond="$questionitem->get('use_description')=='Y'" /> {$lang->use_description}
@@ -47,7 +57,7 @@
             </div>
         </div>
     </div>
-    <div class="f_box">
+    <div class="f_box question-only">
         <div class="title">{$lang->q_answer}</div>
         <div class="list">
             <div id="answer_type0" style="display:none"|cond="$questionitem->get('question_type')">
@@ -61,9 +71,9 @@
             </div>
         </div>
     </div>
-    <div class="f_box">
-        <div class="title">
-            <label for="q_content">{$lang->q_content}</label>
+	    <div class="f_box question-only">
+	        <div class="title">
+	            <label for="q_content">{$lang->q_content}</label>
         </div>
         <div class="list">
             <input type="text" name="q_content" id="q_content" value="{$questionitem->get('content')}" />

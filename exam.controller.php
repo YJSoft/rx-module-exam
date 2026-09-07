@@ -67,25 +67,26 @@ class examController extends exam
 		$args->content = $args->exam_content;
 
 		// 합격시 그룹변경 사용시 입력값 체크..
-		if($this->module_info->exam_pass_group_option && $args->exam_pass_group_list)
+		if($this->module_info->exam_pass_group_option && !empty($args->exam_pass_group_list))
 		{
 			$group_list = array();
+			$selected_group_list = is_array($args->exam_pass_group_list)
+				? $args->exam_pass_group_list
+				: (array)$args->exam_pass_group_list;
 			if($this->module_info->exam_pass_group_option>1)
 			{
-				$default_group_list = explode(",", $this->module_info->exam_pass_group_list);
-				if(!count($default_group_list)) unset($args->exam_pass_group_list);
-				for($i=0;$i<count($args->exam_pass_group_list);$i++)
+				$default_group_list = array_filter(explode(",", (string)$this->module_info->exam_pass_group_list), 'strlen');
+				foreach($selected_group_list as $group_srl)
 				{
-					if(!in_array($args->exam_pass_group_list[$i],$default_group_list)) continue;
-					$group_list[] = $args->exam_pass_group_list[$i];
+					if(!in_array($group_srl, $default_group_list)) continue;
+					$group_list[] = $group_srl;
 				}
 			} else {
-				$default_group_list = $logged_info->group_list;
-				if(!count($default_group_list)) unset($args->exam_pass_group_list);
-				for($i=0;$i<count($args->exam_pass_group_list);$i++)
+				$default_group_list = (array)($logged_info->group_list ?? array());
+				foreach($selected_group_list as $group_srl)
 				{
-					if(!array_key_exists($args->exam_pass_group_list[$i],$default_group_list)) continue;
-					$group_list[] = $args->exam_pass_group_list[$i];
+					if(!array_key_exists($group_srl, $default_group_list)) continue;
+					$group_list[] = $group_srl;
 				}
 			}
 			$args->exam_pass_group_list = implode(",",$group_list);
@@ -249,6 +250,10 @@ class examController extends exam
 
 		// question_srl이 있으면 문제정보도 체크
 		$questionitem = $oExamModel->getQuestion($question_srl);
+		if($questionitem->isExists() && (int)$questionitem->get('document_srl') !== (int)$examitem->document_srl)
+		{
+			return $this->makeObject(-1, 'msg_invalid_request');
+		}
 		// srl값이 있고 해당 문제가 존재하면 수정처리, 아니면 신규처리
 		if($question_srl && $questionitem->isExists())
 		{
@@ -259,11 +264,50 @@ class examController extends exam
 
 		//  var setting
 		$params = Context::getRequestVars();
+		$question_type = (int)($params->q_type ?? 0);
+		if(!in_array($question_type, array(0, 1, 2), true)) $question_type = 0;
+		$passage_questions = array();
+		$passage_selected_srls = array();
 
 		// 정답이 하나도 입력안되있을경우..
-		if($params->q_type==1)
+		if($question_type === 2)
 		{
-			if($params->q_answer6 == "") return $this->makeObject(-1, 'msg_not_answer');
+			if($examitem->getQuestionCount() < 1)
+			{
+				return $this->makeObject(-1, 'msg_passage_requires_questions');
+			}
+			$passage_start = (int)($params->passage_start ?? 0);
+			$passage_end = (int)($params->passage_end ?? 0);
+			if(!($params->q_description_content ?? '') || $passage_start < 1 || $passage_end < $passage_start)
+			{
+				return $this->makeObject(-1, 'msg_invalid_passage_range');
+			}
+
+			foreach(($examitem->getQuestions() ?: array()) as $qitem)
+			{
+				if((int)$qitem->question_srl === (int)$question_srl) continue;
+				$passage_questions[] = $qitem;
+			}
+			if($passage_end > count($passage_questions))
+			{
+				return $this->makeObject(-1, 'msg_invalid_passage_range');
+			}
+
+			for($i = $passage_start; $i <= $passage_end; $i++)
+			{
+				$qitem = $passage_questions[$i - 1];
+				$linked_passage_srl = (int)$qitem->get('passage_srl');
+				if($linked_passage_srl && $linked_passage_srl !== (int)$question_srl)
+				{
+					return $this->makeObject(-1, 'msg_passage_range_overlap');
+				}
+				$passage_selected_srls[(int)$qitem->question_srl] = true;
+			}
+			$params->q_answer = '';
+		}
+		elseif($question_type === 1)
+		{
+			if(($params->q_answer6 ?? '') == "") return $this->makeObject(-1, 'msg_not_answer');
 			$params->q_answer = $params->q_answer6;
 		} else {
 			// 1~5번중에 하나도 입력 안했으면 에러..!
@@ -290,19 +334,20 @@ class examController extends exam
 			$params->q_answer = implode(",", $new_ans_list);
 		}
 		$args = new StdClass();
-		$args->question_level = (int)$params->q_level;
-		$args->question_type = (int)$params->q_type;
-		$args->title = htmlspecialchars($params->q_title, ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
-		$args->content = $params->q_content;
-		$args->use_description = ($params->use_description=='Y')? 'Y' : 'N';
-		$args->description_title = htmlspecialchars($params->q_description_title, ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
-		$args->description = removeHackTag($params->q_description_content);
+		$args->question_level = $question_type === 2 ? 0 : (int)$params->q_level;
+		$args->question_type = $question_type;
+		$args->passage_srl = $question_type === 2 ? 0 : (int)$questionitem->get('passage_srl');
+		$args->title = htmlspecialchars($params->q_title ?? '', ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		$args->content = $question_type === 2 ? '' : ($params->q_content ?? '');
+		$args->use_description = $question_type === 2 ? 'Y' : ((($params->use_description ?? '') == 'Y') ? 'Y' : 'N');
+		$args->description_title = $question_type === 2 ? '' : htmlspecialchars($params->q_description_title ?? '', ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+		$args->description = removeHackTag($params->q_description_content ?? '');
 		$args->answer = $params->q_answer;
-		$args->answer_check_type = (int)$params->answer_check_type;
-		$args->point = (int) $params->q_point;
+		$args->answer_check_type = $question_type === 2 ? 0 : (int)$params->answer_check_type;
+		$args->point = $question_type === 2 ? 0 : (int)$params->q_point;
 		for($i=1;$i<=5;$i++)
 		{
-			$args->{'answer'.$i} = $params->{'q_answer'.$i};
+			$args->{'answer'.$i} = $question_type === 2 ? '' : ($params->{'q_answer'.$i} ?? '');
 		}
 		
 		// update
@@ -324,7 +369,28 @@ class examController extends exam
 		}
 
 		if(!$output->toBool()) return $this->makeObject(-1,"Failed to insert/update Question");
-		if($questionitem->point != $args->point)
+		if($question_type === 2)
+		{
+			foreach($passage_questions as $qitem)
+			{
+				$current_passage_srl = (int)$qitem->get('passage_srl');
+				$new_passage_srl = isset($passage_selected_srls[(int)$qitem->question_srl])
+					? (int)$args->question_srl
+					: ($current_passage_srl === (int)$args->question_srl ? 0 : $current_passage_srl);
+				if($new_passage_srl === $current_passage_srl) continue;
+
+				$passage_output = $this->updateQuestionPassage($document_srl, $qitem->question_srl, $new_passage_srl);
+				if(!$passage_output->toBool()) return $passage_output;
+			}
+		}
+		elseif($questionitem->isExists() && $questionitem->isPassage())
+		{
+			$passage_output = $this->clearQuestionPassage($document_srl, $question_srl);
+			if(!$passage_output->toBool()) return $passage_output;
+		}
+		$count_output = $this->updateQuestionCount($document_srl);
+		if(!$count_output->toBool()) return $count_output;
+		if((int)$questionitem->get('point') !== (int)$args->point)
 		{
 			$total_point = 0;
 			$question_list = $oExamModel->getQuestionList($document_srl);
@@ -386,6 +452,11 @@ class examController extends exam
 		$args = new StdClass();
 		$args->question_srl = $question_srl;
 		$args->document_srl = $document_srl;
+		if($questionitem->isPassage())
+		{
+			$output = $this->clearQuestionPassage($document_srl, $question_srl);
+			if(!$output->toBool()) return $output;
+		}
 		$output = $this->deleteQuestion($args);
 		if(!$output->toBool()) return $this->makeObject(-1, "msg_invalid_request");
 		
@@ -422,12 +493,26 @@ class examController extends exam
 		// 표적화된 문제번호로 php 변수에 데이터 담아두기
 		$targeted_srl = Context::get('targeted_srl');
 		$targeted_item = $oExamModel->getQuestion($targeted_srl);
+		if(!$selected_item->isExists() || !$targeted_item->isExists() || $selected_item->isPassage() || $targeted_item->isPassage())
+		{
+			return $this->makeObject(-1, 'msg_invalid_request');
+		}
+		if((int)$selected_item->get('document_srl') !== (int)$targeted_item->get('document_srl'))
+		{
+			return $this->makeObject(-1, 'msg_invalid_request');
+		}
+		$examitem = $oExamModel->getExam($selected_item->get('document_srl'));
+		if(!$examitem->isExists() || !$examitem->isGranted())
+		{
+			return $this->makeObject(-1, 'msg_not_permitted');
+		}
 
 		// 선택 문제에 표적 문제의 데이터를 이전
 		$args = new StdClass;
 		$args->question_srl = $selected_srl;
 		$args->question_level = $targeted_item->get('question_level');
 		$args->question_type = $targeted_item->get('question_type');
+		$args->passage_srl = $targeted_item->get('passage_srl');
 		$args->title = $targeted_item->get('title');
 		$args->content = $targeted_item->get('content');
 		$args->answer = $targeted_item->get('answer');
@@ -444,12 +529,14 @@ class examController extends exam
 		$args->status = $targeted_item->get('status');
 		$args->point = $targeted_item->get('point');
 		$output = $this->updateQuestion($args);
+		if(!$output->toBool()) return $output;
 
 		// 표적 문제에 선택 문제의 데이터를 이전
 		$args = new StdClass;
 		$args->question_srl = $targeted_srl;
 		$args->question_level = $selected_item->get('question_level');
 		$args->question_type = $selected_item->get('question_type');
+		$args->passage_srl = $selected_item->get('passage_srl');
 		$args->title = $selected_item->get('title');
 		$args->content = $selected_item->get('content');
 		$args->answer = $selected_item->get('answer');
@@ -466,6 +553,7 @@ class examController extends exam
 		$args->status = $selected_item->get('status');
 		$args->point = $selected_item->get('point');
 		$output = $this->updateQuestion($args);
+		return $output;
 	}
 	/**
 	 * 객관식 복수답안을 채점한다.
@@ -904,12 +992,16 @@ class examController extends exam
 		// category 값이 있을때 체크
 		if($obj->category_srl)
 		{
-			$category_list = $oDocumentModel->getCategoryList($obj->module_srl);
-			if(count($category_list) > 0 && !$category_list[$obj->category_srl]->grant)
+			$category_list = (array)$oDocumentModel->getCategoryList($obj->module_srl);
+			$category = $category_list[$obj->category_srl] ?? null;
+			if(!$category)
+			{
+				$obj->category_srl = 0;
+			}
+			elseif(empty($category->grant))
 			{
 				return $this->makeObject(-1, 'msg_not_permitted');
 			}
-			if(count($category_list) > 0 && !$category_list[$obj->category_srl]) $obj->category_srl = 0;
 		}
 
 		// 관리자가 아닐경우 Hack Tag 제거
@@ -1096,6 +1188,23 @@ class examController extends exam
 		if(!$obj->question_srl) return $this->makeObject(-1, 'msg_not_founded');
 		$output = executeQuery('exam.updateQuestion', $obj);
 		return $output;
+	}
+
+	function updateQuestionPassage($document_srl, $question_srl, $passage_srl)
+	{
+		$args = new stdClass();
+		$args->document_srl = $document_srl;
+		$args->question_srl = $question_srl;
+		$args->passage_srl = $passage_srl;
+		return executeQuery('exam.updateQuestionPassage', $args);
+	}
+
+	function clearQuestionPassage($document_srl, $passage_srl)
+	{
+		$args = new stdClass();
+		$args->document_srl = $document_srl;
+		$args->passage_srl = $passage_srl;
+		return executeQuery('exam.clearQuestionPassage', $args);
 	}
 	
 	/**

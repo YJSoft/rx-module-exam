@@ -410,18 +410,13 @@ class examView extends exam
 				$join_session = $_SESSION['exam_joinlog'][$examitem->document_srl];
 				if($examitem->get('random_question_order') === 'Y')
 				{
-					$question_order = array();
-					foreach(($examitem->getQuestions() ?: array()) as $qitem)
-					{
-						$question_order[] = (int)$qitem->question_srl;
-					}
-					shuffle($question_order);
+					$question_order = $examitem->getRandomQuestionOrder();
 					$_SESSION['exam_joinlog'][$examitem->document_srl]['question_order'] = $question_order;
 					$join_session['question_order'] = $question_order;
 				}
 			}
 			$question_order = $join_session['question_order'] ?? array();
-			Context::set('question_list', $examitem->getQuestions($question_order) ?: array());
+			Context::set('question_blocks', $examitem->getQuestionBlocks($question_order));
 		} else {
 			Context::set('mode', '');
 		}
@@ -459,11 +454,18 @@ class examView extends exam
 			if($question_srl && !$questionitem->isExists()) return $this->stop('msg_not_founded');
 			if($questionitem->isExists() && $questionitem->get('document_srl')!=$examitem->document_srl) return $this->stop('msg_invalid_request');
 			Context::set('questionitem', $questionitem);
+			$passage_range = $questionitem->isPassage() ? $examitem->getPassageRange($question_srl) : array('start' => 0, 'end' => 0);
+			Context::set('passage_start', $passage_range['start']);
+			Context::set('passage_end', $passage_range['end']);
 
 			// 지문에서 사용할 에디터 로드
 			$oEditorModel = getModel('editor');
 			$editor = $oEditorModel->getModuleEditor('document', $this->module_srl, $question_srl, 'question_srl', 'q_description_content');
 			Context::set('editor', $editor);
+		}
+		else
+		{
+			Context::set('question_blocks', $examitem->getQuestionBlocks(array(), true));
 		}
 
 		// library load
@@ -563,6 +565,7 @@ class examView extends exam
 		Context::set('member_info', $member_info);
 		Context::set('examitem', $examitem);
 		Context::set('can_grade', $can_grade);
+		Context::set('result_question_blocks', $examitem->getQuestionBlocksFromQuestions($resultitem->answer ?? array()));
 		Context::set('manual_use_question_point', $manual_total_point > 0);
 		Context::set('manual_default_score', count($resultitem->answer ?? array()) ? ceil(100 / count($resultitem->answer)) : 0);
 

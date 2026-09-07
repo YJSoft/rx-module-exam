@@ -1,0 +1,12 @@
+<query id="clearQuestionPassage" action="update">
+	<tables>
+		<table name="exam_question" />
+	</tables>
+	<columns>
+		<column name="passage_srl" default="0" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="passage_srl" var="passage_srl" filter="number" notnull="notnull" />
+		<condition operation="equal" column="document_srl" var="document_srl" filter="number" notnull="notnull" pipe="and" />
+	</conditions>
+</query>

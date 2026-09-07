@@ -5,6 +5,7 @@
     <column name="list_order" type="number" size="11" notnull="notnull" index="idx_list_order" />
     <column name="question_level" type="number" size="1" default="0" />
     <column name="question_type" type="number" size="1" default="0" />
+	<column name="passage_srl" type="number" size="11" default="0" notnull="notnull" index="idx_passage_srl" />
     <column name="title" type="varchar" size="250" />
     <column name="content" type="text" notnull="notnull" />
     <column name="answer" type="text" notnull="notnull" />

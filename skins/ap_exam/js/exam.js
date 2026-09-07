@@ -115,7 +115,7 @@ jQuery(function($) {
 		// 난이도
 		$('#q_level' + source.question_level).prop('checked', true);
 		// 문제유형
-		$('#q_type' + source.question_type).prop('checked', true);
+		$('#q_type' + source.question_type).prop('checked', true).trigger('change');
 		// 문제
 		$('#q_title').val(source.title);
 		// 지문 사용?

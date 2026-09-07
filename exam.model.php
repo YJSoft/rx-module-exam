@@ -219,6 +219,7 @@ class examModel extends exam
 			$args->visible_exam_status = 'Y';
 			$args->visible_exam_member_srl = (int)($logged_info->member_srl ?? 0) ?: null;
 		}
+		$args->exclude_question_type = 2;
 		$output = executeQueryArray('exam.getQuestions', $args);
 
 		// return if an error occurs in the query results

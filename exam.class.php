@@ -61,6 +61,7 @@ class exam extends ModuleObject
 
 		// 복수정답 처리옵션 필드 추가(v0.8 추가)
 		if(!$oDB->isColumnExists("exam_question", "answer_check_type")) return true;
+		if(!$oDB->isColumnExists('exam_question', 'passage_srl')) return true;
 
 		// 합격시 지급할 포인트 필드 추가(v0.5 추가)
 		if(!$oDB->isColumnExists("exam", "pass_point")) return true;
@@ -155,6 +156,10 @@ class exam extends ModuleObject
 		if(!$oDB->isColumnExists("exam_question", "point"))
 		{
 			$oDB->addColumn("exam_question", "point", "number", 11, 0, true);
+		}
+		if(!$oDB->isColumnExists('exam_question', 'passage_srl'))
+		{
+			$oDB->addColumn('exam_question', 'passage_srl', 'number', 11, 0, true);
 		}
 
 		if(!$oDB->isColumnExists("exam", "total_point"))

@@ -19,13 +19,24 @@ jQuery(function($) {
             location.reload();
         });
     });
-    $(document).on('change', 'input[name=q_type]', function(e){
-        var i =0;
-        for(i=0;i<2;i++) {
-            if(i==$(this).val()) $('#answer_type'+$(this).val()).show();
-            else $('#answer_type'+i).hide();
-        }
-   });
+	function setQuestionType(type) {
+		type = parseInt(type, 10) || 0;
+		$('.question-only').toggle(type !== 2);
+		$('.passage-only').toggle(type === 2);
+		$('input[name=passage_start], input[name=passage_end]').prop('disabled', type !== 2);
+		if(type === 2) {
+			$('#use_description').prop('checked', true);
+			$('#description_box').show();
+		}
+		$('#answer_type0').toggle(type === 0);
+		$('#answer_type1').toggle(type === 1);
+		var answerCount = ($('#q_answer').val() || '').split(',').filter(Boolean).length;
+		$('#answer_check_type').toggle(type === 0 && answerCount > 1);
+	}
+	$(document).on('change', 'input[name=q_type]', function() {
+		setQuestionType($(this).val());
+	});
+	setQuestionType($('input[name=q_type]:checked').val());
 	$(document).on('click', 'a.answer_marking', function(e){
         e.preventDefault();
         var ans_list = ($('#q_answer').val())? $('#q_answer').val().split(',') : new Array();

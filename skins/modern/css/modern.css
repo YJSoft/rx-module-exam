@@ -1114,6 +1114,145 @@ body:has(.exam-paper-modern) {
 
 }
 
+.exam-paper-modern .common-passage {
+    margin: 1.25rem 0;
+    padding: 1.25rem;
+    border: 1px solid #cbd5e1;
+    border-radius: .75rem;
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+.exam-paper-modern .common-passage header {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+
+.exam-paper-modern .common-passage h4 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.exam-paper-modern .common-passage-content {
+    line-height: 1.75;
+}
+
+.exam-paper-modern .common-passage-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Rhymix color scheme integration. Bootstrap's reboot styles otherwise force a
+ * light body and light form controls even when the layout is in dark mode. */
+body.color_scheme_dark {
+    background-color: #0f172a;
+    color: #e5e7eb;
+}
+
+body.color_scheme_dark .exam-modern,
+body.color_scheme_dark .exam-paper-modern {
+    color-scheme: dark;
+    --exam-primary: #818cf8;
+    --exam-primary-dark: #a5b4fc;
+    --exam-primary-soft: #272c55;
+    --exam-ink: #e5e7eb;
+    --exam-muted: #94a3b8;
+    --exam-line: #334155;
+    --exam-surface: #1e293b;
+    --exam-canvas: #0f172a;
+    --bs-body-color: #e5e7eb;
+    --bs-body-bg: #0f172a;
+    --bs-border-color: #334155;
+    --bs-secondary-bg: #1e293b;
+    --bs-tertiary-bg: #172033;
+    --bs-emphasis-color: #f8fafc;
+    color: var(--exam-ink);
+}
+
+body.color_scheme_dark:has(.exam-paper-modern),
+body.color_scheme_dark .exam-paper-modern {
+    background-color: var(--exam-canvas);
+}
+
+body.color_scheme_dark .exam-modern select,
+body.color_scheme_dark .exam-modern input[type="text"],
+body.color_scheme_dark .exam-modern input[type="number"],
+body.color_scheme_dark .exam-modern input[type="file"],
+body.color_scheme_dark .exam-modern textarea,
+body.color_scheme_dark .exam-paper-modern select,
+body.color_scheme_dark .exam-paper-modern input[type="text"],
+body.color_scheme_dark .exam-paper-modern input[type="number"],
+body.color_scheme_dark .exam-paper-modern textarea,
+body.color_scheme_dark .exam-modern .btn,
+body.color_scheme_dark .exam-paper-modern .btn,
+body.color_scheme_dark .exam-paper-modern .paper,
+body.color_scheme_dark .exam-paper-modern .qitem,
+body.color_scheme_dark .exam-paper-modern .qanswer_list li,
+body.color_scheme_dark .exam-paper-modern .answer_marking,
+body.color_scheme_dark .exam-modern .tbl_exam_list,
+body.color_scheme_dark .exam-modern .tbl_exam_list td,
+body.color_scheme_dark .exam-paper-modern .tbl_q_write {
+    border-color: var(--exam-line);
+    background: var(--exam-surface);
+    color: var(--exam-ink);
+}
+
+body.color_scheme_dark .exam-modern .tbl_exam_list th,
+body.color_scheme_dark .exam-modern .tbl_exam_list tbody tr:hover td,
+body.color_scheme_dark .exam-paper-modern .sc_tp,
+body.color_scheme_dark .exam-paper-modern .qanswer,
+body.color_scheme_dark .exam-paper-modern .paper_message,
+body.color_scheme_dark .exam-paper-modern .tbl_q_write td.bg,
+body.color_scheme_dark .exam-paper-modern .common-passage {
+    border-color: var(--exam-line);
+    background: #172033;
+    color: var(--exam-ink);
+}
+
+body.color_scheme_dark .exam-modern .tbl_exam_list td,
+body.color_scheme_dark .exam-modern .tbl_exam_list th,
+body.color_scheme_dark .exam-paper-modern .qanswer_list .txt,
+body.color_scheme_dark .exam-paper-modern .qanswer_list .txt a,
+body.color_scheme_dark .exam-paper-modern .question-point,
+body.color_scheme_dark .exam-paper-modern .answer-key,
+body.color_scheme_dark .exam-paper-modern .sub_list,
+body.color_scheme_dark .exam-paper-modern .tbl_q_write td.bg,
+body.color_scheme_dark .exam-paper-modern .answer_marking {
+    color: var(--exam-ink);
+}
+
+body.color_scheme_dark .exam-paper-modern .description,
+body.color_scheme_dark .exam-paper-modern .question-explanation {
+    border-color: #334155;
+    background: #172033;
+    color: #cbd5e1;
+}
+
+body.color_scheme_dark .exam-paper-modern .description legend {
+    color: #a5b4fc;
+}
+
+body.color_scheme_dark .exam-modern .btn:hover,
+body.color_scheme_dark .exam-paper-modern .btn:hover,
+body.color_scheme_dark .exam-paper-modern .qanswer_list li.is-selected,
+body.color_scheme_dark .exam-paper-modern .qanswer_list li:has(.marking.show) {
+    border-color: #818cf8;
+    background: var(--exam-primary-soft);
+    color: #eef2ff;
+}
+
+body.color_scheme_dark .exam-modern button[type="submit"],
+body.color_scheme_dark .exam-modern .btn-primary,
+body.color_scheme_dark .exam-paper-modern .btn-primary,
+body.color_scheme_dark .exam-paper-modern input[type="submit"],
+body.color_scheme_dark .exam-paper-modern .exam_btn1,
+body.color_scheme_dark .exam-paper-modern .answer_marking.on {
+    background: #6366f1;
+    color: #fff;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .exam-modern *,
     .exam-paper-modern * {

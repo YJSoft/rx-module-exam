@@ -1,7 +1,17 @@
 <div cond="!$examitem->getQuestionCount()" class="paper_message">
     <h2>{$lang->no_question_list}</h2>
 </div>
-<div cond="$examitem->getQuestionCount()" loop="$examitem->getQuestions()=>$no,$qitem" class="qitem" id="{$qitem->question_srl}">
+<block loop="$question_blocks=>$question_block">
+<section cond="$question_block->passage" class="common-passage" id="{$question_block->passage->question_srl}">
+	<h4><i class="xi-documents"></i> {$lang->common_passage} · {$question_block->passage->getTitle()}</h4>
+	<p><span cond="$question_block->start">{sprintf($lang->passage_range_label, $question_block->start, $question_block->end)}</span><span cond="!$question_block->start">{$lang->no_passage_questions}</span></p>
+	<div class="qedit">
+		<a href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$question_block->passage->question_srl)}" class="exam_btn btn_close">{$lang->cmd_modify}</a>
+		<a href="#" data-value="{$examitem->document_srl}|{$question_block->passage->question_srl}" class="exam_btn btn_close question_delete">{$lang->cmd_delete}</a>
+	</div>
+	<div class="common-passage-content">{$question_block->passage->getDescription()}</div>
+</section>
+<div loop="$question_block->questions=>$no,$qitem" class="qitem" id="{$qitem->question_srl}">
     <div class="qtitle">
         <div class="txt">
             <span>{$no}</span>. {$qitem->getTitle()}  [{$qitem->getPoint()}점] <span cond="!$qitem->getQType()" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
@@ -35,3 +45,4 @@
         {$qitem->getContent()}
     </fieldset>
 </div>
+</block>

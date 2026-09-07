@@ -494,23 +494,17 @@ class examItem extends BaseObject
 	 */
 	function getQuestions($question_order = array())
 	{
-		if(!$this->getQuestionCount()) return;
+		if(!$this->getQuestionCount()) return array();
 		if(!$this->isGranted() && $this->isSecret()) return;
+		$question_order = is_array($question_order) ? $question_order : array();
 
-		// Get a list of comments
-		$oExamModel = getModel('exam');
-		$output = $oExamModel->getQuestionList($this->document_srl);
-		if(!$output->toBool() || !count($output->data)) return;
-
-		$accessible = array();
 		$question_items = array();
-
-		foreach($output->data as $key => $val)
+		foreach($this->getAllQuestionItems() as $oQuestionItem)
 		{
-			$oQuestionItem = new questionItem();
-			$oQuestionItem->setAttribute($val);
-			if($this->isGranted()) $accessible[$val->question_srl] = true;
-			$question_items[(int)$val->question_srl] = $oQuestionItem;
+			if(!$oQuestionItem->isPassage())
+			{
+				$question_items[(int)$oQuestionItem->question_srl] = $oQuestionItem;
+			}
 		}
 
 		if($question_order)
@@ -527,6 +521,30 @@ class examItem extends BaseObject
 			$question_items = $ordered_items;
 		}
 
+		// 공통 지문에 연결된 문제는 수동 순서 변경 후에도 하나의 연속된 묶음으로 유지한다.
+		$grouped_items = array();
+		$used_passages = array();
+		foreach($question_items as $question_srl => $oQuestionItem)
+		{
+			$passage_srl = (int)$oQuestionItem->get('passage_srl');
+			if(!$passage_srl)
+			{
+				$grouped_items[$question_srl] = $oQuestionItem;
+				continue;
+			}
+			if(isset($used_passages[$passage_srl])) continue;
+
+			foreach($question_items as $group_question_srl => $group_question_item)
+			{
+				if((int)$group_question_item->get('passage_srl') === $passage_srl)
+				{
+					$grouped_items[$group_question_srl] = $group_question_item;
+				}
+			}
+			$used_passages[$passage_srl] = true;
+		}
+		$question_items = $grouped_items;
+
 		$question_list = array();
 		$virtual_number = 1;
 		foreach($question_items as $oQuestionItem)
@@ -534,6 +552,161 @@ class examItem extends BaseObject
 			$question_list[$virtual_number++] = $oQuestionItem;
 		}
 		return $question_list;
+	}
+
+	/**
+	 * 공통 지문을 포함한 모든 출제 항목을 반환한다.
+	 *
+	 * @return array
+	 */
+	private function getAllQuestionItems()
+	{
+		$is_granted = $this->isGranted();
+		if(!$is_granted && $this->isSecret()) return array();
+
+		$oExamModel = getModel('exam');
+		$output = $oExamModel->getQuestionList($this->document_srl);
+		if(!$output || !$output->toBool() || !count($output->data ?? array()))
+		{
+			return array();
+		}
+
+		$items = array();
+		foreach($output->data as $val)
+		{
+			$oQuestionItem = new questionItem();
+			$oQuestionItem->setAttribute($val);
+			if($is_granted) $oQuestionItem->setAccessible();
+			$items[] = $oQuestionItem;
+		}
+		return $items;
+	}
+
+	/**
+	 * 공통 지문 목록을 question_srl 기준으로 반환한다.
+	 *
+	 * @return array
+	 */
+	function getPassages()
+	{
+		$passages = array();
+		foreach($this->getAllQuestionItems() as $oQuestionItem)
+		{
+			if($oQuestionItem->isPassage())
+			{
+				$passages[(int)$oQuestionItem->question_srl] = $oQuestionItem;
+			}
+		}
+		return $passages;
+	}
+
+	/**
+	 * 문제 목록을 공통 지문 단위의 블록으로 묶는다.
+	 *
+	 * @param array $questions 번호가 유지된 문제 목록
+	 * @param bool $include_orphan_passages 연결된 문제가 없는 공통 지문 포함 여부
+	 * @return array
+	 */
+	function getQuestionBlocksFromQuestions($questions, $include_orphan_passages = false)
+	{
+		$questions = is_array($questions) ? $questions : array();
+		$passages = $this->getPassages();
+		$used_passages = array();
+		$blocks = array();
+
+		foreach($questions as $no => $qitem)
+		{
+			if(!is_object($qitem) || !method_exists($qitem, 'get')) continue;
+
+			$passage_srl = (int)$qitem->get('passage_srl');
+			if($passage_srl && isset($passages[$passage_srl]))
+			{
+				if(isset($used_passages[$passage_srl])) continue;
+				$block_questions = array();
+				foreach($questions as $question_no => $question_item)
+				{
+					if(is_object($question_item) && method_exists($question_item, 'get') && (int)$question_item->get('passage_srl') === $passage_srl)
+					{
+						$block_questions[$question_no] = $question_item;
+					}
+				}
+				$blocks[] = (object)array(
+					'passage' => $passages[$passage_srl],
+					'questions' => $block_questions,
+					'start' => $block_questions ? array_key_first($block_questions) : 0,
+					'end' => $block_questions ? array_key_last($block_questions) : 0,
+				);
+				$used_passages[$passage_srl] = true;
+			}
+			else
+			{
+				$blocks[] = (object)array(
+					'passage' => null,
+					'questions' => array($no => $qitem),
+					'start' => $no,
+					'end' => $no,
+				);
+			}
+		}
+
+		if($include_orphan_passages)
+		{
+			foreach($passages as $passage_srl => $passage)
+			{
+				if(isset($used_passages[$passage_srl])) continue;
+				$blocks[] = (object)array(
+					'passage' => $passage,
+					'questions' => array(),
+					'start' => 0,
+					'end' => 0,
+				);
+			}
+		}
+
+		return $blocks;
+	}
+
+	function getQuestionBlocks($question_order = array(), $include_orphan_passages = false)
+	{
+		return $this->getQuestionBlocksFromQuestions($this->getQuestions($question_order), $include_orphan_passages);
+	}
+
+	/**
+	 * 공통 지문 단위로 섞은 문제 순서를 반환한다.
+	 *
+	 * @return array
+	 */
+	function getRandomQuestionOrder()
+	{
+		$blocks = $this->getQuestionBlocks();
+		shuffle($blocks);
+		$question_order = array();
+		foreach($blocks as $block)
+		{
+			foreach($block->questions as $qitem)
+			{
+				$question_order[] = (int)$qitem->question_srl;
+			}
+		}
+		return $question_order;
+	}
+
+	/**
+	 * 공통 지문에 연결된 현재 문제번호 범위를 반환한다.
+	 *
+	 * @param int $passage_srl
+	 * @return array
+	 */
+	function getPassageRange($passage_srl)
+	{
+		$range = array('start' => 0, 'end' => 0);
+		foreach($this->getQuestions() as $no => $qitem)
+		{
+			if((int)$qitem->get('passage_srl') !== (int)$passage_srl) continue;
+			if(!$range['start']) $range['start'] = $no;
+			$range['end'] = $no;
+		}
+		return $range;
 	}
 
 	/**

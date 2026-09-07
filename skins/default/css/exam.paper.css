@@ -65,6 +65,11 @@ input.underInput{width:75px;border:0 none;border-bottom:1px solid #333;backgroun
 .qitem .qanswer_list li a{color:#333}
 .qitem .qanswer_list li a:hover{color:blue}
 
+.common-passage{margin:16px 20px;padding:16px;border:1px solid #9aa4b2;background:#f6f8fa;color:#222}
+.common-passage h4{margin:0 0 12px;font-size:15px}
+.common-passage-content{font-size:14px;line-height:1.7}
+.common-passage-content img{max-width:100%;height:auto}
+
 /* question insert/edit table */
 .tbl_q_write{table-layout:fixed;width:100%;border-collapse:collapse;border-spacing:0;border-top:1px solid #bcbcbc;border-bottom:1px solid #bcbcbc}
 .tbl_q_write .ta_l{padding-left:12px;text-align:left}

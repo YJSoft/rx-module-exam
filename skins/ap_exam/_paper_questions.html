@@ -16,7 +16,12 @@
 <input type="hidden" name="xe_validator_id" value="modules/exam/exam_join/1" />
 <input type="hidden" name="document_srl" value="{$document_srl}" />
 <input type="hidden" name="valid_check" value="Y" />
-    <div loop="$question_list=>$no,$qitem" class="qitem">
+	<block loop="$question_blocks=>$question_block">
+	<section cond="$question_block->passage" class="common-passage">
+		<h4><i class="xi-documents"></i> {sprintf($lang->passage_range_label, $question_block->start, $question_block->end)} · {$question_block->passage->getTitle()}</h4>
+		<div class="common-passage-content">{$question_block->passage->getDescription()}</div>
+	</section>
+    <div loop="$question_block->questions=>$no,$qitem" class="qitem">
         <div class="qtitle">
             <div class="txt"><span>{$no}</span>. {$qitem->getTitle()} [{$qitem->getPoint()}점]</div>
         </div>
@@ -35,6 +40,7 @@
         </li>
         </ul>
     </div>
+	</block>
     <div class="paper_message_area" style="margin-top:20px">
         <button type="submit" class="exam_btn1 btn_submit"><i class="xi-form-checkout"></i> 답안지 제출</button>
     </div>

@@ -5,8 +5,11 @@
 	</customrules>
     <fields>
 		<field name="q_title" required="true" />
-        <field name="q_description_content">
+		<field name="q_description_content">
             <if test="$use_description=='Y'" attr="required" value="true" />
+			<if test="$q_type=='2'" attr="required" value="true" />
         </field>
+		<field name="passage_start" rule="number" />
+		<field name="passage_end" rule="number" />
     </fields>
 </ruleset>

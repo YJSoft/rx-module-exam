@@ -123,6 +123,33 @@
 	<item name="about_random_question_order">
 		<value xml:lang="ko"><![CDATA[응시를 시작할 때마다 문제 순서를 무작위로 배치합니다. 응시 중에는 새로고침해도 같은 순서가 유지됩니다.]]></value>
 	</item>
+	<item name="common_passage">
+		<value xml:lang="ko"><![CDATA[공통 지문]]></value>
+	</item>
+	<item name="passage_question_range">
+		<value xml:lang="ko"><![CDATA[문제 범위]]></value>
+	</item>
+	<item name="about_passage_question_range">
+		<value xml:lang="ko"><![CDATA[이 지문을 함께 사용할 시작 문제번호와 끝 문제번호를 입력하세요. 이미 다른 공통 지문에 연결된 범위는 지정할 수 없습니다.]]></value>
+	</item>
+	<item name="msg_passage_requires_questions">
+		<value xml:lang="ko"><![CDATA[공통 지문을 추가하려면 먼저 문제를 추가해야 합니다.]]></value>
+	</item>
+	<item name="passage_range_label">
+		<value xml:lang="ko"><![CDATA[%d번～%d번 공통 지문]]></value>
+	</item>
+	<item name="passage_content">
+		<value xml:lang="ko"><![CDATA[공통 지문 내용]]></value>
+	</item>
+	<item name="no_passage_questions">
+		<value xml:lang="ko"><![CDATA[연결된 문제가 없습니다.]]></value>
+	</item>
+	<item name="msg_invalid_passage_range">
+		<value xml:lang="ko"><![CDATA[공통 지문의 내용과 올바른 문제 범위를 입력해 주세요.]]></value>
+	</item>
+	<item name="msg_passage_range_overlap">
+		<value xml:lang="ko"><![CDATA[선택한 범위에 이미 다른 공통 지문과 연결된 문제가 있습니다.]]></value>
+	</item>
 	<item name="exam_publish_status">
 		<value xml:lang="ko"><![CDATA[시험 공개 상태]]></value>
 	</item>
@@ -352,6 +379,9 @@
     	<item name="1">
             <value xml:lang="ko"><![CDATA[주관식]]></value>
         </item>
+		<item name="2">
+			<value xml:lang="ko"><![CDATA[공통 지문]]></value>
+		</item>
 	</item>
     <item name="qLevelList" type="array">
     	<item name="0">

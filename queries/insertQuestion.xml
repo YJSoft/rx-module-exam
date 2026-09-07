@@ -9,6 +9,7 @@
         <column name="list_order" var="list_order" default="0" />
         <column name="question_level" var="question_level" default="0" filter="number" />
         <column name="question_type" var="question_type" default="0" filter="number" />
+		<column name="passage_srl" var="passage_srl" default="0" filter="number" />
         <column name="title" var="title" notnull="notnull" />
         <column name="content" var="content" default="" />
         <column name="answer" var="answer" notnull="notnull" />

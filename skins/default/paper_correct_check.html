@@ -24,7 +24,12 @@
 	<input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
 	<input type="hidden" name="log_srl" value="{$resultitem->log_srl}" />
 <div cond="$resultitem->result_type>1 || $can_grade" id="questions" class="questions">
-    <div loop="$resultitem->answer=>$no,$qitem" class="qitem">
+	<block loop="$result_question_blocks=>$question_block">
+	<div cond="$question_block->passage" class="common-passage">
+		<h4>{sprintf($lang->passage_range_label, $question_block->start, $question_block->end)} · {$question_block->passage->getTitle()}</h4>
+		<div class="common-passage-content">{$question_block->passage->getDescription()}</div>
+	</div>
+    <div loop="$question_block->questions=>$no,$qitem" class="qitem">
         <div class="qtitle">
             <div class="txt">
                 <div class="q_number">
@@ -61,6 +66,7 @@
 			<label for="question_score{$no}">{$lang->manual_grade_score}: <input type="number" name="question_score[{$no}]" id="question_score{$no}" value="{(int)$qitem->get('score')}" min="0" max="{$manual_max_score}" class="underInput" /> / {$manual_max_score}{$lang->unit_score}</label>
 		</p>
     </div>
+	</block>
 </div>
 <div cond="$can_grade" class="paper_message_area">
 	<p class="info">{$lang->about_manual_grade}</p>
