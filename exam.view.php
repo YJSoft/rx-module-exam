@@ -400,6 +400,13 @@ class examView extends exam
 		// 이 시험에 응시했던 기록 구해옴
 		$resultitem = $oExamModel->getExamResultByDocumentSrl($document_srl,$logged_info->member_srl);
 		Context::set('resultitem',$resultitem);
+		$join_session = $_SESSION['exam_joinlog'][$examitem->document_srl] ?? null;
+		if($join_session && (int)($join_session['member_srl'] ?? 0) !== (int)$logged_info->member_srl)
+		{
+			unset($_SESSION['exam_joinlog'][$examitem->document_srl]);
+			$join_session = null;
+		}
+		Context::set('has_active_attempt', (bool)$join_session);
 
 		// mode에 따라 체크
 		if($mode=="join")
@@ -414,12 +421,6 @@ class examView extends exam
 				$now = time();
 				if($examitem->get('start_date') && ztime($examitem->get('start_date')) > $now) return $this->stop('msg_not_exam_date');
 				if($examitem->get('end_date') && $now > ztime($examitem->get('end_date'))) return $this->stop('msg_not_exam_date');
-			}
-			$join_session = $_SESSION['exam_joinlog'][$examitem->document_srl] ?? null;
-			if($join_session && (int)($join_session['member_srl'] ?? 0) !== (int)$logged_info->member_srl)
-			{
-				unset($_SESSION['exam_joinlog'][$examitem->document_srl]);
-				$join_session = null;
 			}
 			// 응시료가 있을경우 차감함
 			if($examitem->get('join_point') && (empty($_SESSION['exam_joinlog'][$examitem->document_srl]) && !$examitem->isGranted()))

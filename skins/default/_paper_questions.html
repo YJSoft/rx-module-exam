@@ -8,7 +8,12 @@
 <div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/exam_join/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
     <p>{$XE_VALIDATOR_MESSAGE}</p>
 </div>
-<form ruleset="examJoin" id="examJoin" action="./" method="post" data-exam-srl="{$examitem->document_srl}" data-timed="{($examitem->isTime() && $examitem->get('exam_time'))?'Y':'N'}" data-draft-saved="{escape($lang->exam_draft_saved)}" data-draft-restored="{escape($lang->exam_draft_restored)}" data-offline="{escape($lang->exam_offline)}" data-online="{escape($lang->exam_online)}" data-mobile-warning="{escape($lang->msg_mobile_timed_exam)}">
+<form ruleset="examJoin" id="examJoin" action="./" method="post" data-exam-srl="{$examitem->document_srl}" data-timed="{($examitem->isTime() && $examitem->get('exam_time'))?'Y':'N'}" data-allow-resume="{$examitem->get('allow_retake')}" data-leave-warning="{escape($lang->msg_exam_leave_warning)}" data-draft-saved="{escape($lang->exam_draft_saved)}" data-draft-restored="{escape($lang->exam_draft_restored)}" data-offline="{escape($lang->exam_offline)}" data-online="{escape($lang->exam_online)}" data-mobile-warning="{escape($lang->msg_mobile_timed_exam)}">
+<div class="exam-leave-notice" role="alert">
+	<strong>{$lang->exam_leave_warning_title}</strong>
+	<span cond="$examitem->get('allow_retake')=='Y'">{$lang->exam_leave_notice_resume}</span>
+	<span cond="$examitem->get('allow_retake')!='Y'">{$lang->exam_leave_notice_no_resume}</span>
+</div>
 <div class="exam-connection-status" data-exam-connection role="status" aria-live="polite" hidden></div>
 <div class="exam-draft-status" data-exam-draft-status role="status" aria-live="polite" hidden></div>
 <input type="hidden" name="module" value="exam" />

@@ -53,11 +53,18 @@
             return;
         }
 
-        var timed = $form.attr('data-timed') === 'Y';
-        var $connection = $form.find('[data-exam-connection]');
-        var $draftStatus = $form.find('[data-exam-draft-status]');
-        var saveTimer = null;
-        var wasOffline = !window.navigator.onLine;
+		var timed = $form.attr('data-timed') === 'Y';
+		var allowResume = $form.attr('data-allow-resume') === 'Y';
+		var canSaveDraft = !timed || allowResume;
+		var $connection = $form.find('[data-exam-connection]');
+		var $draftStatus = $form.find('[data-exam-draft-status]');
+		var saveTimer = null;
+		var wasOffline = !window.navigator.onLine;
+		var submitting = false;
+		var abandonmentSent = false;
+		$form[0].addEventListener('formdata', function() {
+			submitting = true;
+		});
 
         function showConnection(online) {
             $connection
@@ -102,8 +109,8 @@
         }
 
         function saveDraft() {
-            if (timed) {
-                return;
+			if (!canSaveDraft) {
+				return;
             }
 
             var draft = {
@@ -118,8 +125,8 @@
         }
 
         function scheduleSave() {
-            if (timed) {
-                return;
+			if (!canSaveDraft) {
+				return;
             }
             window.clearTimeout(saveTimer);
             saveTimer = window.setTimeout(saveDraft, 250);
@@ -155,27 +162,59 @@
             }
         }
 
-        if (timed) {
-            storageRemove(key);
-            if (isMobileDevice()) {
-                window.alert($form.attr('data-mobile-warning'));
-            }
-        } else {
-            restoreDraft();
-            $form.on('input change', '[data-question-srl]', scheduleSave);
+		if (timed && !allowResume) {
+			storageRemove(key);
+		} else {
+			restoreDraft();
+			$form.on('input change', '[data-question-srl]', scheduleSave);
             $form.on('click', 'a.ans_check', function() {
                 window.setTimeout(scheduleSave, 0);
-            });
-            $(window).on('beforeunload', saveDraft);
-        }
+			});
+		}
+		if (timed && isMobileDevice()) {
+			window.alert($form.attr('data-mobile-warning'));
+		}
 
-        $form.on('submit', function(event) {
-            if (!window.navigator.onLine) {
-                event.preventDefault();
-                showConnection(false);
-            } else if (!timed) {
-                saveDraft();
-            }
+		function submitAbandonment() {
+			if (allowResume || abandonmentSent || !window.navigator.sendBeacon || !window.FormData) {
+				return;
+			}
+			var formData = new window.FormData($form[0]);
+			formData.set('abandon_attempt', 'Y');
+			formData.set('valid_check', 'N');
+			abandonmentSent = window.navigator.sendBeacon($form[0].action, formData);
+		}
+
+		$(window).on('beforeunload', function(event) {
+			if (submitting) {
+				return;
+			}
+			saveDraft();
+			var warning = $form.attr('data-leave-warning') || '';
+			event.preventDefault();
+			(event.originalEvent || event).returnValue = warning;
+			return warning;
+		});
+		$(window).on('pagehide', function() {
+			if (!submitting) {
+				saveDraft();
+				submitAbandonment();
+			}
+		});
+
+		$form.on('submit', function(event) {
+			if (!window.navigator.onLine) {
+				event.preventDefault();
+				showConnection(false);
+			} else {
+				saveDraft();
+				// 다른 제출 검증 핸들러가 preventDefault()를 호출하는지 모두 확인한 뒤 표시한다.
+				window.queueMicrotask(function() {
+					if (!event.isDefaultPrevented()) {
+						submitting = true;
+					}
+				});
+			}
         });
 
         $(window).on('offline', function() {

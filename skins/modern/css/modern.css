@@ -1173,6 +1173,21 @@ body:has(.exam-paper-modern) {
     display: none;
 }
 
+.exam-paper-modern .exam-leave-notice {
+    margin: 0 0 1rem;
+    padding: .85rem 1rem;
+    border: 1px solid #f59e0b;
+    border-radius: .65rem;
+    background: #fffbeb;
+    color: #78350f;
+    line-height: 1.6;
+}
+
+.exam-paper-modern .exam-leave-notice strong {
+    display: block;
+    margin-bottom: .2rem;
+}
+
 /* Rhymix color scheme integration. Bootstrap's reboot styles otherwise force a
  * light body and light form controls even when the layout is in dark mode. */
 body.color_scheme_dark {
@@ -1277,6 +1292,12 @@ body.color_scheme_dark .exam-paper-modern .exam-connection-status.is-online {
     border-color: #166534;
     background: #052e16;
     color: #bbf7d0;
+}
+
+body.color_scheme_dark .exam-paper-modern .exam-leave-notice {
+    border-color: #92400e;
+    background: #451a03;
+    color: #fde68a;
 }
 
 body.color_scheme_dark .exam-paper-modern .description,

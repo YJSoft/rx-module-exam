@@ -14,7 +14,7 @@
 		<li>시험을 시작하시려면 아래 [응시하기] 버튼을 누르세요.</li>
 	</ul>
 	<div class="paper_message_area">
-		<a cond="$can_join_exam_group" href="{getUrl('mode','join')}" class="exam_btn1 examJoin">응시하기</a>
+		<a cond="$can_join_exam_group" href="{getUrl('mode','join')}" class="exam_btn1 examJoin"><span cond="$has_active_attempt && $examitem->get('allow_retake')=='Y'">{$lang->cmd_resume_exam}</span><span cond="!$has_active_attempt || $examitem->get('allow_retake')!='Y'">응시하기</span></a>
 	</div>
 </div>
 <!--// 시험 응시 전 처리 -->
@@ -36,7 +36,7 @@
         <div class="paper_message_area">
             <a href="{getUrl('','mid',$mid,'act','disExamMyResult')}" class="exam_btn1" onclick="opener.location.href = this.href;window.close();return false;">시험 응시현황</a>
             <a href="{getUrl('act','dispExamCorrectCheck','log_srl',$resultitem->log_srl,'document_srl','')}" class="exam_btn1">채점 결과</a>
-			<a cond="$examitem->get('allow_retake')=='Y'" href="{getUrl('mode','join','log_srl','')}" class="exam_btn1 examJoin">{$lang->cmd_retake}</a>
+			<a cond="$examitem->get('allow_retake')=='Y'" href="{getUrl('mode','join','log_srl','')}" class="exam_btn1 examJoin"><span cond="$has_active_attempt">{$lang->cmd_resume_exam}</span><span cond="!$has_active_attempt">{$lang->cmd_retake}</span></a>
         </div>
     </div>
     <!--@end-->

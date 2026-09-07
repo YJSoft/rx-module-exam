@@ -139,7 +139,7 @@
 		<value xml:lang="ko"><![CDATA[인터넷 연결이 복구되었습니다.]]></value>
 	</item>
 	<item name="msg_mobile_timed_exam">
-		<value xml:lang="ko"><![CDATA[시간제한 시험을 모바일 기기에서 응시하고 있습니다. 화면을 닫거나 다른 앱으로 전환해도 제한시간은 계속 진행되며 답안은 임시저장되지 않습니다. 안정적인 네트워크 상태를 확인해 주세요.]]></value>
+		<value xml:lang="ko"><![CDATA[시간제한 시험을 모바일 기기에서 응시하고 있습니다. 화면을 닫거나 다른 앱으로 전환해도 제한시간은 계속 진행됩니다. 페이지 이탈 안내를 확인하고 안정적인 네트워크 상태에서 응시해 주세요.]]></value>
 	</item>
 	<item name="passage_question_range">
 		<value xml:lang="ko"><![CDATA[문제 범위]]></value>
@@ -220,10 +220,25 @@
 		<value xml:lang="ko"><![CDATA[이 시험에 응시할 수 있는 회원그룹에 속해 있지 않습니다.]]></value>
 	</item>
 	<item name="about_allow_retake">
-		<value xml:lang="ko"><![CDATA[응시자가 시험을 여러 번 응시할 수 있도록 허용합니다. 응시 이력은 매회 별도로 저장됩니다.]]></value>
+		<value xml:lang="ko"><![CDATA[답안 제출 후 다시 응시할 수 있으며, 응시 도중 페이지를 벗어나도 다시 접속하여 이어서 응시할 수 있습니다. 시간제한 시험은 페이지를 벗어난 동안에도 제한시간이 계속 진행됩니다.]]></value>
 	</item>
 	<item name="cmd_retake">
 		<value xml:lang="ko"><![CDATA[재응시하기]]></value>
+	</item>
+	<item name="cmd_resume_exam">
+		<value xml:lang="ko"><![CDATA[이어서 응시하기]]></value>
+	</item>
+	<item name="exam_leave_warning_title">
+		<value xml:lang="ko"><![CDATA[페이지 이탈 주의]]></value>
+	</item>
+	<item name="exam_leave_notice_resume">
+		<value xml:lang="ko"><![CDATA[페이지를 벗어나도 다시 접속하여 이어서 응시할 수 있습니다. 시간제한 시험은 이탈 중에도 제한시간이 계속 진행되며, 제한시간이 끝나면 더 이상 이어서 응시할 수 없습니다.]]></value>
+	</item>
+	<item name="exam_leave_notice_no_resume">
+		<value xml:lang="ko"><![CDATA[페이지를 벗어나면 현재 응시가 미응답 상태로 제출되어 불합격할 수 있습니다. 답안 제출 전에는 창을 닫거나 다른 페이지로 이동하지 마세요.]]></value>
+	</item>
+	<item name="msg_exam_leave_warning">
+		<value xml:lang="ko"><![CDATA[시험 응시 중입니다. 페이지를 벗어나시겠습니까?]]></value>
 	</item>
 	<item name="manual_grade">
 		<value xml:lang="ko"><![CDATA[수동 채점]]></value>

@@ -118,6 +118,8 @@ input.underInput{width:80px;border:0 none;border-bottom:1px solid #333;backgroun
 .tbl_q_write tbody td.q_editor .cke_top{border-bottom-color: #e5e5e5;}
 .tbl_q_write tbody td.q_editor .cke_bottom{border-top-color: #e5e5e5;}
 .tbl_q_write tbody td.q_editor .xefu-container{margin: 0;border:none;border-top:1px solid #e5e5e5;}
+.exam-leave-notice{margin:16px 12px 0;padding:12px 14px;border:1px solid #e3b341;border-radius:6px;background:#fff8d8;color:#5c4300;line-height:1.6}
+.exam-leave-notice strong{display:block;margin-bottom:3px}
 .tbl_q_write tbody tr:first-child td{border-top:none}
 .tbl_q_write tbody td span.req {display: inline-block;width: 12px;color: #f68074}
 .tbl_q_write tbody td .q_description{display: flex;align-items: center;}

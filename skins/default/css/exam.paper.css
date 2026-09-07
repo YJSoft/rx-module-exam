@@ -75,6 +75,8 @@ input.underInput{width:75px;border:0 none;border-bottom:1px solid #333;backgroun
 .exam-connection-status.is-offline{border-color:#f2a7a7;background:#fff1f1;color:#9f1d1d}
 .exam-connection-status.is-online{border-color:#9bd3ab;background:#eefbf2;color:#166534}
 .exam-connection-status[hidden],.exam-draft-status[hidden]{display:none}
+.exam-leave-notice{margin:0 0 16px;padding:12px 14px;border:1px solid #e3b341;border-radius:6px;background:#fff8d8;color:#5c4300;line-height:1.6}
+.exam-leave-notice strong{display:block;margin-bottom:3px}
 
 /* question insert/edit table */
 .tbl_q_write{table-layout:fixed;width:100%;border-collapse:collapse;border-spacing:0;border-top:1px solid #bcbcbc;border-bottom:1px solid #bcbcbc}

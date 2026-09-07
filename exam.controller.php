@@ -777,6 +777,7 @@ class examController extends exam
 			return $this->makeObject(-1, 'msg_invalid_request');
 		}
 		$args = Context::getRequestVars();
+		$abandon_attempt = (($args->abandon_attempt ?? '') === 'Y');
 		if(!$args->document_srl || !$args->module_srl) return $this->makeObject(-1, 'msg_not_founded');
 
 		// 응시한 시험정보 구해옴
@@ -791,6 +792,8 @@ class examController extends exam
 		{
 			return $this->makeObject(-1, 'msg_not_founded');
 		}
+		// 이어서 응시할 수 있는 시험은 이탈 알림 요청으로 제출하지 않는다.
+		$abandon_attempt = $abandon_attempt && $examitem->get('allow_retake') !== 'Y';
 
 		$logged_info = Context::get('logged_info');
 		if(!$examitem->isJoinGroupAllowed($logged_info))
@@ -824,7 +827,8 @@ class examController extends exam
 		$start_date = $_SESSION['exam_joinlog'][$examitem->document_srl]['start_date'];
 		$start_time = $_SESSION['exam_joinlog'][$examitem->document_srl]['start_time'] ?? ztime($start_date);
 		if(!$start_time) return $this->makeObject(-1, 'msg_not_session');
-		$force_empty_answers = false;
+		// 재응시가 허용되지 않은 시험에서 페이지를 이탈한 경우 미응답으로 제출한다.
+		$force_empty_answers = $abandon_attempt;
 		if($examitem->isTime() && $examitem->get('exam_time'))
 		{
 			// 끝나는시간 (시작시간+제한시간 초)
@@ -907,7 +911,7 @@ class examController extends exam
 
 		// 커트라인 이상일경우 P/..N
 		$score = ceil($score);
-		$status = ($score >= $examitem->get('cutline'))? "P" : "N";
+		$status = $abandon_attempt ? 'N' : (($score >= $examitem->get('cutline')) ? 'P' : 'N');
 
 		//score
 		$new_args = new StdClass();
