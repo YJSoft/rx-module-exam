@@ -6,6 +6,7 @@
     <fields>
 		<field name="exam_title" required="true" />
 		<field name="status" rule="chkbox" />
+		<field name="random_question_order" rule="chkbox" />
 		<field name="exam_cutline" rule="number" />
         <field name="start_date" length=":14" rule="number" />
 		<field name="end_date" length=":14" rule="number" />

@@ -486,7 +486,13 @@ class examItem extends BaseObject
 	{
 		return (int)$this->get('pass_point');
 	}
-	function getQuestions()
+	/**
+	 * 시험 문제 목록을 지정된 순서로 반환한다.
+	 *
+	 * @param array $question_order 문제 번호(question_srl) 배열
+	 * @return array|null
+	 */
+	function getQuestions($question_order = array())
 	{
 		if(!$this->getQuestionCount()) return;
 		if(!$this->isGranted() && $this->isSecret()) return;
@@ -497,16 +503,35 @@ class examItem extends BaseObject
 		if(!$output->toBool() || !count($output->data)) return;
 
 		$accessible = array();
-		$question_list = array();
-		$virtual_number = 1;
+		$question_items = array();
 
 		foreach($output->data as $key => $val)
 		{
 			$oQuestionItem = new questionItem();
 			$oQuestionItem->setAttribute($val);
 			if($this->isGranted()) $accessible[$val->question_srl] = true;
-			$question_list[$virtual_number] = $oQuestionItem;
-			$virtual_number++;
+			$question_items[(int)$val->question_srl] = $oQuestionItem;
+		}
+
+		if($question_order)
+		{
+			$ordered_items = array();
+			foreach($question_order as $question_srl)
+			{
+				$question_srl = (int)$question_srl;
+				if(isset($question_items[$question_srl]))
+				{
+					$ordered_items[$question_srl] = $question_items[$question_srl];
+				}
+			}
+			$question_items = $ordered_items;
+		}
+
+		$question_list = array();
+		$virtual_number = 1;
+		foreach($question_items as $oQuestionItem)
+		{
+			$question_list[$virtual_number++] = $oQuestionItem;
 		}
 		return $question_list;
 	}

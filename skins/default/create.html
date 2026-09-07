@@ -133,6 +133,15 @@
 				</div>
 			</td>
 		</tr>
+		<tr>
+			<td class="bg"><div class="ta_l">{$lang->random_question_order}</div></td>
+			<td>
+				<div class="ta_l">
+					<label for="random_question_order"><input type="checkbox" name="random_question_order" id="random_question_order" value="Y" checked="checked"|cond="$examitem->get('random_question_order')=='Y'" /> {$lang->cmd_setup}</label>
+					<p class="info">{$lang->about_random_question_order}</p>
+				</div>
+			</td>
+		</tr>
         <tr>
             <td class="bg">
                 <div class="ta_l">{$lang->exam_date}</div>

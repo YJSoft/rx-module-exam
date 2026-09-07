@@ -19,6 +19,7 @@
         <column name="is_time" var="is_time" default="N" />
         <column name="is_date" var="is_date" default="N" />
 		<column name="allow_retake" var="allow_retake" default="N" />
+		<column name="random_question_order" var="random_question_order" default="N" />
         <column name="join_point" var="join_point" default="0" filter="number" />
         <column name="exam_time" var="exam_time" default="0" filter="number" />
         <column name="question_count" default="0" filter="number" />

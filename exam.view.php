@@ -407,7 +407,21 @@ class examView extends exam
 					"start_date" => getInternalDateTime(),
 					"start_time" => time(),
 				);
+				$join_session = $_SESSION['exam_joinlog'][$examitem->document_srl];
+				if($examitem->get('random_question_order') === 'Y')
+				{
+					$question_order = array();
+					foreach(($examitem->getQuestions() ?: array()) as $qitem)
+					{
+						$question_order[] = (int)$qitem->question_srl;
+					}
+					shuffle($question_order);
+					$_SESSION['exam_joinlog'][$examitem->document_srl]['question_order'] = $question_order;
+					$join_session['question_order'] = $question_order;
+				}
 			}
+			$question_order = $join_session['question_order'] ?? array();
+			Context::set('question_list', $examitem->getQuestions($question_order) ?: array());
 		} else {
 			Context::set('mode', '');
 		}

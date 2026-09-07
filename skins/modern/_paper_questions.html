@@ -16,7 +16,7 @@
 <input type="hidden" name="xe_validator_id" value="modules/exam/exam_join/1" />
 <input type="hidden" name="document_srl" value="{$document_srl}" />
 <input type="hidden" name="valid_check" value="Y" />
-    <div loop="$examitem->getQuestions()=>$no,$qitem" class="qitem">
+    <div loop="$question_list=>$no,$qitem" class="qitem">
         <div class="qtitle">
             <div class="txt"><span class="question-number">{$no}</span> {$qitem->getTitle()} <span class="question-point">{$qitem->getPoint()}점</span></div>
         </div>

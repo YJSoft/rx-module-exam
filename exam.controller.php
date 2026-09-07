@@ -127,6 +127,7 @@ class examController extends exam
 		$args->is_date = ($args->is_date=="Y")? "Y" : "N";
 		$args->is_time = ($args->is_time=="Y")? "Y" : "N";
 		$args->allow_retake = ($args->allow_retake==="Y")? "Y" : "N";
+		$args->random_question_order = (($args->random_question_order ?? '') === 'Y') ? 'Y' : 'N';
 		$requested_status = isset($args->status) ? ($args->status === 'Y' ? 'Y' : 'N') : null;
 		$start_date_input = trim((string)($args->start_date ?? ''));
 		$end_date_input = trim((string)($args->end_date ?? ''));
@@ -657,7 +658,8 @@ class examController extends exam
 		$score = 0;
 
 		$default_score = ceil(1 / $examitem->get('question_count') * 100); //문제당 기본 배점(1/총문제수*100)
-		foreach($examitem->getQuestions() as $no => $qitem)
+		$question_order = $_SESSION['exam_joinlog'][$examitem->document_srl]['question_order'] ?? array();
+		foreach($examitem->getQuestions($question_order) as $no => $qitem)
 		{
 			$answer = $args->{'answer'.$no} ?? ''; // 응시자가 선택(입력)한 답
 			$q_answer = $qitem->get('answer'); // 문제 정답

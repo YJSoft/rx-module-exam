@@ -68,6 +68,7 @@ class exam extends ModuleObject
 		if(!$oDB->isColumnExists("exam_question", "point")) return true;
 		if(!$oDB->isColumnExists("exam", "total_point")) return true;
 		if(!$oDB->isColumnExists('exam', 'allow_retake')) return true;
+		if(!$oDB->isColumnExists('exam', 'random_question_order')) return true;
 
 		// 트리거 확인해서 추가안된 항목이 있으면 true 리턴
 		$oModuleModel = getModel('module');
@@ -163,6 +164,10 @@ class exam extends ModuleObject
 		if(!$oDB->isColumnExists('exam', 'allow_retake'))
 		{
 			$oDB->addColumn('exam', 'allow_retake', 'char', 1, 'N', true);
+		}
+		if(!$oDB->isColumnExists('exam', 'random_question_order'))
+		{
+			$oDB->addColumn('exam', 'random_question_order', 'char', 1, 'N', true);
 		}
 
         // 트리거 확인 및 추가
