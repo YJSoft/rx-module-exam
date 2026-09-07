@@ -186,3 +186,34 @@ a:hover,a:active,a:focus{text-decoration:none}
 .delete_exam .list_footer .btn_area .exam_btn.btn_close{height: 40px;line-height: 40px;border-top: none;border-bottom: none;border-left: none;}
 .delete_exam .list_footer .btn_area .exam_btn.btn_submit{margin: -1px -1px -1px 0;height: 42px;line-height: 42px;border-radius: 0;}
 .exam-status-private{display:inline-block;margin-left:4px;padding:2px 6px;border-radius:3px;background:#6c757d;color:#fff;font-size:11px;line-height:1.4;vertical-align:middle}
+
+@media screen and (max-width: 767px) {
+	.exam{width:100%;min-width:0;overflow:hidden}
+	.exam_header{margin-bottom:16px;padding:0 4px}
+	.exam_header h2{font-size:22px;line-height:1.35;overflow-wrap:anywhere}
+	.exam_top_category{margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+	.exam_top_category > ul{display:flex;width:max-content;min-width:100%}
+	.exam_top_category ul > li{flex:0 0 auto}
+	.exam_top_category.sub_type ul > li > ul{display:none!important}
+	.exam_list{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+	.exam_list.basic_type .tbl_exam_list{min-width:680px}
+	.tbl_exam_list th,.tbl_exam_list td{white-space:nowrap}
+	.list_footer .btn_area{display:flex;flex-direction:column;gap:10px}
+	.list_footer .btn_area .btn_area_l,.list_footer .btn_area .btn_area_r{float:none;display:flex;flex-wrap:wrap;gap:6px}
+	.list_footer .btn_area a{min-height:40px;box-sizing:border-box}
+	.exam_search{width:calc(100% - 24px);max-width:420px}
+	.exam_search form{padding:18px}
+	.exam_search .search_select,.exam_search .search_con{display:block;width:100%;margin:0 0 10px}
+	.exam_search .search_select select,.exam_search .search_con .search_input{width:100%;height:40px;box-sizing:border-box}
+	.create_header,.create_body{padding:16px 14px}
+	.create_header .btn_area{position:static;display:flex;gap:6px;margin-top:12px}
+	.create_body .create_category,.create_body .create_title.use_category{display:block;width:100%;margin:0 0 10px}
+	.create_exam,.delete_exam{border-right:0;border-left:0}
+	.create_exam .tbl_exam_list,.delete_exam .tbl_exam_list{display:block;min-width:0}
+	.create_exam .tbl_exam_list tbody,.create_exam .tbl_exam_list tr,.create_exam .tbl_exam_list td,
+	.delete_exam .tbl_exam_list tbody,.delete_exam .tbl_exam_list tr,.delete_exam .tbl_exam_list td{display:block;width:100%;box-sizing:border-box}
+	.create_exam .tbl_exam_list td.bg,.delete_exam .tbl_exam_list td.bg{padding-bottom:8px;border-bottom:0}
+	.create_exam .tbl_exam_list input,.create_exam .tbl_exam_list select,.create_exam .tbl_exam_list textarea,
+	.delete_exam .tbl_exam_list input,.delete_exam .tbl_exam_list select,.delete_exam .tbl_exam_list textarea{max-width:100%;box-sizing:border-box}
+	.exam_paginate{overflow-x:auto;white-space:nowrap}
+}

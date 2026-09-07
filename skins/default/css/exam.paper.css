@@ -70,6 +70,11 @@ input.underInput{width:75px;border:0 none;border-bottom:1px solid #333;backgroun
 .common-passage-content{font-size:14px;line-height:1.7}
 .common-passage-content img{max-width:100%;height:auto}
 
+.exam-connection-status,.exam-draft-status{margin:0 10px 10px;padding:10px 12px;border:1px solid #b8c4d1;background:#f5f8fb;color:#344054;font-size:13px;line-height:1.5;text-align:left}
+.exam-connection-status.is-offline{border-color:#f2a7a7;background:#fff1f1;color:#9f1d1d}
+.exam-connection-status.is-online{border-color:#9bd3ab;background:#eefbf2;color:#166534}
+.exam-connection-status[hidden],.exam-draft-status[hidden]{display:none}
+
 /* question insert/edit table */
 .tbl_q_write{table-layout:fixed;width:100%;border-collapse:collapse;border-spacing:0;border-top:1px solid #bcbcbc;border-bottom:1px solid #bcbcbc}
 .tbl_q_write .ta_l{padding-left:12px;text-align:left}
@@ -92,3 +97,39 @@ input.underInput{width:75px;border:0 none;border-bottom:1px solid #333;backgroun
 .tbl_q_write tbody td .answer_marking.on{color:red}
 .tbl_q_write tbody td p.info{padding-top:10px}
 .tbl_q_write tbody td img {vertical-align:middle}
+
+@media screen and (max-width: 767px) {
+	body{min-height:0;background:#f3f5f8;overflow-x:hidden}
+	#wrap{height:auto;min-width:0}
+	.add_ntc{min-height:0!important}
+	#container,.spot,.paper_list,.paper_inn,.paper,.paper_inner{position:static;float:none;width:100%;min-width:0;height:auto;margin:0;box-sizing:border-box}
+	#container{overflow:visible}
+	.paper_list,.paper_inn{white-space:normal}
+	.paper{padding:10px;background:none}
+	.paper_inner{padding:14px;border-radius:8px;background:#fff}
+	.paper h3{width:auto;height:auto;padding:16px 8px 20px;font-size:24px;line-height:1.3;overflow-wrap:anywhere}
+	.paper .sc_tp{display:flex;flex-direction:column;gap:10px;width:auto;height:auto;margin:0 0 18px;padding:0 4px}
+	.paper .sc_tp .fl,.paper .sc_tp .qcnt,.paper .sc_tp .fr{float:none;margin:0;padding:0;text-align:left}
+	.paper .sc_tp .fr{display:flex;flex-wrap:wrap;gap:8px}
+	.paper .sc_tp .fr label{padding:0}
+	.paper .cd{position:sticky;top:8px;left:auto;z-index:20;width:max-content;max-width:100%;height:auto;margin:0 0 12px auto}
+	.paper .questions{width:100%;height:auto;overflow:visible}
+	.qitem{padding:14px 4px;border-top:1px solid #e5e7eb}
+	.qitem .qtitle{font-size:16px;line-height:1.55}
+	.qitem .qtitle .txt{padding:0}
+	.qitem .description,.common-passage{margin:12px 0;padding:14px}
+	.qitem .qanswer,.qitem .qanswer_list{padding:14px 0}
+	.qitem .qanswer_list li{float:none;width:100%;min-height:44px;padding:10px 6px;font-size:15px;letter-spacing:0}
+	.qitem .qanswer_list li a{display:block;padding:2px 0;line-height:1.55}
+	.qitem .qanswer .underInput{width:100%;min-height:40px;box-sizing:border-box}
+	.paper_message{padding:28px 12px 20px}
+	.paper_message h2{padding-bottom:18px;font-size:22px;line-height:1.4}
+	.paper_message .sub_list li{font-size:14px;line-height:1.6}
+	.paper_message_area .exam_btn1{width:100%;max-width:320px;min-height:48px;height:auto;line-height:44px;box-sizing:border-box}
+	.tbl_q_write,.tbl_q_write tbody,.tbl_q_write tr,.tbl_q_write td{display:block;width:100%!important;box-sizing:border-box}
+	.tbl_q_write colgroup{display:none}
+	.tbl_q_write tbody td.bg{padding:10px 12px;border-bottom:0}
+	.tbl_q_write tbody td{padding:12px}
+	.tbl_q_write tbody td .iText,.tbl_q_write tbody td .iTextarea{width:100%;height:auto;min-height:40px;box-sizing:border-box}
+	.exam-connection-status,.exam-draft-status{margin:0 0 10px}
+}

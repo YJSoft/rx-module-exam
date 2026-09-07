@@ -148,3 +148,27 @@ a:hover,a:active,a:focus{text-decoration:none}
 .list_footer .btn_area .btn_area_l .btn_lst{vertical-align:top}
 .list_footer .btn_area .btn_area_r{float:right}
 .exam-status-private{display:inline-block;margin-left:4px;padding:2px 6px;border-radius:3px;background:#6c757d;color:#fff;font-size:11px;line-height:1.4;vertical-align:middle}
+
+@media screen and (max-width: 767px) {
+	.exam{width:100%;min-width:0;overflow:hidden}
+	.exam_header{display:flex;align-items:center;justify-content:space-between;gap:12px;height:auto;padding:14px 4px}
+	.exam_header h2{font-size:22px;line-height:1.35;overflow-wrap:anywhere}
+	.exam_header_r{position:static;flex:0 0 auto}
+	.exam_top_category{padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+	.exam_top_category ul{float:none;display:flex;width:max-content;min-width:100%}
+	.exam_top_category ul > li{float:none;flex:0 0 auto}
+	.exam_top_category.sub_type{margin-bottom:12px;padding-bottom:0}
+	.exam_top_category.sub_type ul > li > ul{display:none!important}
+	.exam_search_area{padding:10px 0}
+	.exam_search,.exam_search form{display:flex;width:100%}
+	.exam_search .search_select{float:none;flex:0 0 96px;box-sizing:border-box}
+	.exam_search .search_con{display:flex;float:none;flex:1;min-width:0}
+	.exam_search .search_con .search_input{float:none;width:auto;min-width:0;flex:1;box-sizing:border-box;height:30px}
+	.exam_search .search_con .btn_search{float:none;flex:0 0 38px;box-sizing:border-box}
+	.exam_list{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+	.tbl_exam_list{min-width:680px;table-layout:auto}
+	.tbl_exam_list th,.tbl_exam_list td{white-space:nowrap}
+	.list_footer .btn_area{display:flex;flex-direction:column;gap:10px}
+	.list_footer .btn_area .btn_area_l,.list_footer .btn_area .btn_area_r{float:none;display:flex;flex-wrap:wrap;gap:6px}
+	.exam_paginate{margin-top:24px;overflow-x:auto;white-space:nowrap}
+}

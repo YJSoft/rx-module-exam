@@ -1144,6 +1144,34 @@ body:has(.exam-paper-modern) {
     height: auto;
 }
 
+.exam-paper-modern .exam-connection-status,
+.exam-paper-modern .exam-draft-status {
+    margin: 0 0 1rem;
+    padding: .75rem .9rem;
+    border: 1px solid #bfdbfe;
+    border-radius: .7rem;
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-size: .88rem;
+}
+
+.exam-paper-modern .exam-connection-status.is-offline {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.exam-paper-modern .exam-connection-status.is-online {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.exam-paper-modern .exam-connection-status[hidden],
+.exam-paper-modern .exam-draft-status[hidden] {
+    display: none;
+}
+
 /* Rhymix color scheme integration. Bootstrap's reboot styles otherwise force a
  * light body and light form controls even when the layout is in dark mode. */
 body.color_scheme_dark {
@@ -1231,6 +1259,24 @@ body.color_scheme_dark .exam-paper-modern .answer-key {
     color: #dcfce7;
 }
 
+body.color_scheme_dark .exam-paper-modern .exam-draft-status {
+    border-color: #334155;
+    background: #172033;
+    color: #bfdbfe;
+}
+
+body.color_scheme_dark .exam-paper-modern .exam-connection-status.is-offline {
+    border-color: #7f1d1d;
+    background: #451a1a;
+    color: #fecaca;
+}
+
+body.color_scheme_dark .exam-paper-modern .exam-connection-status.is-online {
+    border-color: #166534;
+    background: #052e16;
+    color: #bbf7d0;
+}
+
 body.color_scheme_dark .exam-paper-modern .description,
 body.color_scheme_dark .exam-paper-modern .question-explanation {
     border-color: #334155;
@@ -1266,5 +1312,83 @@ body.color_scheme_dark .exam-paper-modern .answer_marking.on {
     .exam-paper-modern * {
         scroll-behavior: auto !important;
         transition: none !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .exam-modern .exam_header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .exam-modern .exam_header_r,
+    .exam-modern .exam_header_r a {
+        width: 100%;
+    }
+
+    .exam-modern .exam_top_category ul {
+        width: max-content;
+        min-width: 100%;
+        flex-wrap: nowrap;
+    }
+
+    .exam-modern .exam_top_category li {
+        flex: 0 0 auto;
+    }
+
+    .exam-modern .table-responsive,
+    .exam-modern .exam_list {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .exam-modern .board_write .tbl_exam_list,
+    .exam-modern .board_write .tbl_exam_list tbody,
+    .exam-modern .board_write .tbl_exam_list tr,
+    .exam-modern .board_write .tbl_exam_list td {
+        display: revert;
+        width: auto !important;
+    }
+
+    .exam-modern .tbl_exam_list {
+        min-width: 680px !important;
+    }
+
+    .exam-modern .list_footer .btn_area,
+    .exam-modern .list_footer .btn_area_l,
+    .exam-modern .list_footer .btn_area_r {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        float: none;
+    }
+
+    .exam-modern .list_footer .btn_area {
+        flex-direction: column;
+    }
+
+    .exam-paper-modern .paper {
+        border-radius: .85rem;
+    }
+
+    .exam-paper-modern h3 {
+        overflow-wrap: anywhere;
+    }
+
+    .exam-paper-modern .qanswer_list .txt a {
+        min-height: 48px;
+        padding-top: .85rem;
+        padding-bottom: .85rem;
+    }
+
+    .exam-paper-modern .paper_message_area .exam_btn1 {
+        width: 100%;
+        max-width: 340px;
+        min-height: 50px;
+    }
+
+    .exam-paper-modern .cd {
+        top: .5rem;
+        max-width: 100%;
     }
 }

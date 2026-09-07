@@ -126,6 +126,21 @@
 	<item name="common_passage">
 		<value xml:lang="ko"><![CDATA[공통 지문]]></value>
 	</item>
+	<item name="exam_draft_saved">
+		<value xml:lang="ko"><![CDATA[답안이 이 기기에 임시저장되었습니다.]]></value>
+	</item>
+	<item name="exam_draft_restored">
+		<value xml:lang="ko"><![CDATA[이전에 임시저장한 답안을 복원했습니다.]]></value>
+	</item>
+	<item name="exam_offline">
+		<value xml:lang="ko"><![CDATA[오프라인 상태입니다. 연결이 복구될 때까지 답안을 제출할 수 없습니다.]]></value>
+	</item>
+	<item name="exam_online">
+		<value xml:lang="ko"><![CDATA[인터넷 연결이 복구되었습니다.]]></value>
+	</item>
+	<item name="msg_mobile_timed_exam">
+		<value xml:lang="ko"><![CDATA[시간제한 시험을 모바일 기기에서 응시하고 있습니다. 화면을 닫거나 다른 앱으로 전환해도 제한시간은 계속 진행되며 답안은 임시저장되지 않습니다. 안정적인 네트워크 상태를 확인해 주세요.]]></value>
+	</item>
 	<item name="passage_question_range">
 		<value xml:lang="ko"><![CDATA[문제 범위]]></value>
 	</item>

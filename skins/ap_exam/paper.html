@@ -17,7 +17,7 @@
 	</div>
 	<div id="examTimer" class="cd" cond="$examitem->isTime() && $examitem->get('exam_time')" data-value="{$examitem->get('exam_time')}"></div>
 </div>
-<div id="questions" class="questions">
+<div id="questions" class="questions" data-exam-srl="{$examitem->document_srl}" data-member-srl="{(int)($logged_info->member_srl ?? 0)}" data-exam-completed="{($resultitem && $mode!='join')?'Y':'N'}">
     <include target="_paper_message.html" cond="!$mode" />
     <include target="_paper_questions.html" cond="$mode=='join'" />
 </div>

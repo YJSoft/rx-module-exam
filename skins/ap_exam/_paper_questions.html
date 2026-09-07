@@ -8,7 +8,9 @@
 <div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/exam_join/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
     <p>{$XE_VALIDATOR_MESSAGE}</p>
 </div>
-<form ruleset="examJoin" id="examJoin" action="./" method="post">
+<form ruleset="examJoin" id="examJoin" action="./" method="post" data-exam-srl="{$examitem->document_srl}" data-timed="{($examitem->isTime() && $examitem->get('exam_time'))?'Y':'N'}" data-draft-saved="{escape($lang->exam_draft_saved)}" data-draft-restored="{escape($lang->exam_draft_restored)}" data-offline="{escape($lang->exam_offline)}" data-online="{escape($lang->exam_online)}" data-mobile-warning="{escape($lang->msg_mobile_timed_exam)}">
+<div class="exam-connection-status" data-exam-connection role="status" aria-live="polite" hidden></div>
+<div class="exam-draft-status" data-exam-draft-status role="status" aria-live="polite" hidden></div>
 <input type="hidden" name="module" value="exam" />
 <input type="hidden" name="act" value="procExamJoin" />
 <input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
@@ -30,10 +32,10 @@
             {$qitem->getDescription()}
         </fieldset>
         <p cond="$qitem->getQType()" class="qanswer">
-            <label for="answer{$no}">정　답: <input type="text" name="answer{$no}" id="answer{$no}" value="" class="underInput" /></label>
+            <label for="answer{$no}">정　답: <input type="text" name="answer{$no}" id="answer{$no}" value="" class="underInput" data-question-srl="{$qitem->question_srl}" /></label>
         </p>
         <ul cond="!$qitem->getQType()" class="qanswer_list">
-        <input type="hidden" name="answer{$no}" id="answer{$no}" value="" />
+        <input type="hidden" name="answer{$no}" id="answer{$no}" value="" data-question-srl="{$qitem->question_srl}" />
         <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i) != ''">
             <div class="txt"><a href="#" class="ans_check" data-value="{$no},{$i},{($qitem->getAnswerCount()>1)?'Y':'N';}">{$icon} {$qitem->getAnswer($i)}</a></div>
             <div class="marking"></div>

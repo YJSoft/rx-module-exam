@@ -335,6 +335,7 @@ class examView extends exam
 	 **/
 	private function dispExamPage()
 	{
+		Context::addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
 		$this->setLayoutPath($this->module_path.'/skins/'.$this->module_info->skin);
 		$this->setLayoutFile("paper_layout");
 		if (!$this->grant->join)
@@ -424,6 +425,7 @@ class examView extends exam
 		// 필요한 library load
 		Context::addCSSFile($this->module_path.'tpl/css/jquery.flipcountdown.css');
 		Context::addJsFile($this->module_path.'tpl/js/jquery.flipcountdown.js');
+		Context::addJsFile($this->module_path.'tpl/js/exam_mobile.js');
 
 		// 시험페이지 출력
 		$this->setTemplateFile('paper');
