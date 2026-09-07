@@ -1,0 +1,32 @@
+<div cond="!$examitem->getQuestionCount()" class="paper_message">
+    <h2>{$lang->no_question_list}</h2>
+</div>
+
+<div cond="$examitem->getQuestionCount()" loop="$examitem->getQuestions()=>$no,$qitem" class="qitem">
+    <div class="qtitle">
+        <div class="txt">
+            <span class="question-number">{$no}</span> {$qitem->getTitle()} <span class="question-point">{$qitem->getPoint()}점</span> <span cond="!$qitem->getQType()" class="answer-key">{$lang->q_answer}: {$qitem->getAnswer()}</span>
+            <a href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$qitem->question_srl)}" class="btn"><i class="bi bi-pencil" aria-hidden="true"></i> {$lang->cmd_question_edit}</a>
+            <a href="#" data-value="{$examitem->document_srl}|{$qitem->question_srl}" class="btn question_delete"><i class="bi bi-trash3" aria-hidden="true"></i> {$lang->cmd_question_delete}</a>
+        </div>
+    </div>
+    <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">
+        <legend cond="$qitem->getDescriptionTitle()">{$qitem->getDescriptionTitle()}</legend>
+        {$qitem->getDescription()}
+    </fieldset>
+    <p cond="$qitem->getQType()" class="qanswer">
+        <label for="answer{$no}">정　답: <input type="text" name="answer{$no}" id="answer{$no}" value="{$qitem->get('answer')}" readonly="readonly" class="underInput" /></label>
+    </p>
+    <ul cond="!$qitem->getQType()" class="qanswer_list">
+    {@ $answerList = $qitem->getAnswerList(); }
+    <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i) != ''">
+        <div class="txt">
+            {$icon} {$qitem->getAnswer($i)}
+        </div>
+        <div cond="in_array($i,$answerList)" class="marking show"><span class="answer-mark" aria-hidden="true"><i class="bi bi-check-lg"></i></span></div>
+    </li>
+    </ul>
+    <p cond="$qitem->getContent()" class="question-explanation">
+        [해설: {$qitem->getContent()}]
+    </p>
+</div>

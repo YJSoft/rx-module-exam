@@ -1,0 +1,23 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+<load target="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" type="body" />
+<load target="css/modern.css" />
+<load target="js/modern.js" type="body" />
+
+<main class="exam-paper-modern" data-bs-theme="light">
+    <div class="paper-shell">
+        <section class="paper" aria-label="시험지">
+            <div class="paper_inner">
+                {$content}
+            </div>
+        </section>
+    </div>
+</main>
+
+<script type="text/javascript">
+jQuery(function($) {
+    $(document).on('contextmenu', function() {
+        return false;
+    });
+});
+</script>

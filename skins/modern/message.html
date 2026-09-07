@@ -1,0 +1,21 @@
+<include target="_header.html" />
+
+<section id="exam_message" class="modern-card exam-modern-message" role="alert">
+    <div class="message-symbol" aria-hidden="true"><i class="bi bi-info-lg"></i></div>
+    <h1>{$message}</h1>
+    <div class="login-body">
+        <p cond="$is_logged">
+            <a class="btn btn-primary" href="{getUrl('act','dispMemberLogout')}"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> {$lang->cmd_logout}</a>
+        </p>
+        <p cond="!$is_logged && $module != 'admin'">
+            <a class="btn btn-primary" href="{getUrl('act','dispMemberLoginForm')}"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> {$lang->cmd_login}</a>
+        </p>
+    </div>
+    <div class="login-footer">
+        <a href="{getUrl('','act','dispMemberFindAccount')}">{$lang->cmd_find_member_account}</a>
+        <span aria-hidden="true">·</span>
+        <a href="{getUrl('','act','dispMemberSignUpForm')}">{$lang->cmd_signup}</a>
+    </div>
+</section>
+
+<include target="_footer.html" />

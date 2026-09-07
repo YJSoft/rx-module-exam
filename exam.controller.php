@@ -275,9 +275,10 @@ class examController extends exam
 		{
 			$total_point = 0;
 			$question_list = $oExamModel->getQuestionList($document_srl);
-			if(count($question_list))
+			$questions = $question_list->data ?? array();
+			if(count($questions))
 			{
-				foreach($question_list->data as $key => $val)
+				foreach($questions as $key => $val)
 				{
 					$total_point += $val->point;
 				}

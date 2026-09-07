@@ -1,0 +1,50 @@
+<load target="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+<load target="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+<load target="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" type="body" />
+<load target="css/modern.css" />
+<load target="js/modern.js" type="body" />
+
+<block cond="!$module_info->duration_new = (int)$module_info->duration_new">{@ $module_info->duration_new = 12 }</block>
+{@ $cate_list = array(); $current_key = null; }
+<!--@foreach($category_list as $key=>$val)-->
+    <!--@if(!$val->depth)-->
+        {@
+            $cate_list[$key] = $val;
+            $cate_list[$key]->children = array();
+            $current_key = $key;
+        }
+    <!--@elseif($current_key)-->
+        {@ $cate_list[$current_key]->children[] = $val }
+    <!--@end-->
+<!--@end-->
+
+<div class="exam exam-modern" data-bs-theme="light">
+    {$module_info->header_text}
+    <header class="exam_header">
+        <block cond="$module_info->title || $module_info->browser_title">
+            <h2 cond="$module_info->title">{$module_info->title}</h2>
+            <h2 cond="!$module_info->title">{$module_info->browser_title}</h2>
+        </block>
+        <div class="exam_header_r" cond="$grant->manager">
+            <a href="{getUrl('act','dispExamAdminInsert')}" title="{$lang->cmd_setup}"><i class="bi bi-gear" aria-hidden="true"></i> {$lang->module} {$lang->cmd_setup}</a>
+        </div>
+    </header>
+
+    <nav class="exam_top_category" aria-label="시험 분류">
+        <ul>
+            <li class="on"|cond="!$category && $act!='disExamMyResult'">
+                <a href="{getUrl('category','','page','','act','','search_status','','document_srl','')}">{$lang->cmd_exam_list}</a>
+            </li>
+            <li cond="$module_info->hide_category!='Y'" loop="$cate_list=>$key,$val" class="on"|cond="$category==$val->category_srl">
+                <a href="{getUrl('category',$val->category_srl,'document_srl','', 'page', '','search_status','')}">{$val->title}</a>
+                <ul cond="count($val->children)">
+                    <li loop="$val->children=>$idx,$item" class="on"|cond="$category==$item->category_srl">
+                        <a href="{getUrl('category',$item->category_srl,'document_srl','', 'page', '','act','','search_status','')}">{$item->title}</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="ms-auto on"|cond="$act=='disExamMyResult'" class="ms-auto"|cond="$act!='disExamMyResult'">
+                <a href="{getUrl('','mid',$mid,'act','disExamMyResult')}">{$lang->cmd_my_exam_result}</a>
+            </li>
+        </ul>
+    </nav>

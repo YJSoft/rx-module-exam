@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin version="0.2">
+    <title xml:lang="ko">모던 시험 스킨</title>
+    <description xml:lang="ko">Bootstrap 5.3.8 기반의 반응형 시험 모듈 스킨입니다.</description>
+    <version>1.0.0</version>
+    <date>2026-09-07</date>
+    <author email_address="yjsoft@yjsoft.xyz" link="https://yjsoft.xyz/">
+        <name xml:lang="ko">YJSoft</name>
+    </author>
+    <license>LGPL v2</license>
+</skin>

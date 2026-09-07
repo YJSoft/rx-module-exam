@@ -44,7 +44,7 @@ class questionItem extends BaseObject
 	 */
 	function setAttribute($attribute)
 	{
-		if(!$attribute->question_srl)
+		if(empty($attribute->question_srl))
 		{
 			$this->question_srl = NULL;
 			return;
@@ -53,12 +53,9 @@ class questionItem extends BaseObject
 		$this->question_srl = $attribute->question_srl;
 		$this->adds($attribute);
 
-		if(count($attribute))
+		foreach($attribute as $key => $val)
 		{
-			foreach($attribute as $key => $val)
-			{
-				$this->{$key} = $val;
-			}
+			$this->{$key} = $val;
 		}
 	}
 	function isExists()

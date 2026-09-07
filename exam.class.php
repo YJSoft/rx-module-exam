@@ -209,17 +209,17 @@ class exam extends ModuleObject
 	}
 	function getConfigStatus($key='',$key_return=false) {
 		$list = $this->getStatusList();
-		if($key && array_key_exists(strtolower($key), $list)) return ($key_return)? $key : $list[$key];
+		if($key && isset($list[$key])) return ($key_return)? $key : $list[$key];
 		else return ($key_return)? 'Y' : $list['Y'];
 	}
 	function getConfigPageType($key=0,$key_return=false) {
 		$list = Context::getLang('pageTypeList');
-		if(array_key_exists($key, $list) || $list->offsetExists($key)) return ($key_return)? $key : $list[$key];
+		if(isset($list[$key])) return ($key_return)? $key : $list[$key];
 		else return ($key_return)? 0 : $list[0];
 	}
 	function getConfigResultType($key=0,$key_return=false) {
 		$list = Context::getLang('resultTypeList');
-		if(array_key_exists($key, $list) || $list->offsetExists($key)) return ($key_return)? $key : $list[$key];
+		if(isset($list[$key])) return ($key_return)? $key : $list[$key];
 		else return ($key_return)? 0 : $list[0];
 	}
 
@@ -227,7 +227,7 @@ class exam extends ModuleObject
 	 * Return BaseObject or Object depend on PHP version
 	 * @return BaseObject|Object
 	 */
-	public function makeObject($code, $msg)
+	public function makeObject($code = 0, $msg = 'success')
 	{
 		return class_exists('BaseObject') ? new BaseObject($code, $msg) : new Object($code, $msg);
 	}
