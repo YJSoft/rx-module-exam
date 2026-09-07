@@ -23,6 +23,7 @@
         <column name="status" var="status" />
         <column name="pass_point" var="pass_point" default="0" />
         <column name="pass_group_list" var="pass_group_list" default="" />
+		<column name="join_group_list" var="join_group_list" default="" />
         <column name="total_point" var="total_point" default="0" />
     </columns>
     <conditions>

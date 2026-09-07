@@ -151,8 +151,19 @@
                     <p class="info">{$lang->about_join_point}</p>
                 </div>
             </td>
-        </tr>
-        <tr cond="$module_info->exam_pass_point_option">
+		</tr>
+		<tr cond="$module_info->use_exam_join_group=='Y'">
+			<td class="bg"><div class="ta_l">{$lang->exam_join_group}</div></td>
+			<td>
+				<div class="ta_l">
+					<label for="join_group_{$key}" class="x_inline" loop="$join_group_options => $key,$val">
+						<input type="checkbox" name="exam_join_group_list[]" value="{$key}" id="join_group_{$key}" checked="checked"|cond="$examitem->isJoinGroup($key)" /> {$val}
+					</label>
+					<p class="info">{$lang->about_exam_join_group}</p>
+				</div>
+			</td>
+		</tr>
+		<tr cond="$module_info->exam_pass_point_option">
             <td class="bg">
                 <div class="ta_l">
                     <label for="exam_pass_point">{$lang->exam_pass_point}</label>

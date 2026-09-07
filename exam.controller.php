@@ -113,6 +113,20 @@ class examController extends exam
 		$args->join_point = (int)$args->exam_join_point;
 		$args->content = $args->exam_content;
 
+		// 시험별 응시 가능 그룹 설정을 검증한다.
+		$join_group_list = array();
+		if(($this->module_info->use_exam_join_group ?? 'N') === 'Y')
+		{
+			$member_group_list = getModel('member')->getGroups();
+			foreach((array)($args->exam_join_group_list ?? array()) as $group_srl)
+			{
+				$group_srl = (int)$group_srl;
+				if($group_srl && isset($member_group_list[$group_srl])) $join_group_list[$group_srl] = $group_srl;
+			}
+		}
+		$args->join_group_list = implode(',', $join_group_list);
+		unset($args->exam_join_group_list);
+
 		// 합격시 그룹변경 사용시 입력값 체크..
 		if($this->module_info->exam_pass_group_option && !empty($args->exam_pass_group_list))
 		{
@@ -778,8 +792,13 @@ class examController extends exam
 			return $this->makeObject(-1, 'msg_not_founded');
 		}
 
-		// 이미 응시했으면...
 		$logged_info = Context::get('logged_info');
+		if(!$examitem->isJoinGroupAllowed($logged_info))
+		{
+			return $this->makeObject(-1, 'msg_not_allowed_exam_group');
+		}
+
+		// 이미 응시했으면...
 		$resultitem = $oExamModel->getExamResultByDocumentSrl($examitem->document_srl,$logged_info->member_srl);
 		if($resultitem && $resultitem->log_srl && $examitem->get('allow_retake') !== 'Y') return $this->makeObject(-1, 'msg_exists_result');
 		$has_passed_before = $oExamModel->hasPassedExam($examitem->document_srl, $logged_info->member_srl);

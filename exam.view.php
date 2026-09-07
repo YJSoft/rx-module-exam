@@ -32,6 +32,10 @@ class examView extends exam
 		{
 			$this->module_info->lock_published_exam_questions = 'Y';
 		}
+		if(!isset($this->module_info->use_exam_join_group))
+		{
+			$this->module_info->use_exam_join_group = 'N';
+		}
 		if($this->module_info->exam_pass_group_list) $this->module_info->exam_pass_group_list = explode(",", $this->module_info->exam_pass_group_list);
 
 		// 템플릿 경로 지정
@@ -229,6 +233,16 @@ class examView extends exam
 		Context::set('can_make_exam_private',
 			!$examitem->isExists() || $examitem->getStatus() === 'N' || $this->module_info->allow_exam_reprivate === 'Y'
 		);
+		$join_group_options = array();
+		if($this->module_info->use_exam_join_group === 'Y')
+		{
+			$member_group_list = getModel('member')->getGroups();
+			foreach($member_group_list as $group_srl => $group_info)
+			{
+				$join_group_options[$group_srl] = $group_info->title;
+			}
+		}
+		Context::set('join_group_options', $join_group_options);
 
 		// 분류를 사용할경우 목록 구해와서 세팅
 		if($this->module_info->hide_category!='Y')
@@ -312,6 +326,7 @@ class examView extends exam
 
 		$security = new Security();
 		$security->encodeHTML('group_list..');
+		$security->encodeHTML('join_group_options..');
 
 		$this->setTemplateFile('create');
 	}
@@ -373,6 +388,12 @@ class examView extends exam
 		if($examitem->isSecret() && !$examitem->isGranted())
 		{
 			return $this->stop('msg_not_founded');
+		}
+		$can_join_exam_group = $examitem->isJoinGroupAllowed($logged_info);
+		Context::set('can_join_exam_group', $can_join_exam_group);
+		if($mode === 'join' && !$can_join_exam_group)
+		{
+			return $this->stop('msg_not_allowed_exam_group');
 		}
 		Context::set('examitem', $examitem);
 

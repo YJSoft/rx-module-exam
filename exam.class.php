@@ -66,6 +66,7 @@ class exam extends ModuleObject
 		// 합격시 지급할 포인트 필드 추가(v0.5 추가)
 		if(!$oDB->isColumnExists("exam", "pass_point")) return true;
 		if(!$oDB->isColumnExists("exam", "pass_group_list")) return true;
+		if(!$oDB->isColumnExists('exam', 'join_group_list')) return true;
 		if(!$oDB->isColumnExists("exam_question", "point")) return true;
 		if(!$oDB->isColumnExists("exam", "total_point")) return true;
 		if(!$oDB->isColumnExists('exam', 'allow_retake')) return true;
@@ -124,6 +125,10 @@ class exam extends ModuleObject
 					$_output = executeQuery('exam.updateResultConverter', $val);
 				}
 			}
+		}
+		if(!$oDB->isColumnExists('exam', 'join_group_list'))
+		{
+			$oDB->addColumn('exam', 'join_group_list', 'varchar', 250, '', true);
 		}
 		// 복수정답 처리옵션 필드 추가(v0.8 추가)
 		if(!$oDB->isColumnExists("exam_question", "answer_check_type"))

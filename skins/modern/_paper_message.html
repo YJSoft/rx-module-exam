@@ -7,12 +7,14 @@
 		<li cond="$examitem->get('cutline')">시험에서 <strong>{$examitem->get('cutline')}{$lang->unit_score} </strong>이상을 받으셔야 <strong>합격</strong>입니다.</li>
 		<li cond="$module_info->exam_pass_point_option && $examitem->get('pass_point')">합격하시면 <strong>{$examitem->get('pass_point')} {$point_config->point_name} </strong>가 지급됩니다.</li>
 		<li cond="$module_info->exam_pass_group_option && $examitem->get('passGroupList')">합격하시면 <strong>[{implode(", ",$examitem->get('passGroupList'))}]</strong>그룹 회원이 되실 수 있습니다.</li>
+		<li cond="$examitem->get('joinGroupList')">{$lang->exam_join_group}: <strong>{implode(', ', $examitem->get('joinGroupList'))}</strong></li>
+		<li cond="!$can_join_exam_group" class="text-danger">{$lang->msg_not_allowed_exam_group}</li>
 		<li cond="$examitem->isTime()">시험 제한시간은 <strong>{$examitem->getTimeText()}</strong>이며 시간이 지나면 자동으로 제출됩니다.</li>
 		<li cond="!$examitem->isTime()">이 시험의 제한시간은 없습니다.</li>
 		<li>시험을 시작하시려면 아래 [응시하기] 버튼을 누르세요.</li>
 	</ul>
 	<div class="paper_message_area">
-		<a href="{getUrl('mode','join')}" class="exam_btn1 examJoin"><i class="bi bi-play-fill" aria-hidden="true"></i> 응시하기</a>
+		<a cond="$can_join_exam_group" href="{getUrl('mode','join')}" class="exam_btn1 examJoin"><i class="bi bi-play-fill" aria-hidden="true"></i> 응시하기</a>
 	</div>
 </div>
 <!--// 시험 응시 전 처리 -->

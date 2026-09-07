@@ -204,6 +204,21 @@
 	<item name="confirm_question_change_invalidates_results">
 		<value xml:lang="ko"><![CDATA[문제를 변경하면 기존 응시 결과가 모두 무효화됩니다. 지급 또는 차감된 포인트는 유지됩니다. 계속하시겠습니까?]]></value>
 	</item>
+	<item name="use_exam_join_group">
+		<value xml:lang="ko"><![CDATA[시험별 응시 그룹 설정]]></value>
+	</item>
+	<item name="about_use_exam_join_group">
+		<value xml:lang="ko"><![CDATA[활성화하면 출제자가 시험지마다 응시 가능한 회원그룹을 지정할 수 있습니다.]]></value>
+	</item>
+	<item name="exam_join_group">
+		<value xml:lang="ko"><![CDATA[응시 가능 그룹]]></value>
+	</item>
+	<item name="about_exam_join_group">
+		<value xml:lang="ko"><![CDATA[선택한 그룹의 회원만 시험에 응시할 수 있습니다. 아무 그룹도 선택하지 않으면 제한하지 않습니다.]]></value>
+	</item>
+	<item name="msg_not_allowed_exam_group">
+		<value xml:lang="ko"><![CDATA[이 시험에 응시할 수 있는 회원그룹에 속해 있지 않습니다.]]></value>
+	</item>
 	<item name="about_allow_retake">
 		<value xml:lang="ko"><![CDATA[응시자가 시험을 여러 번 응시할 수 있도록 허용합니다. 응시 이력은 매회 별도로 저장됩니다.]]></value>
 	</item>

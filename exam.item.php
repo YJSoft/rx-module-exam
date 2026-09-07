@@ -112,8 +112,22 @@ class examItem extends BaseObject
 				if($member_group_list[$pass_group_list[$i]]) $group_list[$pass_group_list[$i]] = $member_group_list[$pass_group_list[$i]]->title;
 			}
 		}
+		$join_group_list = array();
+		if(!empty($attribute->join_group_list))
+		{
+			$oMemberModel = isset($oMemberModel) ? $oMemberModel : getModel('member');
+			$member_group_list = isset($member_group_list) ? $member_group_list : $oMemberModel->getGroups();
+			foreach(explode(',', $attribute->join_group_list) as $group_srl)
+			{
+				if(isset($member_group_list[$group_srl]))
+				{
+					$join_group_list[$group_srl] = escape($member_group_list[$group_srl]->title, false);
+				}
+			}
+		}
 		$this->adds($attribute);
 		$this->add('passGroupList', $group_list);
+		$this->add('joinGroupList', $join_group_list);
 		$GLOBALS['XE_EXAM_LIST'][$this->document_srl] = $this;
 	}
 	function isExists()
@@ -167,6 +181,21 @@ class examItem extends BaseObject
 		if(array_key_exists($key, $this->get('passGroupList'))) return true;
 
 		return false;
+	}
+	function isJoinGroup($key)
+	{
+		$join_group_list = $this->get('joinGroupList');
+		return is_array($join_group_list) && array_key_exists($key, $join_group_list);
+	}
+	function isJoinGroupAllowed($logged_info = null)
+	{
+		$join_group_list = $this->get('joinGroupList');
+		if(!is_array($join_group_list) || !count($join_group_list)) return true;
+		if($this->isGranted()) return true;
+		if(!$logged_info) $logged_info = Context::get('logged_info');
+		if(!$logged_info || empty($logged_info->group_list)) return false;
+
+		return count(array_intersect(array_keys($join_group_list), array_keys((array)$logged_info->group_list))) > 0;
 	}
 	function doCart()
 	{
