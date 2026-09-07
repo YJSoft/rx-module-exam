@@ -25,7 +25,7 @@
     <column name="last_update" type="date" index="idx_last_update" />
     <column name="ipaddress" type="varchar" size="128" notnull="notnull" index="idx_ipaddress" />
     <column name="list_order" type="number" size="11" notnull="notnull" index="idx_list_order" />
-    <column name="status" type="varchar" size="20" default="Y" />
+	<column name="status" type="varchar" size="20" default="N" />
     <column name="pass_point" type="number" size="11" default="0" />
     <column name="pass_group_list" type="varchar" size="80" default="" />
     <column name="total_point" type="number" size="11" default="0" />

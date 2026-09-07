@@ -32,6 +32,11 @@ class examAdminView extends exam
 			}
 		}
 		if($module_info && $module_info->module != 'exam') return $this->stop("msg_invalid_request");
+		if($this->module_info && !isset($this->module_info->allow_exam_reprivate))
+		{
+			$this->module_info->allow_exam_reprivate = 'N';
+			Context::set('module_info', $this->module_info);
+		}
 
 		// get the module category list
 		$module_category = $oModuleModel->getModuleCategories();

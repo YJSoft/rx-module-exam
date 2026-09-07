@@ -28,7 +28,7 @@
         <column name="regdate" var="regdate" default="curdate()" />
         <column name="ipaddress" var="ipaddress" default="ipaddress()" />
         <column name="list_order" var="list_order" default="0" />
-        <column name="status" var="status" default="Y" />
+		<column name="status" var="status" default="N" />
         <column name="pass_point" var="pass_point" default="0" />
         <column name="pass_group_list" var="pass_group_list" default="" />
         <column name="total_point" var="total_point" default="0" />

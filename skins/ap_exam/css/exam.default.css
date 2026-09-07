@@ -185,3 +185,4 @@ a:hover,a:active,a:focus{text-decoration:none}
 .delete_exam .list_footer .btn_area{margin-top: 0;}
 .delete_exam .list_footer .btn_area .exam_btn.btn_close{height: 40px;line-height: 40px;border-top: none;border-bottom: none;border-left: none;}
 .delete_exam .list_footer .btn_area .exam_btn.btn_submit{margin: -1px -1px -1px 0;height: 42px;line-height: 42px;border-radius: 0;}
+.exam-status-private{display:inline-block;margin-left:4px;padding:2px 6px;border-radius:3px;background:#6c757d;color:#fff;font-size:11px;line-height:1.4;vertical-align:middle}

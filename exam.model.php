@@ -135,6 +135,12 @@ class examModel extends exam
 		$args->member_srl = $searchOpt->member_srl;
 
 		$logged_info = Context::get('logged_info');
+		$grant = Context::get('grant');
+		if(!($grant->manager ?? false))
+		{
+			$args->visible_status = 'Y';
+			$args->visible_member_srl = (int)($logged_info->member_srl ?? 0) ?: null;
+		}
 
 		$args->sort_index = $searchOpt->sort_index;
 		
@@ -205,7 +211,14 @@ class examModel extends exam
 		// get a list of questions
 		$args = new stdClass;
 		$args->module_srl = $module_srl ? $module_srl : Context::get('module_srl');
-		if ( !Context::get('grant')->manager ) $args->status = $status ? $status : Context::get('status');
+		$grant = Context::get('grant');
+		if(!($grant->manager ?? false))
+		{
+			$logged_info = Context::get('logged_info');
+			$args->status = $status ? $status : Context::get('status');
+			$args->visible_exam_status = 'Y';
+			$args->visible_exam_member_srl = (int)($logged_info->member_srl ?? 0) ?: null;
+		}
 		$output = executeQueryArray('exam.getQuestions', $args);
 
 		// return if an error occurs in the query results
@@ -407,6 +420,7 @@ class examModel extends exam
 		$args->module_srl = $obj->module_srl;
 		$args->document_srl = $obj->document_srl ?? null;
 		$args->status = $obj->status;
+		$args->exam_status = $obj->exam_status ?? null;
 
 		if($obj->mid)
 		{

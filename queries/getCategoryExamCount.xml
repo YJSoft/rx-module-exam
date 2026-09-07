@@ -8,5 +8,6 @@
     <conditions>
         <condition operation="equal" column="category_srl" var="category_srl" filter="number" notnull="notnull" />
         <condition operation="equal" column="module_srl" var="module_srl" filter="number" notnull="notnull" pipe="and" />
+		<condition operation="equal" column="status" default="Y" pipe="and" />
     </conditions>
 </query>

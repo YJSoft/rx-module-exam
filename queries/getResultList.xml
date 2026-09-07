@@ -14,6 +14,7 @@
         <condition operation="equal" column="result.module_srl" var="module_srl" pipe="and" />
         <condition operation="equal" column="result.document_srl" var="document_srl" pipe="and" />
         <condition operation="equal" column="result.status" var="status" pipe="and" />
+		<condition operation="equal" column="exam.status" var="exam_status" pipe="and" />
         <group pipe="and">
             <condition operation="equal" column="result.correct_count" var="correct_count" filter="number" />
             <condition operation="more" column="result.correct_count" var="correct_count_more" pipe="and" />

@@ -55,6 +55,16 @@
                 </div>
             </td>
         </tr>
+		<tr>
+			<td class="bg"><div class="ta_l"><span class="req">*</span> {$lang->exam_publish_status}</div></td>
+			<td>
+				<div class="ta_l">
+					<div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="status" id="status_n" value="N" checked="checked"|cond="!$examitem->isExists() || $examitem->getStatus()=='N'" disabled="disabled"|cond="!$can_make_exam_private" /><label class="form-check-label" for="status_n">{$lang->exam_private}</label></div>
+					<div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="status" id="status_y" value="Y" checked="checked"|cond="$examitem->isExists() && $examitem->getStatus()=='Y'" /><label class="form-check-label" for="status_y">{$lang->exam_public}</label></div>
+					<p class="info">{$lang->about_exam_publish_status}<block cond="!$can_make_exam_private"><br />{$lang->about_exam_reprivate_locked}</block></p>
+				</div>
+			</td>
+		</tr>
         <tr cond="$module_info->hide_category!='Y'">
             <td class="bg">
                 <div class="ta_l">

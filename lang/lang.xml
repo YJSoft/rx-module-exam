@@ -117,6 +117,30 @@
 	<item name="allow_retake">
 		<value xml:lang="ko"><![CDATA[재응시 허용]]></value>
 	</item>
+	<item name="exam_publish_status">
+		<value xml:lang="ko"><![CDATA[시험 공개 상태]]></value>
+	</item>
+	<item name="exam_public">
+		<value xml:lang="ko"><![CDATA[공개]]></value>
+	</item>
+	<item name="exam_private">
+		<value xml:lang="ko"><![CDATA[비공개]]></value>
+	</item>
+	<item name="about_exam_publish_status">
+		<value xml:lang="ko"><![CDATA[비공개 시험은 작성자와 관리자만 목록 및 시험지를 확인할 수 있습니다. 문제 출제를 마친 후 공개하세요.]]></value>
+	</item>
+	<item name="about_exam_reprivate_locked">
+		<value xml:lang="ko"><![CDATA[이미 공개한 시험은 비공개로 돌릴 수 없습니다.]]></value>
+	</item>
+	<item name="allow_exam_reprivate">
+		<value xml:lang="ko"><![CDATA[공개 시험 재비공개 허용]]></value>
+	</item>
+	<item name="about_allow_exam_reprivate">
+		<value xml:lang="ko"><![CDATA[활성화하면 작성자가 이미 공개한 시험을 다시 비공개로 변경할 수 있습니다. 기본값은 허용하지 않음입니다.]]></value>
+	</item>
+	<item name="msg_exam_reprivate_not_allowed">
+		<value xml:lang="ko"><![CDATA[이미 공개한 시험은 비공개로 변경할 수 없습니다. 모듈 관리자 설정에서 재비공개를 허용해야 합니다.]]></value>
+	</item>
 	<item name="about_allow_retake">
 		<value xml:lang="ko"><![CDATA[응시자가 시험을 여러 번 응시할 수 있도록 허용합니다. 응시 이력은 매회 별도로 저장됩니다.]]></value>
 	</item>
@@ -284,8 +308,8 @@
     	<item name="Y">
             <value xml:lang="ko"><![CDATA[공개]]></value>
         </item>
-    	<item name="N">
-            <value xml:lang="ko"><![CDATA[종료]]></value>
+		<item name="N">
+			<value xml:lang="ko"><![CDATA[비공개]]></value>
         </item>
 	</item>
     <item name="pageTypeList" type="array">

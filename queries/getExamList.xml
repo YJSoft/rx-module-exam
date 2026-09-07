@@ -10,7 +10,10 @@
         <condition operation="notin" column="module_srl" var="exclude_module_srl" filter="number" pipe="and" />
         <condition operation="in" column="category_srl" var="category_srl" pipe="and" />
         <condition operation="equal" column="member_srl" var="member_srl" filter="number" pipe="and" />
-        <condition operation="in" column="status" var="statusList" pipe="and" />
+		<group pipe="and">
+			<condition operation="equal" column="status" var="visible_status" />
+			<condition operation="equal" column="member_srl" var="visible_member_srl" filter="number" pipe="or" />
+		</group>
         <group pipe="and">
             <condition operation="like" column="title" var="title" />
             <condition operation="like" column="user_name" var="user_name" pipe="or" />

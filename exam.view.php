@@ -24,6 +24,10 @@ class examView extends exam
 		{
 			$this->module_info->duration_new = 24;
 		}
+		if(!isset($this->module_info->allow_exam_reprivate))
+		{
+			$this->module_info->allow_exam_reprivate = 'N';
+		}
 		if($this->module_info->exam_pass_group_list) $this->module_info->exam_pass_group_list = explode(",", $this->module_info->exam_pass_group_list);
 
 		// 템플릿 경로 지정
@@ -212,6 +216,9 @@ class examView extends exam
 		{
 			$examitem->setGrant();
 		}
+		Context::set('can_make_exam_private',
+			!$examitem->isExists() || $examitem->getStatus() === 'N' || $this->module_info->allow_exam_reprivate === 'Y'
+		);
 
 		// 분류를 사용할경우 목록 구해와서 세팅
 		if($this->module_info->hide_category!='Y')
@@ -352,6 +359,10 @@ class examView extends exam
 
 		// check the manage grant
 		if($this->grant->manager) $examitem->setGrant();
+		if($examitem->isSecret() && !$examitem->isGranted())
+		{
+			return $this->stop('msg_not_founded');
+		}
 		Context::set('examitem', $examitem);
 
 		// 이 시험에 응시했던 기록 구해옴
@@ -466,6 +477,7 @@ class examView extends exam
 		$args->list_count = $this->list_count;
 		$args->page_count = $this->page_count;
 		$args->status = Context::get('search_status');
+		$args->exam_status = 'Y';
 
 		// 내가 본 시험 결과 구해옴
 		$oExamModel = getModel('exam');
@@ -511,6 +523,7 @@ class examView extends exam
 		$examitem = $oExamModel->getExam($resultitem->document_srl);
 		if(!$examitem->isExists() || $examitem->get('module_srl') != $this->module_srl) return $this->stop('msg_invalid_request');
 		$can_grade = $this->grant->manager || $examitem->isGranted();
+		if($examitem->isSecret() && !$can_grade) return $this->stop('msg_not_founded');
 
 		// 응시자, 출제자, 관리자가 아니면 에러
 		if(!$can_grade && (int)$resultitem->member_srl !== (int)($logged_info->member_srl ?? 0)) return $this->stop('msg_not_permitted');

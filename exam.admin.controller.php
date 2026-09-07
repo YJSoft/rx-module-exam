@@ -33,6 +33,7 @@ class examAdminController extends exam
 		if(!in_array($args->order_target,$this->order_target)) $args->order_target = 'document_srl';
 		if(!in_array($args->order_type, array('asc', 'desc'))) $args->order_type = 'asc';
 		if(!$args->editor_skin) $args->editor_skin = 'default';
+		$args->allow_exam_reprivate = ($args->allow_exam_reprivate ?? '') === 'Y' ? 'Y' : 'N';
 
 		// if there is an existed module
 		if($args->module_srl) {

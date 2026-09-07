@@ -118,6 +118,13 @@
 	<section class="section">
 		<h1>{$lang->subtitle_advanced}</h1>
 		<div class="x_control-group">
+			<label class="x_control-label" for="allow_exam_reprivate">{$lang->allow_exam_reprivate}</label>
+			<div class="x_controls">
+				<label class="x_inline" for="allow_exam_reprivate"><input type="checkbox" name="allow_exam_reprivate" id="allow_exam_reprivate" value="Y" checked="checked"|cond="$module_info->allow_exam_reprivate=='Y'" /> {$lang->use}</label>
+				<p class="x_help-block">{$lang->about_allow_exam_reprivate}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
 			<label class="x_control-label">{$lang->cmd_list_setting}</label>
 			<div class="x_controls">
 				{@$list = array_keys($list_config)}

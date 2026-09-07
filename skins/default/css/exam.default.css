@@ -147,3 +147,4 @@ a:hover,a:active,a:focus{text-decoration:none}
 .list_footer .btn_area .btn_area_l{float:left}
 .list_footer .btn_area .btn_area_l .btn_lst{vertical-align:top}
 .list_footer .btn_area .btn_area_r{float:right}
+.exam-status-private{display:inline-block;margin-left:4px;padding:2px 6px;border-radius:3px;background:#6c757d;color:#fff;font-size:11px;line-height:1.4;vertical-align:middle}

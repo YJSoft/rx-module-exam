@@ -38,7 +38,7 @@
 		<block loop="$list_config=>$key,$val">
 		<td cond="$val->type=='exam_srl' && $val->idx==-1"><div class="ta_c">{$no}</div></td>
 		<td cond="($module_info->hide_category!='Y') && ($val->type=='category' && $val->idx==-1)"><div class="ta_c bd_tit"><a href="{getUrl('category',$examitem->get('category_srl'))}">{$category_list[$examitem->get('category_srl')]->title}</a></div></td>
-		<td cond="$val->type=='exam_title' && $val->idx==-1"><div class="ta_c bd_tit"><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl)}" onclick="examopen(this.href,'exam');return false">{$examitem->getTitle()}</a> {$examitem->printExtraImages(60*60*$module_info->duration_new)}</div></td>
+		<td cond="$val->type=='exam_title' && $val->idx==-1"><div class="ta_c bd_tit"><a href="{getUrl('','mid',$mid,'document_srl',$examitem->document_srl)}" onclick="examopen(this.href,'exam');return false">{$examitem->getTitle()}</a> <span cond="$examitem->isSecret()" class="exam-status-private"><i class="xi-lock"></i> {$lang->exam_private}</span> {$examitem->printExtraImages(60*60*$module_info->duration_new)}</div></td>
 		<td cond="$val->type=='nick_name' && $val->idx==-1"><div class="ta_c"><span class="member_{$examitem->get('member_srl')}">{$examitem->getNickName()}</span></div></td>
 		<td cond="$val->type=='user_name' && $val->idx==-1"><div class="ta_c"><span class="member_{$examitem->get('member_srl')}">{$examitem->getUserName()}</span></div></td>
 		<td cond="$val->type=='regdate' && $val->idx==-1"><div class="ta_c">{zdate($examitem->get('regdate'),'Y') === date('Y') ? getTimeGap($examitem->get('regdate'), 'm.d') : getTimeGap($examitem->get('regdate'))}</div></td>

@@ -524,9 +524,6 @@ class examItem extends BaseObject
 
 		$check_files = false;
 
-		// Check if secret post is
-		if($this->isSecret()) $buffs[] = "secret";
-
 		// Set the latest time
 		$time_check = date("YmdHis", $_SERVER['REQUEST_TIME']-$time_interval);
 

@@ -127,6 +127,7 @@ class examController extends exam
 		$args->is_date = ($args->is_date=="Y")? "Y" : "N";
 		$args->is_time = ($args->is_time=="Y")? "Y" : "N";
 		$args->allow_retake = ($args->allow_retake==="Y")? "Y" : "N";
+		$requested_status = isset($args->status) ? ($args->status === 'Y' ? 'Y' : 'N') : null;
 		$start_date_input = trim((string)($args->start_date ?? ''));
 		$end_date_input = trim((string)($args->end_date ?? ''));
 		$args->start_date = $args->is_date === 'Y' ? $this->convertUserDateToInternal($start_date_input) : '';
@@ -147,6 +148,7 @@ class examController extends exam
 		{
 			return $this->makeObject(-1, 'msg_not_permitted');
 		}
+		$args->status = $is_update ? ($requested_status ?? $examitem->getStatus()) : ($requested_status ?? 'N');
 		// 시험지 설정만 수정할 때 기존 수동 배점 합계가 초기화되지 않도록 보존한다.
 		$args->total_point = $is_update ? (int)$examitem->get('total_point') : 0;
 		unset($args->exam_total_point);
@@ -607,6 +609,10 @@ class examController extends exam
 		{
 			return $this->makeObject(-1, 'msg_invalid_request');
 		}
+		if($examitem->isSecret() && !$examitem->isGranted())
+		{
+			return $this->makeObject(-1, 'msg_not_founded');
+		}
 
 		// 이미 응시했으면...
 		$logged_info = Context::get('logged_info');
@@ -891,6 +897,7 @@ class examController extends exam
 		$obj->document_srl = getNextSequence();
 		$obj->list_order = $obj->document_srl * -1;
 		$oDocumentModel = getModel('document');
+		$logged_info = Context::get('logged_info');
 
 		// category 값이 있을때 체크
 		if($obj->category_srl)
@@ -904,12 +911,11 @@ class examController extends exam
 		}
 
 		// 관리자가 아닐경우 Hack Tag 제거
-		if($logged_info->is_admin != 'Y') $obj->content = removeHackTag($obj->content);
+		if(($logged_info->is_admin ?? 'N') != 'Y') $obj->content = removeHackTag($obj->content);
 		$obj->join_count = $obj->requestion_count = 0;
-		$obj->status = 'Y';
+		$obj->status = $obj->status === 'Y' ? 'Y' : 'N';
 
 		// Insert member's information only if the member is logged-in and not manually registered.
-		$logged_info = Context::get('logged_info');
 		if(Context::get('is_logged'))
 		{
 			$obj->member_srl = $logged_info->member_srl;
@@ -971,7 +977,11 @@ class examController extends exam
 		if($obj->is_time=="Y") {
 			if(!$obj->exam_time) return $this->makeObject(-1, 'msg_not_exam_time');
 		}
-		if($obj->status) $obj->status = $this->getConfigStatus($obj->status,true);
+		$obj->status = $obj->status === 'Y' ? 'Y' : 'N';
+		if($source_obj->getStatus() === 'Y' && $obj->status === 'N' && ($this->module_info->allow_exam_reprivate ?? 'N') !== 'Y')
+		{
+			return $this->makeObject(-1, 'msg_exam_reprivate_not_allowed');
+		}
 
 		// Call a trigger (before)
 		$output = ModuleHandler::triggerCall('exam.updateExam', 'before', $obj);
@@ -988,7 +998,7 @@ class examController extends exam
 		$obj->content = nl2br(htmlspecialchars($obj->content, ENT_COMPAT | ENT_HTML401, 'UTF-8', false));
 
 		// 관리자가 아닐경우 Hack Tag 제거
-		if($logged_info->is_admin != 'Y') $obj->content = removeHackTag($obj->content);
+		if(($logged_info->is_admin ?? 'N') != 'Y') $obj->content = removeHackTag($obj->content);
 
 		// 카테고리를 변경했을 때 처리
 		$oDocumentModel = getModel('document');
@@ -1007,10 +1017,13 @@ class examController extends exam
 		}
 
 		// 카테고리의 속한 개수 업데이트
-		if($source_obj->get('category_srl') != $obj->category_srl)
+		if($source_obj->get('category_srl') != $obj->category_srl || $source_obj->getStatus() !== $obj->status)
 		{
-			if($source_obj->get('category_srl') != $obj->category_srl) $this->updateCategoryCount($obj->module_srl, $source_obj->get('category_srl'));
-			if($obj->category_srl) $this->updateCategoryCount($obj->module_srl, $obj->category_srl);
+			$category_srls = array_unique(array_filter(array($source_obj->get('category_srl'), $obj->category_srl)));
+			foreach($category_srls as $category_srl)
+			{
+				$this->updateCategoryCount($obj->module_srl, $category_srl);
+			}
 		}
 		// Call a trigger (after)
 		if($output->toBool())
