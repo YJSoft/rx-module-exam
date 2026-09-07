@@ -203,6 +203,12 @@ class examView extends exam
 		// point module config setting
 		$point_config = $oExamModel->getPointConfig();
 		Context::set('point_config', $point_config);
+		$exam_create_point = (int)PointModel::getModulePointConfig($this->module_srl, 'insert_document');
+		$current_member_point = Context::get('is_logged') && !empty($logged_info->member_srl)
+			? PointModel::getPoint($logged_info->member_srl)
+			: 0;
+		Context::set('exam_create_point', $exam_create_point);
+		Context::set('current_member_point', $current_member_point);
 
 		// 존재하는지 확인
 		if ($documentSrl)

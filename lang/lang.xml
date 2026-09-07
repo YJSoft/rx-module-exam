@@ -252,6 +252,9 @@
     <item name="exam_join_point">
 		<value xml:lang="ko"><![CDATA[응시료]]></value>
 	</item>
+	<item name="exam_create_point">
+		<value xml:lang="ko"><![CDATA[시험지 생성 포인트]]></value>
+	</item>
     <item name="exam_correct_count">
 		<value xml:lang="ko"><![CDATA[정답 수]]></value>
 	</item>
@@ -486,6 +489,12 @@
 	</item>
 	<item name="about_join_point">
 		<value xml:lang="ko"><![CDATA[시험 응시에 필요한 포인트를 설정하실 수 있습니다.]]></value>
+	</item>
+	<item name="about_exam_create_point_minus">
+		<value xml:lang="ko"><![CDATA[시험지를 생성하면 %s %s이 차감됩니다. 현재 보유 포인트: %s %s]]></value>
+	</item>
+	<item name="about_exam_create_point_plus">
+		<value xml:lang="ko"><![CDATA[시험지를 생성하면 %s %s이 지급됩니다. 현재 보유 포인트: %s %s]]></value>
 	</item>
 	<item name="about_exam_delete">
 		<value xml:lang="ko"><![CDATA[시험지를 삭제하면 문제 및 참여자정보도 같이 삭제됩니다.]]></value>

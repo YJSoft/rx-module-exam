@@ -36,6 +36,10 @@
 				<input type="text" name="exam_title" id="exam_title" placeholder="{$lang->exam_title}" value="{$examitem->getTitle()}"|cond="$examitem->getTitle()" />
 			</div>
 		</section>
+		<div class="message info" cond="!$examitem->isExists() && $exam_create_point != 0">
+			<p cond="$exam_create_point < 0">{sprintf($lang->about_exam_create_point_minus, abs($exam_create_point), $point_config->point_name, $current_member_point, $point_config->point_name)}</p>
+			<p cond="$exam_create_point > 0">{sprintf($lang->about_exam_create_point_plus, $exam_create_point, $point_config->point_name, $current_member_point, $point_config->point_name)}</p>
+		</div>
 
         <table class="tbl_exam_list">
         <caption>시험지 생성</caption>

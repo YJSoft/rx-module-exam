@@ -90,6 +90,15 @@
             </td>
             <td><div class="ta_l"><input type="text" name="exam_title" id="exam_title" placeholder="{$lang->exam_title}" value="{$examitem->getTitle()}"|cond="$examitem->getTitle()" class="form-control iText w250" /></div></td>
         </tr>
+		<tr cond="!$examitem->isExists() && $exam_create_point != 0">
+			<td class="bg"><div class="ta_l">{$lang->exam_create_point}</div></td>
+			<td>
+				<div class="ta_l">
+					<p class="info" cond="$exam_create_point < 0">{sprintf($lang->about_exam_create_point_minus, abs($exam_create_point), $point_config->point_name, $current_member_point, $point_config->point_name)}</p>
+					<p class="info" cond="$exam_create_point > 0">{sprintf($lang->about_exam_create_point_plus, $exam_create_point, $point_config->point_name, $current_member_point, $point_config->point_name)}</p>
+				</div>
+			</td>
+		</tr>
         <tr>
             <td class="bg">
                 <div class="ta_l">

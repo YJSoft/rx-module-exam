@@ -150,6 +150,22 @@ class examController extends exam
 		{
 			return $this->makeObject(-1, 'msg_not_permitted');
 		}
+
+		// 시험지 신규 생성 시 포인트 모듈의 글 작성 포인트 설정을 적용한다.
+		$create_point = 0;
+		if(!$is_update)
+		{
+			if(!Context::get('is_logged') || empty($logged_info->member_srl))
+			{
+				return $this->makeObject(-1, 'msg_not_permitted');
+			}
+
+			$create_point = (int)PointModel::getModulePointConfig($this->module_srl, 'insert_document');
+			if($create_point < 0 && PointModel::getPoint($logged_info->member_srl) + $create_point < 0)
+			{
+				return $this->makeObject(-1, 'msg_not_enough_point');
+			}
+		}
 		$args->status = $is_update ? ($requested_status ?? $examitem->getStatus()) : ($requested_status ?? 'N');
 		// 시험지 설정만 수정할 때 기존 수동 배점 합계가 초기화되지 않도록 보존한다.
 		$args->total_point = $is_update ? (int)$examitem->get('total_point') : 0;
@@ -160,7 +176,7 @@ class examController extends exam
 		{
 			$output = $this->updateExam($examitem, $args);
 		} else { // insert
-			$output = $this->insertExam($args);
+			$output = $this->insertExam($args, FALSE, $create_point);
 		}
 
 		// if there is an error
@@ -951,7 +967,7 @@ class examController extends exam
 		$this->setMessage('success_updated');
 		$this->setRedirectUrl(getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispExamCorrectCheck', 'log_srl', $resultitem->log_srl));
 	}
-	function insertExam($obj,$manual_inserted=FALSE)
+	function insertExam($obj,$manual_inserted=FALSE,$create_point=0)
 	{
 		if(!$manual_inserted && !checkCSRF())
 		{
@@ -1038,6 +1054,18 @@ class examController extends exam
 			{
 				$oDB->rollback();
 				return $trigger_output;
+			}
+		}
+
+		// 수동 등록이 아닌 신규 시험지에만 생성 포인트를 반영한다.
+		$create_point = (int)$create_point;
+		if(!$manual_inserted && $create_point !== 0 && $obj->member_srl)
+		{
+			$point_output = PointController::setPoint($obj->member_srl, $create_point, 'plus', 'insert_exam');
+			if(!$point_output->toBool())
+			{
+				$oDB->rollback();
+				return $point_output;
 			}
 		}
 
