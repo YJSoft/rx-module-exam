@@ -768,6 +768,7 @@ body:has(.exam-paper-modern) {
 }
 
 .exam-paper-modern .question-point,
+.exam-paper-modern .question-level,
 .exam-paper-modern .answer-key {
     display: inline-flex;
     margin-left: .35rem;
@@ -1249,7 +1250,8 @@ body.color_scheme_dark .exam-paper-modern .answer_marking {
     color: var(--exam-ink);
 }
 
-body.color_scheme_dark .exam-paper-modern .question-point {
+body.color_scheme_dark .exam-paper-modern .question-point,
+body.color_scheme_dark .exam-paper-modern .question-level {
     background: #334155;
     color: #e2e8f0;
 }

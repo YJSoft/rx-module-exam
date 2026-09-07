@@ -33,7 +33,7 @@
         <div class="qtitle">
             <div class="txt">
                 <span class="result-mark is-{strtolower($qitem->get('my_answer_result'))}" aria-label="{$qitem->get('my_answer_result')}"><i class="bi bi-check-lg" cond="$qitem->get('my_answer_result')=='O'"></i><i class="bi bi-x-lg" cond="$qitem->get('my_answer_result')=='X'"></i><i class="bi bi-dash-lg" cond="$qitem->get('my_answer_result')!='O' && $qitem->get('my_answer_result')!='X'"></i></span>
-                <span class="question-number">{$no}</span> {$qitem->getTitle()}
+				<span class="question-number">{$no}</span> {$qitem->getTitle()} <span class="question-level">{$lang->q_level}: {$lang->qLevelList[$qitem->getQLevel()]}</span>
 				<span cond="!$qitem->getQType() && ($resultitem->result_type>2 || $can_grade)" class="answer-key">{$lang->q_answer}: {$qitem->getAnswer()}</span>
             </div>
         </div>

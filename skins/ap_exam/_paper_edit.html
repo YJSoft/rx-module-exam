@@ -14,7 +14,7 @@
 <div loop="$question_block->questions=>$no,$qitem" class="qitem" id="{$qitem->question_srl}">
     <div class="qtitle">
         <div class="txt">
-            <span>{$no}</span>. {$qitem->getTitle()}  [{$qitem->getPoint()}점] <span cond="!$qitem->getQType()" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
+            <span>{$no}</span>. {$qitem->getTitle()}  [{$qitem->getPoint()}점] <span class="question-level">{$lang->q_level}: {$lang->qLevelList[$qitem->getQLevel()]}</span> <span cond="!$qitem->getQType()" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
         </div>
 		<div class="qedit">
 			<a href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$qitem->question_srl)}" class="exam_btn btn_close">{$lang->cmd_modify}</a>

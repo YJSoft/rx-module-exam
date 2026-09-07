@@ -37,7 +37,7 @@
                 <div class="q_number">
                     <img src="img/check_{strtolower($qitem->get('my_answer_result'))}.png" width="55" height="45" alt="" />
                 </div>
-                <span>{$no}</span>. {$qitem->getTitle()}
+				<span>{$no}</span>. {$qitem->getTitle()} <span class="question-level">{$lang->q_level}: {$lang->qLevelList[$qitem->getQLevel()]}</span>
 				<span cond="!$qitem->getQType() && ($resultitem->result_type>2 || $can_grade)" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
             </div>
         </div>

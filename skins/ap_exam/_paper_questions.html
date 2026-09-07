@@ -25,7 +25,7 @@
 	</section>
     <div loop="$question_block->questions=>$no,$qitem" class="qitem">
         <div class="qtitle">
-            <div class="txt"><span>{$no}</span>. {$qitem->getTitle()} [{$qitem->getPoint()}점]</div>
+            <div class="txt"><span>{$no}</span>. {$qitem->getTitle()} [{$qitem->getPoint()}점] <span class="question-level">{$lang->q_level}: {$lang->qLevelList[$qitem->getQLevel()]}</span></div>
         </div>
         <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">
             <legend cond="$qitem->getDescriptionTitle()">{$qitem->getDescriptionTitle()}</legend>
