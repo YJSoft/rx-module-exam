@@ -593,6 +593,7 @@ class examView extends exam
 
 		// 응시자, 출제자, 관리자가 아니면 에러
 		if(!$can_grade && (int)$resultitem->member_srl !== (int)($logged_info->member_srl ?? 0)) return $this->stop('msg_not_permitted');
+		$show_result_detail = $can_grade || (Context::get('show_detail') === 'Y' && (int)$resultitem->result_type > 1);
 
 		// 응시자 정보 구해옴
 		$oMemberModel = getModel('member');
@@ -615,6 +616,7 @@ class examView extends exam
 		Context::set('member_info', $member_info);
 		Context::set('examitem', $examitem);
 		Context::set('can_grade', $can_grade);
+		Context::set('show_result_detail', $show_result_detail);
 		Context::set('result_question_blocks', $examitem->getQuestionBlocksFromQuestions($resultitem->answer ?? array()));
 		Context::set('manual_use_question_point', $manual_total_point > 0);
 		Context::set('manual_default_score', count($resultitem->answer ?? array()) ? ceil(100 / count($resultitem->answer)) : 0);

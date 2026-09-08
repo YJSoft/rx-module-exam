@@ -1,9 +1,9 @@
 <div class="paper_header">
 	<h3>{$resultitem->title}<span cond="$module_info->hide_category !== 'Y' && $resultitem->category_title"> ({$resultitem->category_title})</span></h3>
 	<div class="paper_command">
-		<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close"><i class="xi-eye"></i> {$lang->cmd_confirm}</a>
+		<a href="{getUrl('act','','log_srl','','show_detail','','document_srl',$resultitem->document_srl)}" onclick="if(window.opener){window.close();return false;}" class="exam_btn btn_close"><i class="xi-eye"></i> {$lang->cmd_confirm}</a>
 	</div>
-	<div class="sc_tp">
+	<div class="sc_tp" cond="$can_grade">
 		<p class="qcnt">
 			총 <span id="total_q_count">{$resultitem->correct_count+$resultitem->wrong_count}</span> 문항 중 {$resultitem->correct_count}개 정답
 		</p>
@@ -14,10 +14,17 @@
 	</div>
 </div>
 
-<div cond="$resultitem->result_type<2 && !$can_grade" class="paper_message">
-    <h2>이 시험의 채점 결과는 공개되지 않습니다.</h2>
+<div cond="!$can_grade" class="paper_message exam-result-summary">
+    <h2>{$lang->msg_exam_completed}</h2>
+    <ul class="sub_list">
+		<li cond="$resultitem->result_type==0">{$lang->msg_exam_result_private}</li>
+		<li cond="$resultitem->result_type>0">{$lang->exam_score}: <strong>{(int)$resultitem->score}{$lang->unit_score}</strong></li>
+		<li cond="$resultitem->result_type>0">{$lang->exam_result_status}: <strong>{$lang->resultStatusList[$resultitem->status]}</strong></li>
+	</ul>
     <div class="paper_message_area">
-        <a href="{getUrl('','mid',$mid,'act','disExamMyResult')}" class="exam_btn1" onclick="opener.location.href = this.href;window.close();return false;">시험 응시현황</a>
+		<a cond="$resultitem->result_type>1 && !$show_result_detail" href="{getUrl('show_detail','Y')}" class="exam_btn1 btn_submit"><i class="xi-document"></i> {($resultitem->result_type>2)?$lang->cmd_view_explanation:$lang->cmd_view_solution}</a>
+		<a cond="$show_result_detail" href="{getUrl('show_detail','')}" class="exam_btn1"><i class="xi-list"></i> {$lang->cmd_result_summary}</a>
+		<a href="{getUrl('act','','log_srl','','show_detail','','document_srl',$resultitem->document_srl)}" class="exam_btn1"><i class="xi-arrow-left"></i> 시험으로 돌아가기</a>
     </div>
 </div>
 <form ruleset="manualGrade" action="./" method="post">
@@ -25,7 +32,7 @@
 	<input type="hidden" name="act" value="procExamManualGrade" />
 	<input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
 	<input type="hidden" name="log_srl" value="{$resultitem->log_srl}" />
-<div cond="$resultitem->result_type>1 || $can_grade" id="questions" class="questions">
+<div cond="$show_result_detail" id="questions" class="questions">
 	<block loop="$result_question_blocks=>$question_block">
 	<section cond="$question_block->passage" class="common-passage">
 		<h4><i class="xi-documents"></i> {sprintf($lang->passage_range_label, $question_block->start, $question_block->end)} · {$question_block->passage->getTitle()}</h4>
@@ -38,7 +45,7 @@
                     <img src="img/check_{strtolower($qitem->get('my_answer_result'))}.png" width="55" height="45" alt="" />
                 </div>
 				<span>{$no}</span>. {$qitem->getTitle()} <span class="question-level">{$lang->q_level}: {$lang->qLevelList[$qitem->getQLevel()]}</span>
-				<span cond="!$qitem->getQType() && ($resultitem->result_type>2 || $can_grade)" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
+				<span cond="!$qitem->getQType() && ($resultitem->result_type>1 || $can_grade)" style="color:blue">[{$lang->q_answer}: {$qitem->getAnswer()}]</span>
             </div>
         </div>
         <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">
@@ -47,7 +54,7 @@
         </fieldset>
         <p cond="$qitem->getQType()" class="qanswer">
             <label for="my_answer{$no}">제　출: <input type="text" id="my_answer{$no}" value="{$qitem->get('my_answer')}" readonly="readonly" class="underInput" /></label>
-			<label cond="$resultitem->result_type>2 || $can_grade" for="answer{$no}">정　답: <input type="text" id="answer{$no}" value="{$qitem->getAnswer()}" readonly="readonly" class="underInput" /></label>
+			<label cond="$resultitem->result_type>1 || $can_grade" for="answer{$no}">정　답: <input type="text" id="answer{$no}" value="{$qitem->getAnswer()}" readonly="readonly" class="underInput" /></label>
         </p>
         <ul cond="!$qitem->getQType()" class="qanswer_list">
         {@ $answerList = explode(",", $qitem->get('my_answer')); }
@@ -59,7 +66,7 @@
             </div>
         </li>
         </ul>
-		<fieldset cond="($resultitem->result_type>1 || $can_grade) && $qitem->getContent()" class="qcontent">
+		<fieldset cond="($resultitem->result_type>2 || $can_grade) && $qitem->getContent()" class="qcontent">
 			<legend>[ 해설 ]</legend>
 			{$qitem->getContent()}
 		</fieldset>

@@ -246,7 +246,7 @@ class examController extends exam
 			return $output;
 		}
 
-		// 성공 시 시험 목록으로 이동
+		// 성공 시 해당 응시 기록의 결과 요약 화면으로 이동
 		$returnUrl = getNotEncodedUrl('', 'mid', $this->mid);
 		$this->setRedirectUrl($returnUrl);
 	}
@@ -940,7 +940,7 @@ class examController extends exam
 
 		// 성공 시 시험 목록으로 이동
 		$this->setMessage('success_saved');
-		$returnUrl = getNotEncodedUrl('', 'mid', $this->mid,'document_srl',$args->document_srl);
+		$returnUrl = getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispExamCorrectCheck', 'log_srl', $new_args->log_srl);
 		$this->setRedirectUrl($returnUrl);
 	}
 

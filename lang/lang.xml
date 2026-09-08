@@ -423,9 +423,9 @@
     	<item name="2">
             <value xml:lang="ko"><![CDATA[풀이 공개]]></value>
         </item>
-    	<item name="3">
-            <value xml:lang="ko"><![CDATA[전체 공개]]></value>
-        </item>
+		<item name="3">
+			<value xml:lang="ko"><![CDATA[해설도 공개]]></value>
+		</item>
 	</item>
 	<item name="resultStatusList" type="array">
     	<item name="P">
@@ -521,7 +521,25 @@
 		<value xml:lang="ko"><![CDATA[시험을 응시할 때 어떤 형태로 보일것인지 선택할 수 있습니다.]]></value>
 	</item>
 	<item name="about_resulttype">
-		<value xml:lang="ko"><![CDATA[시험 응시 후 결과를 어떻게 알려줄 것인지 선택할 수 있습니다. 비공개를 설정하면 응시자는 결과를 확인할 수 없으며 전체 공개로 설정하시면 정답까지 보여줍니다.]]></value>
+		<value xml:lang="ko"><![CDATA[비공개는 완료 여부만, 점수 공개는 점수와 합격 여부를 표시합니다. 풀이 공개는 문항별 제출 답안과 정답을 추가로 공개하며, 해설도 공개는 출제자가 입력한 해설까지 보여줍니다.]]></value>
+	</item>
+	<item name="msg_exam_completed">
+		<value xml:lang="ko"><![CDATA[시험 응시가 완료되었습니다.]]></value>
+	</item>
+	<item name="msg_exam_result_private">
+		<value xml:lang="ko"><![CDATA[이 시험은 결과 비공개로 설정되어 있습니다.]]></value>
+	</item>
+	<item name="exam_result_status">
+		<value xml:lang="ko"><![CDATA[합격 여부]]></value>
+	</item>
+	<item name="cmd_view_solution">
+		<value xml:lang="ko"><![CDATA[풀이 보기]]></value>
+	</item>
+	<item name="cmd_view_explanation">
+		<value xml:lang="ko"><![CDATA[해설 보기]]></value>
+	</item>
+	<item name="cmd_result_summary">
+		<value xml:lang="ko"><![CDATA[결과 요약]]></value>
 	</item>
 	<item name="about_cutline">
 		<value xml:lang="ko"><![CDATA[시험 점수가 커트라인 이상일 경우 합격, 아니면 불합격으로 처리합니다.]]></value>
