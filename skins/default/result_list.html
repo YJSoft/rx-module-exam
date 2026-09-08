@@ -11,7 +11,7 @@
 				<td><a href="#popup_menu_area" class="member_{$resultitem->member_srl}">{$resultitem->nick_name}</a></td>
 				<td class="ta_c">{$resultitem->score}</td><td class="ta_c">{$lang->resultStatusList[$resultitem->status]}</td>
 				<td class="ta_c">{$resultitem->exam_time_text}</td><td class="ta_c">{zdate($resultitem->regdate,'Y.m.d H:i')}</td>
-				<td class="ta_c"><a class="btn" href="{getUrl('act','dispExamCorrectCheck','log_srl',$resultitem->log_srl)}" onclick="examopen(this.href,'exam2');return false">{$lang->manual_grade}</a></td>
+				<td class="ta_c"><a class="btn" href="{getUrl('act','dispExamManualGrade','log_srl',$resultitem->log_srl)}" onclick="examopen(this.href,'exam2');return false">{$lang->manual_grade}</a></td>
 			</tr>
 		</tbody>
 	</table>

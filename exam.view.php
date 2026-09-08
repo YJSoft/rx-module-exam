@@ -577,6 +577,22 @@ class examView extends exam
 	 **/
 	public function dispExamCorrectCheck()
 	{
+		return $this->displayExamResult(false);
+	}
+
+	/**
+	 * 출제자 또는 관리자 전용 수동채점 페이지 출력
+	 */
+	public function dispExamManualGrade()
+	{
+		return $this->displayExamResult(true);
+	}
+
+	/**
+	 * 일반 결과 화면과 관리용 수동채점 화면을 분리하여 출력한다.
+	 */
+	private function displayExamResult($manual_grade = false)
+	{
 		$this->setLayoutPath($this->module_path.'/skins/'.$this->module_info->skin);
 		$this->setLayoutFile("paper_layout");
 
@@ -588,11 +604,13 @@ class examView extends exam
 		if(!$resultitem || !$resultitem->member_srl) return $this->stop('msg_invalid_request');
 		$examitem = $oExamModel->getExam($resultitem->document_srl);
 		if(!$examitem->isExists() || $examitem->get('module_srl') != $this->module_srl) return $this->stop('msg_invalid_request');
-		$can_grade = $this->grant->manager || $examitem->isGranted();
-		if($examitem->isSecret() && !$can_grade) return $this->stop('msg_not_founded');
+		$can_manage_result = $this->grant->manager || $examitem->isGranted();
+		if($manual_grade && !$can_manage_result) return $this->stop('msg_not_permitted');
+		$can_grade = $manual_grade;
+		if($examitem->isSecret() && !$can_manage_result) return $this->stop('msg_not_founded');
 
 		// 응시자, 출제자, 관리자가 아니면 에러
-		if(!$can_grade && (int)$resultitem->member_srl !== (int)($logged_info->member_srl ?? 0)) return $this->stop('msg_not_permitted');
+		if(!$can_manage_result && (int)$resultitem->member_srl !== (int)($logged_info->member_srl ?? 0)) return $this->stop('msg_not_permitted');
 		$show_result_detail = $can_grade || (Context::get('show_detail') === 'Y' && (int)$resultitem->result_type > 1);
 
 		// 응시자 정보 구해옴

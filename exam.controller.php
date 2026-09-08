@@ -1051,7 +1051,7 @@ class examController extends exam
 		}
 
 		$this->setMessage('success_updated');
-		$this->setRedirectUrl(getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispExamCorrectCheck', 'log_srl', $resultitem->log_srl));
+		$this->setRedirectUrl(getNotEncodedUrl('', 'mid', $this->mid, 'act', 'dispExamManualGrade', 'log_srl', $resultitem->log_srl));
 	}
 	function insertExam($obj,$manual_inserted=FALSE,$create_point=0)
 	{
