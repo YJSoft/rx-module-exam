@@ -229,7 +229,7 @@ class examController extends exam
 		}
 		$args->status = $is_update ? ($requested_status ?? $examitem->getStatus()) : ($requested_status ?? 'N');
 		// 시험지 설정만 수정할 때 기존 수동 배점 합계가 초기화되지 않도록 보존한다.
-		$args->total_point = $is_update ? (int)$examitem->get('total_point') : 0;
+		$args->total_point = $is_update ? (int)$examitem->getAllQuestionPoint() : 0;
 		unset($args->exam_total_point);
 
 		// update
@@ -847,6 +847,7 @@ class examController extends exam
 		$score = 0;
 
 		$default_score = ceil(1 / $examitem->get('question_count') * 100); //문제당 기본 배점(1/총문제수*100)
+		$use_question_point = $examitem->getAllQuestionPoint() > 0;
 		$question_order = $_SESSION['exam_joinlog'][$examitem->document_srl]['question_order'] ?? array();
 		foreach($examitem->getQuestions($question_order) as $no => $qitem)
 		{
@@ -875,7 +876,7 @@ class examController extends exam
 			}
 			
 			//총 배점이 0점이라면 기존 시험이므로 기존 방식대로 채점한다
-			if($examitem->getAllQuestionPoint() == 0) {
+			if(!$use_question_point) {
 				if($check=='O') {
 					$_score = $default_score;
 					$score += $_score;

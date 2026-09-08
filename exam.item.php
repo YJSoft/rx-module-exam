@@ -709,7 +709,10 @@ class examItem extends BaseObject
 		$question_order = array();
 		foreach($blocks as $block)
 		{
-			foreach($block->questions as $qitem)
+			// 공통 지문과 연결된 문제는 한 묶음으로 유지하되 묶음 내부 순서도 섞는다.
+			$block_questions = array_values($block->questions);
+			shuffle($block_questions);
+			foreach($block_questions as $qitem)
 			{
 				$question_order[] = (int)$qitem->question_srl;
 			}
@@ -832,7 +835,17 @@ class examItem extends BaseObject
 
 	function getAllQuestionPoint()
 	{
-		return $this->get('total_point');
+		$total_point = (int)$this->get('total_point');
+		if($total_point > 0) return $total_point;
+
+		// 이전 버전에서 시험지 설정을 수정하며 총점 캐시가 0으로 초기화된 경우,
+		// 실제 문항에 저장된 배점을 사용하여 100점 자동 배점으로 잘못 처리되지 않게 한다.
+		foreach(($this->getQuestions() ?: array()) as $qitem)
+		{
+			$total_point += max(0, (int)$qitem->getPoint());
+		}
+		if($total_point > 0) $this->add('total_point', $total_point);
+		return $total_point;
 	}
 }
 /* End of file exam.item.php */
