@@ -635,6 +635,12 @@ class examView extends exam
 		Context::set('examitem', $examitem);
 		Context::set('can_grade', $can_grade);
 		Context::set('show_result_detail', $show_result_detail);
+		$clear_exam_draft = !$manual_grade && (int)$resultitem->member_srl === (int)($logged_info->member_srl ?? 0);
+		Context::set('clear_exam_draft', $clear_exam_draft);
+		if($clear_exam_draft)
+		{
+			Context::addJsFile($this->module_path.'tpl/js/exam_mobile.js');
+		}
 		Context::set('result_question_blocks', $examitem->getQuestionBlocksFromQuestions($resultitem->answer ?? array()));
 		Context::set('manual_use_question_point', $manual_total_point > 0);
 		Context::set('manual_default_score', count($resultitem->answer ?? array()) ? ceil(100 / count($resultitem->answer)) : 0);
