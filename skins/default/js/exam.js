@@ -9,6 +9,7 @@ jQuery(function($) {
     // 객관식 문제에서 답 클릭시 입력과함께 표시
     $('.qanswer_list a.ans_check').click(function(event) {
         event.preventDefault();
+        if ($(this).closest('[data-practice-graded="Y"]').length) return;
         var chk_val = $(this).attr('data-value').split(',');
 
         var $answer = $('#answer'+chk_val[0]);
@@ -36,5 +37,4 @@ jQuery(function($) {
         $(this).parent().toggleClass('on');
     });
 });
-
 

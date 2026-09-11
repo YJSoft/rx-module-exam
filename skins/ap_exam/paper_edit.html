@@ -20,12 +20,13 @@
 			endif;
 		}
 		<a cond="!$question_edit_locked" href="{getUrl('mode','write','question_srl','')}" class="exam_btn btn_submit"><i class="xi-cube"></i> 출제</a>
+		<a cond="!$question_edit_locked" href="{getUrl('act','dispExamCsvImport','mode','','question_srl','')}" class="exam_btn btn_submit" onclick="examopen(this.href,'exam_csv_import');return false;"><i class="xi-file-text-o"></i> {$lang->cmd_csv_import}</a>
 		<a href="javascript:void(0);" onclick="cancel();" class="exam_btn btn_close" cond="!$ref"><i class="xi-check"></i> {$lang->cmd_complete}</a>
 		<a href="{getUrl('act','','mode','')}" class="exam_btn btn_close" cond="$ref"><i class="xi-check"></i> {$lang->cmd_complete}</a>
 	</div>
 	<div class="sc_tp" cond="$act !== 'dispExamEditMode'">
 		<p class="qcnt">
-			총 <span id="total_q_count">{$examitem->getQuestionCount()}</span> 문항
+			총 <span id="total_q_count">{$examitem->getDisplayQuestionCount()}</span> 문항
 			총 <span id="total_q_point">{$examitem->getAllQuestionPoint()}</span> 점
 		</p>
 	</div>

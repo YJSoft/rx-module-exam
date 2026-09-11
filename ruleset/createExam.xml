@@ -7,6 +7,10 @@
 		<field name="exam_title" required="true" />
 		<field name="status" rule="chkbox" />
 		<field name="random_question_order" rule="chkbox" />
+		<field name="bank_objective_count" rule="number" />
+		<field name="bank_subjective_count" rule="number" />
+		<field name="bank_sort_by_level" rule="chkbox" />
+		<field name="page_type" rule="number" />
 		<field name="exam_cutline" rule="number" />
         <field name="start_date" length=":14" rule="number" />
 		<field name="end_date" length=":14" rule="number" />

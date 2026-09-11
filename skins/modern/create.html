@@ -34,9 +34,26 @@
                             <input type="radio" name="page_type" id="page_type{$key}" value="{$key}" checked="checked"|cond="$key==$examitem->get('page_type')" /> {$val}
                         </label> &nbsp;&nbsp;
                     </block>
-                    <p class="info">{$lang->about_pagetype}</p>
+					<ul class="exam_type_descriptions">
+						<li loop="$lang->pageTypeDescriptionList=>$key,$val"><strong>{$lang->pageTypeList[$key]}</strong>: {$val}</li>
+					</ul>
                 </div>
             </td>
+        </tr>
+        <tr class="question-bank-only" style="display:none"|cond="$examitem->get('page_type')!=2">
+            <td class="bg"><div class="ta_l">{$lang->bank_question_counts}</div></td>
+            <td><div class="ta_l">
+                <label for="bank_objective_count">{$lang->objective_question}: <input type="number" name="bank_objective_count" id="bank_objective_count" value="{(int)$examitem->get('bank_objective_count')}" min="0" max="100000" class="iText" style="width:80px" /></label>&nbsp;&nbsp;
+                <label for="bank_subjective_count">{$lang->subjective_question}: <input type="number" name="bank_subjective_count" id="bank_subjective_count" value="{(int)$examitem->get('bank_subjective_count')}" min="0" max="100000" class="iText" style="width:80px" /></label>
+                <p class="info">{sprintf($lang->about_bank_question_counts, $bank_question_counts['objective'], $bank_question_counts['subjective'])}</p>
+            </div></td>
+        </tr>
+        <tr class="question-bank-only" style="display:none"|cond="$examitem->get('page_type')!=2">
+            <td class="bg"><div class="ta_l">{$lang->bank_sort_by_level}</div></td>
+            <td><div class="ta_l">
+                <label for="bank_sort_by_level"><input type="checkbox" name="bank_sort_by_level" id="bank_sort_by_level" value="Y" checked="checked"|cond="$examitem->get('bank_sort_by_level')=='Y'" /> {$lang->cmd_setup}</label>
+                <p class="info">{$lang->about_bank_sort_by_level}</p>
+            </div></td>
         </tr>
         <tr>
             <td class="bg">
@@ -142,7 +159,7 @@
 				</div>
 			</td>
 		</tr>
-		<tr>
+		<tr class="non-question-bank-only">
 			<td class="bg"><div class="ta_l">{$lang->random_question_order}</div></td>
 			<td>
 				<div class="ta_l">

@@ -184,12 +184,33 @@ class examController extends exam
 		unset($args->exam_pass_point);
 
 		$args->module_srl = $this->module_srl;
-		$args->page_type = $this->getConfigPageType($args->page_type, true);
+		$args->page_type = $this->getConfigPageType($args->page_type ?? 0, true);
 		$args->result_type = $this->getConfigResultType($args->result_type, true);
 		$args->is_date = ($args->is_date=="Y")? "Y" : "N";
-		$args->is_time = ($args->is_time=="Y")? "Y" : "N";
+		$args->is_time = ((int)$args->page_type !== 1 && ($args->is_time ?? '') === 'Y') ? 'Y' : 'N';
+		if((int)$args->page_type === 1) $args->exam_time = 0;
 		$args->allow_retake = ($args->allow_retake==="Y")? "Y" : "N";
-		$args->random_question_order = (($args->random_question_order ?? '') === 'Y') ? 'Y' : 'N';
+		$is_question_bank = (int)$args->page_type === 2;
+		$args->random_question_order = !$is_question_bank && (($args->random_question_order ?? '') === 'Y') ? 'Y' : 'N';
+		if($is_question_bank)
+		{
+			foreach(array('bank_objective_count', 'bank_subjective_count') as $count_field)
+			{
+				$count_value = $args->{$count_field} ?? 0;
+				if(!is_scalar($count_value) || !preg_match('/^[0-9]+$/', (string)$count_value) || (int)$count_value > 100000)
+				{
+					return $this->makeObject(-1, 'msg_invalid_bank_question_count');
+				}
+				$args->{$count_field} = (int)$count_value;
+			}
+			$args->bank_sort_by_level = (($args->bank_sort_by_level ?? '') === 'Y') ? 'Y' : 'N';
+		}
+		else
+		{
+			$args->bank_objective_count = 0;
+			$args->bank_subjective_count = 0;
+			$args->bank_sort_by_level = 'N';
+		}
 		$requested_status = isset($args->status) ? ($args->status === 'Y' ? 'Y' : 'N') : null;
 		$start_date_input = trim((string)($args->start_date ?? ''));
 		$end_date_input = trim((string)($args->end_date ?? ''));
@@ -229,7 +250,7 @@ class examController extends exam
 		}
 		$args->status = $is_update ? ($requested_status ?? $examitem->getStatus()) : ($requested_status ?? 'N');
 		// 시험지 설정만 수정할 때 기존 수동 배점 합계가 초기화되지 않도록 보존한다.
-		$args->total_point = $is_update ? (int)$examitem->getAllQuestionPoint() : 0;
+		$args->total_point = $is_question_bank ? 0 : ($is_update ? (int)$examitem->getAllQuestionPoint() : 0);
 		unset($args->exam_total_point);
 
 		// update
@@ -325,6 +346,7 @@ class examController extends exam
 		if(!$examitem->isExists()) return $this->makeObject(-1, 'msg_not_founded');
 		if(!$examitem->isGranted()) return $this->makeObject(-1, 'msg_not_permitted');
 		if($this->isPublishedQuestionEditLocked($examitem)) return $this->makeObject(-1, 'msg_published_exam_question_locked');
+		$is_question_bank = (int)$examitem->get('page_type') === 2;
 
 		// question_srl이 있으면 문제정보도 체크
 		$questionitem = $oExamModel->getQuestion($question_srl);
@@ -344,8 +366,13 @@ class examController extends exam
 		$params = Context::getRequestVars();
 		$question_type = (int)($params->q_type ?? 0);
 		if(!in_array($question_type, array(0, 1, 2), true)) $question_type = 0;
+		if($is_question_bank && $question_type === 2)
+		{
+			return $this->makeObject(-1, 'msg_bank_common_passage_not_supported');
+		}
 		$passage_questions = array();
 		$passage_selected_srls = array();
+		$subjective_check_type = 0;
 
 		// 정답이 하나도 입력안되있을경우..
 		if($question_type === 2)
@@ -387,6 +414,19 @@ class examController extends exam
 		{
 			if(($params->q_answer6 ?? '') == "") return $this->makeObject(-1, 'msg_not_answer');
 			$params->q_answer = $params->q_answer6;
+			$subjective_check_type = (int)($params->subjective_check_type ?? 0);
+			if(!in_array($subjective_check_type, array(0, 1, 2, 3), true))
+			{
+				return $this->makeObject(-1, 'msg_invalid_subjective_check_type');
+			}
+			if(in_array($subjective_check_type, array(1, 2), true) && count($this->getSubjectiveKeywords($params->q_answer)) < 2)
+			{
+				return $this->makeObject(-1, 'msg_subjective_keywords_required');
+			}
+			if($subjective_check_type === 3 && !$this->isValidSubjectiveRegex($params->q_answer))
+			{
+				return $this->makeObject(-1, 'msg_invalid_subjective_regex');
+			}
 		} else {
 			// 1~5번중에 하나도 입력 안했으면 에러..!
 			$is_answer = FALSE;
@@ -414,7 +454,7 @@ class examController extends exam
 		$args = new StdClass();
 		$args->question_level = $question_type === 2 ? 0 : (int)$params->q_level;
 		$args->question_type = $question_type;
-		$args->passage_srl = $question_type === 2 ? 0 : (int)$questionitem->get('passage_srl');
+		$args->passage_srl = ($question_type === 2 || $is_question_bank) ? 0 : (int)$questionitem->get('passage_srl');
 		$args->title = escape($params->q_title ?? '', false);
 		$args->content = $question_type === 2 ? '' : ($params->q_content ?? '');
 		$args->use_description = $question_type === 2 ? 'Y' : ((($params->use_description ?? '') == 'Y') ? 'Y' : 'N');
@@ -422,7 +462,8 @@ class examController extends exam
 		$args->description = removeHackTag($params->q_description_content ?? '');
 		$args->answer = $params->q_answer;
 		$args->answer_check_type = $question_type === 2 ? 0 : (int)$params->answer_check_type;
-		$args->point = $question_type === 2 ? 0 : (int)$params->q_point;
+		$args->subjective_check_type = $question_type === 1 ? $subjective_check_type : 0;
+		$args->point = ($question_type === 2 || $is_question_bank) ? 0 : (int)$params->q_point;
 		for($i=1;$i<=5;$i++)
 		{
 			$args->{'answer'.$i} = $question_type === 2 ? '' : ($params->{'q_answer'.$i} ?? '');
@@ -473,7 +514,7 @@ class examController extends exam
 			$total_point = 0;
 			$question_list = $oExamModel->getQuestionList($document_srl);
 			$questions = $question_list->data ?? array();
-			if(count($questions))
+			if(!$is_question_bank && count($questions))
 			{
 				foreach($questions as $key => $val)
 				{
@@ -502,6 +543,402 @@ class examController extends exam
 
 		$this->setMessage('success_saved');
 		$this->setRedirectUrl(getNotEncodedUrl('', 'mid', $this->mid,'document_srl',$examitem->document_srl,'act','dispExamEditMode'));
+	}
+
+	/**
+	 * CSV 파일에서 문제와 공통지문을 일괄 등록한다.
+	 */
+	public function procExamCsvImport()
+	{
+		if(($this->module_info->module ?? '') !== 'exam') return $this->makeObject(-1, 'msg_invalid_request');
+		if(!$this->grant->create) return $this->makeObject(-1, 'msg_not_permitted');
+		if(!checkCSRF()) return $this->makeObject(-1, 'msg_invalid_request');
+
+		$document_srl = (int)Context::get('document_srl');
+		$module_srl = (int)Context::get('module_srl');
+		$oExamModel = getModel('exam');
+		$examitem = $oExamModel->getExam($document_srl);
+		if(!$examitem->isExists()) return $this->makeObject(-1, 'msg_not_founded');
+		if(!$examitem->isGranted()) return $this->makeObject(-1, 'msg_not_permitted');
+		if($module_srl !== (int)$this->module_srl || (int)$examitem->get('module_srl') !== $module_srl)
+		{
+			return $this->makeObject(-1, 'msg_invalid_request');
+		}
+		if($this->isPublishedQuestionEditLocked($examitem)) return $this->makeObject(-1, 'msg_published_exam_question_locked');
+		$is_question_bank = (int)$examitem->get('page_type') === 2;
+
+		$file = $_FILES['question_csv'] ?? null;
+		$upload_error = is_array($file) ? (int)($file['error'] ?? UPLOAD_ERR_NO_FILE) : UPLOAD_ERR_NO_FILE;
+		if(in_array($upload_error, array(UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE), true))
+		{
+			return $this->makeObject(-1, 'msg_csv_file_size');
+		}
+		if(!$file || !is_array($file) || $upload_error !== UPLOAD_ERR_OK || empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name']))
+		{
+			return $this->makeObject(-1, 'msg_csv_file_required');
+		}
+		if((int)($file['size'] ?? 0) < 1 || (int)$file['size'] > 20 * 1024 * 1024)
+		{
+			return $this->makeObject(-1, 'msg_csv_file_size');
+		}
+		if(strtolower(pathinfo((string)($file['name'] ?? ''), PATHINFO_EXTENSION)) !== 'csv')
+		{
+			return $this->makeObject(-1, 'msg_csv_file_type');
+		}
+
+		$csv = @file_get_contents($file['tmp_name']);
+		if($csv === false || $csv === '' || strpos($csv, "\0") !== false)
+		{
+			return $this->makeObject(-1, 'msg_csv_read_failed');
+		}
+		if(substr($csv, 0, 3) === "\xEF\xBB\xBF")
+		{
+			$csv = substr($csv, 3);
+		}
+		if(!mb_check_encoding($csv, 'UTF-8'))
+		{
+			$encoding = mb_detect_encoding($csv, array('CP949', 'EUC-KR'), true);
+			if(!$encoding) return $this->makeObject(-1, 'msg_csv_encoding');
+			$csv = mb_convert_encoding($csv, 'UTF-8', $encoding);
+		}
+
+		$stream = fopen('php://temp/maxmemory:20971520', 'w+b');
+		fwrite($stream, $csv);
+		rewind($stream);
+		$headers = $this->getQuestionCsvHeaders();
+		$records = array();
+		$record_no = 0;
+		while(($cells = fgetcsv($stream, 0, ',', '"', '\\')) !== false)
+		{
+			$record_no++;
+			$cells = array_map(static function($value)
+			{
+				return trim((string)$value);
+			}, $cells);
+			if($record_no === 1)
+			{
+				if(isset($cells[0])) $cells[0] = preg_replace('/^\xEF\xBB\xBF/', '', $cells[0]);
+				if($cells !== $headers)
+				{
+					fclose($stream);
+					return $this->makeObject(-1, 'msg_csv_invalid_headers');
+				}
+				continue;
+			}
+			if(!count(array_filter($cells, static function($value) { return $value !== ''; }))) continue;
+			if(count($cells) > count($headers))
+			{
+				fclose($stream);
+				return $this->makeObject(-1, sprintf(Context::getLang('msg_csv_column_count'), $record_no));
+			}
+			$cells = array_pad($cells, count($headers), '');
+			$records[] = array('row' => $record_no, 'data' => array_combine($headers, $cells));
+			if(count($records) > 10000)
+			{
+				fclose($stream);
+				return $this->makeObject(-1, 'msg_csv_too_many_rows');
+			}
+		}
+		fclose($stream);
+		if(!$records) return $this->makeObject(-1, 'msg_csv_no_rows');
+
+		$level_map = array('하' => 0, '중' => 1, '상' => 2);
+		$type_map = array('객관식' => 0, '주관식' => 1, '공통지문' => 2);
+		$subjective_map = array(
+			'완전일치' => 0,
+			'모든단어' => 1,
+			'모든단어포함' => 1,
+			'일부단어' => 2,
+			'단어중하나포함' => 2,
+			'정규식' => 3,
+			'정규식(PHP,고급)' => 3,
+		);
+		$normalize_label = static function($value)
+		{
+			return preg_replace('/\s+/u', '', trim((string)$value));
+		};
+		$row_error = function($row, $message)
+		{
+			return $this->makeObject(-1, sprintf(Context::getLang('msg_csv_row_error'), $row, $message));
+		};
+		$ordinary_rows = array();
+		$passage_rows = array();
+		$duplicate_count = 0;
+		$passage_started = false;
+
+		foreach($records as $record)
+		{
+			$row = $record['row'];
+			$data = $record['data'];
+			$type_label = $normalize_label($data['문제유형(객관식/주관식/공통지문)']);
+			if(!array_key_exists($type_label, $type_map)) return $row_error($row, Context::getLang('msg_csv_invalid_question_type'));
+			$question_type = $type_map[$type_label];
+			$title = trim($data['문제']);
+			$description_title = trim($data['지문 머리글']);
+			$description = trim($data['지문 본문 html']);
+			if($title === '' || mb_strlen($title, 'UTF-8') > 250) return $row_error($row, Context::getLang('msg_csv_invalid_title'));
+			if(mb_strlen($description_title, 'UTF-8') > 250) return $row_error($row, Context::getLang('msg_csv_invalid_description_title'));
+			if(strlen($description) > 1024 * 1024 || strlen($data['해설']) > 1024 * 1024) return $row_error($row, Context::getLang('msg_csv_cell_too_large'));
+
+			if($question_type === 2)
+			{
+				if($is_question_bank) return $row_error($row, Context::getLang('msg_bank_common_passage_not_supported'));
+				$passage_started = true;
+				if($data['문제번호'] !== '') return $row_error($row, Context::getLang('msg_csv_passage_number_empty'));
+				if(!preg_match('/^(\d+)\s*[~\-]\s*(\d+)$/u', $data['문제범위(예:1~3)'], $matches))
+				{
+					return $row_error($row, Context::getLang('msg_invalid_passage_range'));
+				}
+				$start = (int)$matches[1];
+				$end = (int)$matches[2];
+				if($start < 1 || $end < $start || $description === '') return $row_error($row, Context::getLang('msg_invalid_passage_range'));
+				$passage_rows[] = array(
+					'row' => $row,
+					'start' => $start,
+					'end' => $end,
+					'title' => escape($title, false),
+					'description' => removeHackTag($description),
+				);
+				continue;
+			}
+
+			if($passage_started) return $row_error($row, Context::getLang('msg_csv_passage_must_be_last'));
+			if(!preg_match('/^[1-9][0-9]*$/', $data['문제번호'])) return $row_error($row, Context::getLang('msg_csv_invalid_question_number'));
+			$question_no = (int)$data['문제번호'];
+			if($question_no > 10000) return $row_error($row, Context::getLang('msg_csv_invalid_question_number'));
+			if($data['문제범위(예:1~3)'] !== '') return $row_error($row, Context::getLang('msg_csv_range_only_passage'));
+
+			$level_label = $normalize_label($data['난이도(하/중/상)']);
+			if(!array_key_exists($level_label, $level_map)) return $row_error($row, Context::getLang('msg_csv_invalid_level'));
+			$use_description = strtoupper($data['지문 사용 여부(Y/N)']);
+			if(!in_array($use_description, array('Y', 'N'), true)) return $row_error($row, Context::getLang('msg_csv_invalid_yes_no'));
+			if($use_description === 'Y' && $description === '') return $row_error($row, Context::getLang('msg_csv_description_required'));
+			if(!$is_question_bank && (!preg_match('/^[0-9]+$/', $data['배점']) || (int)$data['배점'] > 100))
+			{
+				return $row_error($row, Context::getLang('msg_csv_invalid_point'));
+			}
+
+			$args = new stdClass();
+			$args->question_level = $level_map[$level_label];
+			$args->question_type = $question_type;
+			$args->title = escape($title, false);
+			$args->content = $data['해설'];
+			$args->use_description = $use_description;
+			$args->description_title = escape($description_title, false);
+			$args->description = removeHackTag($description);
+			$args->point = $is_question_bank ? 0 : (int)$data['배점'];
+			$args->status = 'Y';
+			for($i = 1; $i <= 5; $i++) $args->{'answer'.$i} = '';
+
+			$answer = trim($data['(공통) 정답']);
+			if($question_type === 0)
+			{
+				$has_option = false;
+				for($i = 1; $i <= 5; $i++)
+				{
+					$args->{'answer'.$i} = trim($data['객관식 보기 '.$i]);
+					if($args->{'answer'.$i} !== '') $has_option = true;
+				}
+				if(!$has_option || $answer === '') return $row_error($row, Context::getLang('msg_not_answer'));
+				$answer_list = array_values(array_unique(array_filter(array_map('trim', explode(',', $answer)), static function($value) { return $value !== ''; })));
+				if(!$answer_list) return $row_error($row, Context::getLang('msg_not_answer'));
+				foreach($answer_list as $answer_no)
+				{
+					if(!preg_match('/^[1-5]$/', $answer_no) || $args->{'answer'.$answer_no} === '') return $row_error($row, Context::getLang('msg_csv_invalid_objective_answer'));
+				}
+				$args->answer = implode(',', $answer_list);
+				$args->answer_check_type = count($answer_list) > 1 ? 1 : 0;
+				$args->subjective_check_type = 0;
+			}
+			else
+			{
+				if($answer === '' || strlen($answer) > 10000) return $row_error($row, Context::getLang('msg_not_answer'));
+				$check_label = $normalize_label($data['주관식 채점 기준(완전일치/모든단어/일부단어/정규식)']);
+				if(!array_key_exists($check_label, $subjective_map)) return $row_error($row, Context::getLang('msg_invalid_subjective_check_type'));
+				$check_type = $subjective_map[$check_label];
+				if(in_array($check_type, array(1, 2), true) && count($this->getSubjectiveKeywords($answer)) < 2)
+				{
+					return $row_error($row, Context::getLang('msg_subjective_keywords_required'));
+				}
+				if($check_type === 3 && !$this->isValidSubjectiveRegex($answer)) return $row_error($row, Context::getLang('msg_invalid_subjective_regex'));
+				$args->answer = $answer;
+				$args->answer_check_type = 0;
+				$args->subjective_check_type = $check_type;
+			}
+
+			if(isset($ordinary_rows[$question_no])) $duplicate_count++;
+			$ordinary_rows[$question_no] = array('row' => $row, 'args' => $args);
+		}
+
+		$existing_questions = $examitem->getQuestions() ?: array();
+		$question_map = array();
+		$point_map = array();
+		foreach($existing_questions as $no => $qitem)
+		{
+			$question_map[(int)$no] = array(
+				'question_srl' => (int)$qitem->question_srl,
+				'passage_srl' => $is_question_bank ? 0 : (int)$qitem->get('passage_srl'),
+			);
+			$point_map[(int)$no] = $is_question_bank ? 0 : (int)$qitem->get('point');
+		}
+		ksort($ordinary_rows, SORT_NUMERIC);
+		$expected_new_no = count($question_map) + 1;
+		foreach(array_keys($ordinary_rows) as $question_no)
+		{
+			if($question_no <= count($question_map)) continue;
+			if($question_no !== $expected_new_no)
+			{
+				return $row_error($ordinary_rows[$question_no]['row'], sprintf(Context::getLang('msg_csv_question_number_gap'), $expected_new_no));
+			}
+			$question_map[$question_no] = array('question_srl' => 0, 'passage_srl' => 0);
+			$point_map[$question_no] = 0;
+			$expected_new_no++;
+		}
+
+		$occupied_ranges = array();
+		foreach($question_map as $no => $question)
+		{
+			if($question['passage_srl']) $occupied_ranges[$no] = true;
+		}
+		foreach($passage_rows as $passage)
+		{
+			if($passage['end'] > count($question_map)) return $row_error($passage['row'], Context::getLang('msg_invalid_passage_range'));
+			for($no = $passage['start']; $no <= $passage['end']; $no++)
+			{
+				if(isset($occupied_ranges[$no])) return $row_error($passage['row'], Context::getLang('msg_passage_range_overlap'));
+				$occupied_ranges[$no] = true;
+			}
+		}
+
+		$oDB = DB::getInstance();
+		$oDB->begin();
+		$inserted_count = 0;
+		$updated_count = 0;
+		try
+		{
+			foreach($ordinary_rows as $question_no => $row)
+			{
+				$args = $row['args'];
+				$args->passage_srl = $question_map[$question_no]['passage_srl'];
+				if($question_map[$question_no]['question_srl'])
+				{
+					$args->question_srl = $question_map[$question_no]['question_srl'];
+					$output = executeQuery('exam.updateQuestion', $args);
+					$updated_count++;
+				}
+				else
+				{
+					$args->question_srl = getNextSequence();
+					$args->module_srl = $module_srl;
+					$args->document_srl = $document_srl;
+					$args->list_order = $args->question_srl * -1;
+					$output = executeQuery('exam.insertQuestion', $args);
+					$question_map[$question_no]['question_srl'] = (int)$args->question_srl;
+					$inserted_count++;
+				}
+				if(!$output->toBool())
+				{
+					$oDB->rollback();
+					return $output;
+				}
+				$point_map[$question_no] = (int)$args->point;
+			}
+
+			foreach($passage_rows as $passage)
+			{
+				$args = new stdClass();
+				$args->question_srl = getNextSequence();
+				$args->module_srl = $module_srl;
+				$args->document_srl = $document_srl;
+				$args->list_order = $args->question_srl * -1;
+				$args->question_level = 0;
+				$args->question_type = 2;
+				$args->passage_srl = 0;
+				$args->title = $passage['title'];
+				$args->content = '';
+				$args->answer = '';
+				$args->answer_check_type = 0;
+				$args->subjective_check_type = 0;
+				$args->use_description = 'Y';
+				$args->description_title = '';
+				$args->description = $passage['description'];
+				$args->point = 0;
+				$args->status = 'Y';
+				for($i = 1; $i <= 5; $i++) $args->{'answer'.$i} = '';
+				$output = executeQuery('exam.insertQuestion', $args);
+				if(!$output->toBool())
+				{
+					$oDB->rollback();
+					return $output;
+				}
+
+				for($no = $passage['start']; $no <= $passage['end']; $no++)
+				{
+					$output = $this->updateQuestionPassage($document_srl, $question_map[$no]['question_srl'], $args->question_srl);
+					if(!$output->toBool())
+					{
+						$oDB->rollback();
+						return $output;
+					}
+				}
+			}
+
+			$count_args = new stdClass();
+			$count_args->document_srl = $document_srl;
+			$count_args->question_count = count($question_map);
+			if((int)$examitem->getJoinCount() > 0) $count_args->join_count = 0;
+			$output = executeQuery('exam.updateExamCount', $count_args);
+			if(!$output->toBool())
+			{
+				$oDB->rollback();
+				return $output;
+			}
+
+			$total_args = new stdClass();
+			$total_args->document_srl = $document_srl;
+			$total_args->total_point = array_sum($point_map);
+			$output = executeQuery('exam.updateExamTotalPoint', $total_args);
+			if(!$output->toBool())
+			{
+				$oDB->rollback();
+				return $output;
+			}
+
+			if((int)$examitem->getJoinCount() > 0)
+			{
+				$result_args = new stdClass();
+				$result_args->module_srl = $module_srl;
+				$result_args->document_srl = $document_srl;
+				$output = executeQuery('exam.deleteExamResultByModuleSrl', $result_args);
+				if(!$output->toBool())
+				{
+					$oDB->rollback();
+					return $output;
+				}
+			}
+			$oDB->commit();
+		}
+		catch(\Throwable $e)
+		{
+			$oDB->rollback();
+			return $this->makeObject(-1, 'msg_csv_import_failed');
+		}
+
+		unset($GLOBALS['XE_EXAM_LIST'][$document_srl]);
+		$oCacheHandler = CacheHandler::getInstance('object');
+		if($oCacheHandler->isSupport())
+		{
+			$oCacheHandler->delete('exam_item:'.getNumberingPath($document_srl).$document_srl);
+		}
+
+		$this->setMessage(sprintf(
+			Context::getLang('msg_csv_import_success'),
+			$inserted_count,
+			$updated_count,
+			count($passage_rows),
+			$duplicate_count
+		));
+		$this->setRedirectUrl(getNotEncodedUrl('', 'mid', $this->mid, 'document_srl', $document_srl, 'act', 'dispExamCsvImport'));
 	}
 	/**
 	 * @brief 시험문제 삭제 처리
@@ -608,6 +1045,7 @@ class examController extends exam
 			$args->{'answer'.$i} = $targeted_item->get('answer'.$i);
 		}
 		$args->answer_check_type = $targeted_item->get('answer_check_type');
+		$args->subjective_check_type = $targeted_item->get('subjective_check_type');
 		$args->use_description = $targeted_item->get('use_description');
 		$args->description_title = $targeted_item->get('description_title');
 		$args->description = $targeted_item->get('description');
@@ -632,6 +1070,7 @@ class examController extends exam
 			$args->{'answer'.$i} = $selected_item->get('answer'.$i);
 		}
 		$args->answer_check_type = $selected_item->get('answer_check_type');
+		$args->subjective_check_type = $selected_item->get('subjective_check_type');
 		$args->use_description = $selected_item->get('use_description');
 		$args->description_title = $selected_item->get('description_title');
 		$args->description = $selected_item->get('description');
@@ -700,6 +1139,313 @@ class examController extends exam
 			'matched_count' => $matched_count,
 			'answer_count' => $q_answer_count,
 		);
+	}
+
+	/**
+	 * 쉼표로 구분한 주관식 채점 키워드를 정리한다.
+	 *
+	 * @param string $answer
+	 * @return array
+	 */
+	private function getSubjectiveKeywords($answer)
+	{
+		$keywords = array_map('trim', explode(',', (string)$answer));
+		$keywords = array_filter($keywords, static function($keyword)
+		{
+			return $keyword !== '';
+		});
+
+		return array_values(array_unique($keywords, SORT_STRING));
+	}
+
+	/**
+	 * 사용자 정규식을 제한된 PCRE 자원 안에서 실행한다.
+	 * 패턴과 제출 답안의 크기를 제한하고, 실행 후 프로세스 설정을 반드시 복구한다.
+	 *
+	 * @param string $pattern
+	 * @param string $subject
+	 * @return int|false
+	 */
+	private function safeSubjectivePregMatch($pattern, $subject)
+	{
+		$pattern = (string)$pattern;
+		$subject = (string)$subject;
+		if($pattern === '' || strlen($pattern) > 2000 || strlen($subject) > 5000)
+		{
+			return false;
+		}
+		// 출제자가 실행 한도를 덮어쓰지 못하도록 한도 제어문은 직접 삽입한다.
+		if(stripos($pattern, '(*LIMIT_') !== false)
+		{
+			return false;
+		}
+		$pattern = substr($pattern, 0, 1)
+			. '(*LIMIT_MATCH=100000)(*LIMIT_RECURSION=1000)'
+			. substr($pattern, 1);
+
+		$old_backtrack_limit = ini_get('pcre.backtrack_limit');
+		$old_recursion_limit = ini_get('pcre.recursion_limit');
+		$backtrack_changed = @ini_set('pcre.backtrack_limit', '100000') !== false;
+		$recursion_changed = @ini_set('pcre.recursion_limit', '1000') !== false;
+		$result = false;
+		try
+		{
+			$result = @preg_match($pattern, $subject);
+		}
+		catch(\Throwable $e)
+		{
+			$result = false;
+		}
+		finally
+		{
+			if($backtrack_changed && $old_backtrack_limit !== false)
+			{
+				@ini_set('pcre.backtrack_limit', (string)$old_backtrack_limit);
+			}
+			if($recursion_changed && $old_recursion_limit !== false)
+			{
+				@ini_set('pcre.recursion_limit', (string)$old_recursion_limit);
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param string $pattern
+	 * @return bool
+	 */
+	private function isValidSubjectiveRegex($pattern)
+	{
+		return $this->safeSubjectivePregMatch($pattern, '') !== false;
+	}
+
+	/**
+	 * 주관식 답안을 설정된 기준에 따라 채점한다.
+	 *
+	 * @param string $answer 응시자가 제출한 답안
+	 * @param string $correct_answer 출제자가 입력한 정답 또는 패턴
+	 * @param int $check_type 0: 완전 일치, 1: 모든 키워드 포함, 2: 키워드 하나 이상 포함, 3: PHP 정규식
+	 * @return bool
+	 */
+	private function checkSubjectiveAnswer($answer, $correct_answer, $check_type)
+	{
+		$answer = (string)$answer;
+		$correct_answer = (string)$correct_answer;
+		$check_type = (int)$check_type;
+
+		if($check_type === 0)
+		{
+			return $answer === $correct_answer;
+		}
+		if($check_type === 3)
+		{
+			return $this->safeSubjectivePregMatch($correct_answer, $answer) === 1;
+		}
+
+		$keywords = $this->getSubjectiveKeywords($correct_answer);
+		if(!$keywords)
+		{
+			return false;
+		}
+
+		$matched_count = 0;
+		foreach($keywords as $keyword)
+		{
+			if(strpos($answer, $keyword) !== false)
+			{
+				$matched_count++;
+			}
+		}
+
+		if($check_type === 1)
+		{
+			return $matched_count === count($keywords);
+		}
+
+		return $check_type === 2 && $matched_count > 0;
+	}
+
+	/**
+	 * 객관식과 주관식을 공통 형식으로 채점한다.
+	 *
+	 * @param questionItem $qitem
+	 * @param string $answer
+	 * @return array
+	 */
+	private function checkQuestionAnswer($qitem, $answer)
+	{
+		$q_answer = $qitem->get('answer');
+		$q_answer_count = $qitem->getAnswerCount();
+		$result = array(
+			'check' => 'X',
+			'matched_count' => 0,
+			'answer_count' => $q_answer_count,
+		);
+
+		if(!$qitem->getQType() && $q_answer_count > 1)
+		{
+			return $this->checkMultipleChoiceAnswer(
+				$answer,
+				$qitem->getAnswerList(),
+				$qitem->get('answer_check_type')
+			);
+		}
+
+		$is_correct = $qitem->getQType() === 1
+			? $this->checkSubjectiveAnswer($answer, $q_answer, $qitem->get('subjective_check_type'))
+			: (string)$answer === (string)$q_answer;
+		if($is_correct)
+		{
+			$result['check'] = 'O';
+			$result['matched_count'] = 1;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * 연습문제 즉시 채점 화면에 표시할 정답 문자열을 만든다.
+	 *
+	 * @param questionItem $qitem
+	 * @return string
+	 */
+	private function getPracticeCorrectAnswer($qitem)
+	{
+		if($qitem->getQType())
+		{
+			return $qitem->getAnswer();
+		}
+
+		$icons = (array)Context::getLang('numIconList');
+		$answers = array();
+		foreach($qitem->getAnswerList() as $answer_no)
+		{
+			$answer_no = (int)$answer_no;
+			if($answer_no < 1 || $answer_no > 5) continue;
+			$answers[] = ($icons[$answer_no] ?? $answer_no) . ' ' . $qitem->getAnswer($answer_no);
+		}
+
+		return implode(' / ', $answers);
+	}
+
+	/**
+	 * 연습문제 한 문항을 즉시 채점하고 세션에 답안을 잠근다.
+	 */
+	public function procExamPracticeSubmit()
+	{
+		if(!$this->grant->join)
+		{
+			return $this->makeObject(-1, 'msg_not_permitted');
+		}
+		if(!checkCSRF())
+		{
+			return $this->makeObject(-1, 'msg_invalid_request');
+		}
+
+		$args = Context::getRequestVars();
+		$document_srl = (int)($args->document_srl ?? 0);
+		$module_srl = (int)($args->module_srl ?? 0);
+		$question_srl = (int)($args->question_srl ?? 0);
+		$answer = is_scalar($args->answer ?? null) ? (string)$args->answer : '';
+		if(!$document_srl || !$module_srl || !$question_srl || $answer === '' || strlen($answer) > 10000)
+		{
+			return $this->makeObject(-1, 'msg_not_answer');
+		}
+
+		$oExamModel = getModel('exam');
+		$examitem = $oExamModel->getExam($document_srl);
+		$logged_info = Context::get('logged_info');
+		if(!$examitem->isExists() || (int)$examitem->get('page_type') !== 1 ||
+			(int)$examitem->get('module_srl') !== $module_srl)
+		{
+			return $this->makeObject(-1, 'msg_invalid_request');
+		}
+		if($examitem->isSecret() && !$examitem->isGranted())
+		{
+			return $this->makeObject(-1, 'msg_not_founded');
+		}
+		if(!$examitem->isJoinGroupAllowed($logged_info))
+		{
+			return $this->makeObject(-1, 'msg_not_allowed_exam_group');
+		}
+		$resultitem = $oExamModel->getExamResultByDocumentSrl($document_srl, $logged_info->member_srl);
+		if($resultitem && $resultitem->log_srl && $examitem->get('allow_retake') !== 'Y')
+		{
+			return $this->makeObject(-1, 'msg_exists_result');
+		}
+		$now = time();
+		if($examitem->isDate() && ($examitem->get('start_date') || $examitem->get('end_date')))
+		{
+			if($examitem->get('start_date') && ztime($examitem->get('start_date')) > $now)
+			{
+				return $this->makeObject(-1, 'msg_not_exam_date');
+			}
+			if($examitem->get('end_date') && $now > ztime($examitem->get('end_date')))
+			{
+				return $this->makeObject(-1, 'msg_not_exam_date');
+			}
+		}
+
+		$session = &$_SESSION['exam_joinlog'][$document_srl];
+		if(empty($session) || (int)($session['member_srl'] ?? 0) !== (int)($logged_info->member_srl ?? 0))
+		{
+			return $this->makeObject(-1, 'msg_not_session');
+		}
+
+		$question_order = $session['question_order'] ?? array();
+		$questions = $examitem->getQuestions($question_order);
+		$qitem = null;
+		foreach($questions as $question)
+		{
+			if((int)$question->question_srl === $question_srl)
+			{
+				$qitem = $question;
+				break;
+			}
+		}
+		if(!$qitem)
+		{
+			return $this->makeObject(-1, 'msg_not_founded');
+		}
+
+		if(!isset($session['practice_answers']) || !is_array($session['practice_answers']))
+		{
+			$session['practice_answers'] = array();
+		}
+		if(!isset($session['practice_answers'][$question_srl]))
+		{
+			$answer_result = $this->checkQuestionAnswer($qitem, $answer);
+			$session['practice_answers'][$question_srl] = array(
+				'answer' => $answer,
+				'check' => $answer_result['check'],
+				'correct_answer' => $this->getPracticeCorrectAnswer($qitem),
+				'explanation' => $qitem->getContent(),
+				'submitted_at' => time(),
+			);
+		}
+
+		$record = $session['practice_answers'][$question_srl];
+		$result_labels = array(
+			'O' => Context::getLang('practice_result_correct'),
+			'P' => Context::getLang('practice_result_partial'),
+			'X' => Context::getLang('practice_result_wrong'),
+		);
+		$this->add('question_srl', $question_srl);
+		$this->add('answer', $record['answer']);
+		$this->add('answer_result', $record['check']);
+		$this->add('result_label', $result_labels[$record['check']] ?? $result_labels['X']);
+		$this->add('correct_answer', $record['correct_answer']);
+		$this->add('explanation', $record['explanation']);
+		$submitted_count = 0;
+		foreach($questions as $question)
+		{
+			if(isset($session['practice_answers'][(int)$question->question_srl])) $submitted_count++;
+		}
+		$this->add('submitted_count', $submitted_count);
+		$this->add('completed', $submitted_count >= count($questions) ? 'Y' : 'N');
+
+		return $this->makeObject();
 	}
 
 	/**
@@ -793,7 +1539,9 @@ class examController extends exam
 			return $this->makeObject(-1, 'msg_not_founded');
 		}
 		// 이어서 응시할 수 있는 시험은 이탈 알림 요청으로 제출하지 않는다.
-		$abandon_attempt = $abandon_attempt && $examitem->get('allow_retake') !== 'Y';
+		$is_practice = (int)$examitem->get('page_type') === 1;
+		$is_question_bank = (int)$examitem->get('page_type') === 2;
+		$abandon_attempt = !$is_practice && $abandon_attempt && $examitem->get('allow_retake') !== 'Y';
 
 		$logged_info = Context::get('logged_info');
 		if(!$examitem->isJoinGroupAllowed($logged_info))
@@ -829,7 +1577,7 @@ class examController extends exam
 		if(!$start_time) return $this->makeObject(-1, 'msg_not_session');
 		// 재응시가 허용되지 않은 시험에서 페이지를 이탈한 경우 미응답으로 제출한다.
 		$force_empty_answers = $abandon_attempt;
-		if($examitem->isTime() && $examitem->get('exam_time'))
+		if(!$is_practice && $examitem->isTime() && $examitem->get('exam_time'))
 		{
 			// 끝나는시간 (시작시간+제한시간 초)
 			$end_date = $start_time + (int)$examitem->get('exam_time');
@@ -846,43 +1594,45 @@ class examController extends exam
 		$wrong_count = 0;
 		$score = 0;
 
-		$default_score = ceil(1 / $examitem->get('question_count') * 100); //문제당 기본 배점(1/총문제수*100)
-		$use_question_point = $examitem->getAllQuestionPoint() > 0;
 		$question_order = $_SESSION['exam_joinlog'][$examitem->document_srl]['question_order'] ?? array();
-		foreach($examitem->getQuestions($question_order) as $no => $qitem)
+		$practice_answers = $_SESSION['exam_joinlog'][$examitem->document_srl]['practice_answers'] ?? array();
+		$questions = $is_question_bank
+			? $examitem->getQuestionBankQuestions($question_order)
+			: $examitem->getQuestions($question_order);
+		if(!$questions) return $this->makeObject(-1, 'no_question_list');
+		$default_score = ceil(1 / count($questions) * 100); // 개별 배점이 없는 시험은 실제 출제 문제 수를 기준으로 자동 배점한다.
+		$use_question_point = !$is_question_bank && $examitem->getAllQuestionPoint() > 0;
+		if($is_practice)
 		{
-			$answer = $force_empty_answers ? '' : ($args->{'answer'.$no} ?? ''); // 응시자가 선택(입력)한 답
-			$q_answer = $qitem->get('answer'); // 문제 정답
-			$q_answer_count = $qitem->getAnswerCount(); // 정답 개수
-			$check = 'X'; // O정답, X오답, P부분정답
-			$cnt = 0;
-			$_score = 0;
-			// 객관식이고 복수정답일때 처리
-			if(!$qitem->getQType() && $q_answer_count>1)
+			foreach($questions as $question)
 			{
-				$multiple_answer_result = $this->checkMultipleChoiceAnswer(
-					$answer,
-					$qitem->getAnswerList(),
-					$qitem->get('answer_check_type')
-				);
-				$check = $multiple_answer_result['check'];
-				$cnt = $multiple_answer_result['matched_count'];
-				$q_answer_count = $multiple_answer_result['answer_count'];
-			} else { // 복수 정답이 아닐때..
-				if($answer==$q_answer)
+				if(!isset($practice_answers[(int)$question->question_srl]))
 				{
-					$check = 'O';
+					return $this->makeObject(-1, 'msg_practice_incomplete');
 				}
 			}
+		}
+		foreach($questions as $no => $qitem)
+		{
+			$question_default_score = $is_question_bank
+				? max(0, (int)$qitem->get('point'))
+				: $default_score;
+			$practice_answer = $practice_answers[(int)$qitem->question_srl]['answer'] ?? '';
+			$answer = $is_practice ? $practice_answer : ($force_empty_answers ? '' : ($args->{'answer'.$no} ?? ''));
+			$_score = 0;
+			$answer_result = $this->checkQuestionAnswer($qitem, $answer);
+			$check = $answer_result['check'];
+			$cnt = $answer_result['matched_count'];
+			$q_answer_count = $answer_result['answer_count'];
 			
 			//총 배점이 0점이라면 기존 시험이므로 기존 방식대로 채점한다
 			if(!$use_question_point) {
 				if($check=='O') {
-					$_score = $default_score;
+					$_score = $question_default_score;
 					$score += $_score;
 					$correct_count++;
 				} elseif($check=="P") {
-					$_score = ceil(($default_score/$q_answer_count)*$cnt);
+					$_score = ceil(($question_default_score/$q_answer_count)*$cnt);
 					$score += $_score;
 					$correct_count++;
 				} else {
@@ -982,6 +1732,11 @@ class examController extends exam
 		$answers = is_array($resultitem->answer) ? $resultitem->answer : array();
 		$question_count = count($answers);
 		$default_score = $question_count ? ceil(100 / $question_count) : 0;
+		$is_question_bank = (int)$examitem->get('page_type') === 2;
+		if($is_question_bank)
+		{
+			$answers = $examitem->applyQuestionBankPoints($answers);
+		}
 		$stored_total_point = 0;
 		foreach($answers as $qitem)
 		{
@@ -991,7 +1746,7 @@ class examController extends exam
 			}
 			$stored_total_point += max(0, (int)$qitem->get('point'));
 		}
-		$use_question_point = $stored_total_point > 0;
+		$use_question_point = !$is_question_bank && $stored_total_point > 0;
 		$correct_count = 0;
 		$wrong_count = 0;
 		$total_score = 0;
@@ -1002,7 +1757,10 @@ class examController extends exam
 			{
 				continue;
 			}
-			$max_score = $use_question_point ? max(0, (int)$qitem->get('point')) : $default_score;
+			$automatic_score = $is_question_bank
+				? max(0, (int)$qitem->get('point'))
+				: $default_score;
+			$max_score = $use_question_point ? max(0, (int)$qitem->get('point')) : $automatic_score;
 			$current_score = max(0, (int)$qitem->get('score'));
 			$question_score = array_key_exists($no, $question_scores) ? (int)$question_scores[$no] : $current_score;
 			$question_score = min(max(0, $question_score), $max_score);

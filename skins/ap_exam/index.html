@@ -44,7 +44,7 @@
 		<td cond="$val->type=='regdate' && $val->idx==-1"><div class="ta_c">{zdate($examitem->get('regdate'),'Y') === date('Y') ? getTimeGap($examitem->get('regdate'), 'm.d') : getTimeGap($examitem->get('regdate'))}</div></td>
 		<td cond="$val->type=='exam_date' && $val->idx==-1"><div class="ta_c">{$examitem->getExamDate('Y.m.d H:i', true)}</div></td>
 		<td cond="$val->type=='last_update' && $val->idx==-1"><div class="ta_c">{zdate($examitem->get('last_update'),'Y') === date('Y') ? getTimeGap($examitem->get('last_update'), 'm.d') : getTimeGap($examitem->get('last_update'))}</div></td>
-		<td cond="$val->type=='exam_question_count' && $val->idx==-1"><div class="ta_c">{$examitem->getQuestionCount()}</div></td>
+		<td cond="$val->type=='exam_question_count' && $val->idx==-1"><div class="ta_c">{$examitem->getDisplayQuestionCount()}</div></td>
 		<td cond="$val->type=='exam_join_count' && $val->idx==-1"><div class="ta_c">{$examitem->getJoinCount()}</div></td>
 		<td cond="$val->type=='exam_join_point' && $val->idx==-1"><div class="ta_c">{$examitem->getJoinPoint()}P</div></td>
 		<td cond="$val->type=='exam_pass_point' && $val->idx==-1"><div class="ta_c">{$examitem->getPassPoint()}P</div></td>

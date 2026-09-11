@@ -61,6 +61,7 @@ class exam extends ModuleObject
 
 		// 복수정답 처리옵션 필드 추가(v0.8 추가)
 		if(!$oDB->isColumnExists("exam_question", "answer_check_type")) return true;
+		if(!$oDB->isColumnExists('exam_question', 'subjective_check_type')) return true;
 		if(!$oDB->isColumnExists('exam_question', 'passage_srl')) return true;
 
 		// 합격시 지급할 포인트 필드 추가(v0.5 추가)
@@ -71,6 +72,9 @@ class exam extends ModuleObject
 		if(!$oDB->isColumnExists("exam", "total_point")) return true;
 		if(!$oDB->isColumnExists('exam', 'allow_retake')) return true;
 		if(!$oDB->isColumnExists('exam', 'random_question_order')) return true;
+		if(!$oDB->isColumnExists('exam', 'bank_objective_count')) return true;
+		if(!$oDB->isColumnExists('exam', 'bank_subjective_count')) return true;
+		if(!$oDB->isColumnExists('exam', 'bank_sort_by_level')) return true;
 
 		// 트리거 확인해서 추가안된 항목이 있으면 true 리턴
 		$oModuleModel = getModel('module');
@@ -157,6 +161,11 @@ class exam extends ModuleObject
 				}
 			}
 		}
+		// 기존 주관식 문항은 기본값 0(완전 일치)으로 마이그레이션한다.
+		if(!$oDB->isColumnExists('exam_question', 'subjective_check_type'))
+		{
+			$oDB->addColumn('exam_question', 'subjective_check_type', 'number', 1, 0, true);
+		}
 		
 		if(!$oDB->isColumnExists("exam_question", "point"))
 		{
@@ -178,6 +187,18 @@ class exam extends ModuleObject
 		if(!$oDB->isColumnExists('exam', 'random_question_order'))
 		{
 			$oDB->addColumn('exam', 'random_question_order', 'char', 1, 'N', true);
+		}
+		if(!$oDB->isColumnExists('exam', 'bank_objective_count'))
+		{
+			$oDB->addColumn('exam', 'bank_objective_count', 'number', 11, 0, true);
+		}
+		if(!$oDB->isColumnExists('exam', 'bank_subjective_count'))
+		{
+			$oDB->addColumn('exam', 'bank_subjective_count', 'number', 11, 0, true);
+		}
+		if(!$oDB->isColumnExists('exam', 'bank_sort_by_level'))
+		{
+			$oDB->addColumn('exam', 'bank_sort_by_level', 'char', 1, 'N', true);
 		}
 
         // 트리거 확인 및 추가
@@ -233,9 +254,39 @@ class exam extends ModuleObject
 		else return ($key_return)? 'Y' : $list['Y'];
 	}
 	function getConfigPageType($key=0,$key_return=false) {
+		$key = is_scalar($key) ? (int)$key : 0;
 		$list = Context::getLang('pageTypeList');
 		if(isset($list[$key])) return ($key_return)? $key : $list[$key];
 		else return ($key_return)? 0 : $list[0];
+	}
+
+	/**
+	 * 문제 CSV 템플릿 및 가져오기에서 사용하는 열 이름.
+	 * 순서를 변경하면 기존 템플릿과 호환되지 않으므로 반드시 끝에만 추가한다.
+	 *
+	 * @return array
+	 */
+	protected function getQuestionCsvHeaders()
+	{
+		return array(
+			'문제번호',
+			'난이도(하/중/상)',
+			'문제유형(객관식/주관식/공통지문)',
+			'문제범위(예:1~3)',
+			'문제',
+			'지문 사용 여부(Y/N)',
+			'지문 머리글',
+			'지문 본문 html',
+			'(공통) 정답',
+			'객관식 보기 1',
+			'객관식 보기 2',
+			'객관식 보기 3',
+			'객관식 보기 4',
+			'객관식 보기 5',
+			'주관식 채점 기준(완전일치/모든단어/일부단어/정규식)',
+			'해설',
+			'배점',
+		);
 	}
 	function getConfigResultType($key=0,$key_return=false) {
 		$list = Context::getLang('resultTypeList');

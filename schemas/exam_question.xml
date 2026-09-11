@@ -15,6 +15,7 @@
     <column name="answer4" type="text" notnull="notnull" />
     <column name="answer5" type="text" notnull="notnull" />
     <column name="answer_check_type" type="number" size="1" default="0" />
+    <column name="subjective_check_type" type="number" size="1" default="0" notnull="notnull" />
     <column name="use_description" type="char" size="1" default="N" notnull="notnull" />
     <column name="description_title" type="varchar" size="250" />
     <column name="description" type="text" notnull="notnull" />

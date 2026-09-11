@@ -500,6 +500,18 @@ class examItem extends BaseObject
 	{
 		return (int)$this->get('question_count');
 	}
+	/**
+	 * 화면에 표시할 실제 출제 문항 수를 반환한다.
+	 * 문제은행 시험은 등록 문항 수가 아니라 유형별 설정과 현재 후보 수를 기준으로 한다.
+	 *
+	 * @return int
+	 */
+	function getDisplayQuestionCount()
+	{
+		return (int)$this->get('page_type') === 2
+			? $this->getQuestionBankSelectedCount()
+			: $this->getQuestionCount();
+	}
 	function getJoinCount()
 	{
 		return $this->get('join_count');
@@ -721,6 +733,149 @@ class examItem extends BaseObject
 	}
 
 	/**
+	 * 문제은행 출제 후보를 유형별로 반환한다.
+	 * 공통지문 및 공통지문에 연결된 문제는 문제은행에서 사용하지 않는다.
+	 *
+	 * @return array<int,array>
+	 */
+	protected function getQuestionBankCandidates()
+	{
+		$candidates = array(0 => array(), 1 => array());
+		foreach($this->getAllQuestionItems() as $qitem)
+		{
+			$type = (int)$qitem->get('question_type');
+			if(!isset($candidates[$type]) || (int)$qitem->get('passage_srl') > 0) continue;
+			$candidates[$type][] = $qitem;
+		}
+		return $candidates;
+	}
+
+	/**
+	 * 세션에 저장된 문제은행 순서에 해당하는 유효한 문제만 반환한다.
+	 *
+	 * @param array $question_order
+	 * @return array<int,questionItem>
+	 */
+	function getQuestionBankQuestions($question_order)
+	{
+		$question_order = is_array($question_order) ? $question_order : array();
+		if(!$question_order) return array();
+
+		$candidate_map = array();
+		foreach($this->getQuestionBankCandidates() as $type_candidates)
+		{
+			foreach($type_candidates as $qitem) $candidate_map[(int)$qitem->question_srl] = $qitem;
+		}
+
+		$questions = array();
+		$virtual_number = 1;
+		foreach($question_order as $question_srl)
+		{
+			$question_srl = (int)$question_srl;
+			if(isset($candidate_map[$question_srl])) $questions[$virtual_number++] = $candidate_map[$question_srl];
+		}
+
+		return $this->applyQuestionBankPoints($questions);
+	}
+
+	/**
+	 * 문제은행 문항의 DB 배점은 0으로 유지하면서 런타임 배점을 적용한다.
+	 * 모든 배점은 정수이고 합계는 100점이며, 필요한 감점은 낮은 난이도부터 적용한다.
+	 *
+	 * @param array $questions
+	 * @return array
+	 */
+	function applyQuestionBankPoints($questions)
+	{
+		$questions = is_array($questions) ? $questions : array();
+		$question_count = count($questions);
+		if(!$question_count) return $questions;
+
+		$higher_point = intdiv(100 + $question_count - 1, $question_count);
+		$lower_point_count = ($higher_point * $question_count) - 100;
+		$priority_keys = array_keys($questions);
+		usort($priority_keys, static function($left_key, $right_key) use ($questions)
+		{
+			$level_compare = (int)$questions[$left_key]->get('question_level') <=> (int)$questions[$right_key]->get('question_level');
+			return $level_compare ?: ((int)$left_key <=> (int)$right_key);
+		});
+
+		foreach($questions as $qitem) $qitem->add('point', $higher_point);
+		for($i = 0; $i < $lower_point_count; $i++)
+		{
+			$questions[$priority_keys[$i]]->add('point', $higher_point - 1);
+		}
+
+		return $questions;
+	}
+
+	/**
+	 * 문제은행에서 실제 출제 가능한 객관식·주관식 문제 수.
+	 *
+	 * @return array{objective:int,subjective:int,total:int}
+	 */
+	function getQuestionBankAvailableCounts()
+	{
+		$candidates = $this->getQuestionBankCandidates();
+		$objective = count($candidates[0]);
+		$subjective = count($candidates[1]);
+		return array(
+			'objective' => $objective,
+			'subjective' => $subjective,
+			'total' => $objective + $subjective,
+		);
+	}
+
+	/**
+	 * 현재 설정과 등록 문제 수를 기준으로 실제 출제될 문제 수를 반환한다.
+	 *
+	 * @return int
+	 */
+	function getQuestionBankSelectedCount()
+	{
+		$available = $this->getQuestionBankAvailableCounts();
+		return min(max(0, (int)$this->get('bank_objective_count')), $available['objective'])
+			+ min(max(0, (int)$this->get('bank_subjective_count')), $available['subjective']);
+	}
+
+	/**
+	 * 문제은행 설정에 따라 응시자별 출제 문제 순서를 생성한다.
+	 * 같은 난이도 안에서는 무작위 순서를 유지한다.
+	 *
+	 * @return array<int,int>
+	 */
+	function getQuestionBankOrder()
+	{
+		$candidates = $this->getQuestionBankCandidates();
+		$selected = array();
+		$requested_counts = array(
+			0 => max(0, (int)$this->get('bank_objective_count')),
+			1 => max(0, (int)$this->get('bank_subjective_count')),
+		);
+
+		foreach($requested_counts as $type => $requested_count)
+		{
+			if($requested_count < 1 || !$candidates[$type]) continue;
+			shuffle($candidates[$type]);
+			$selected = array_merge($selected, array_slice($candidates[$type], 0, min($requested_count, count($candidates[$type]))));
+		}
+
+		shuffle($selected);
+		if($this->get('bank_sort_by_level') === 'Y')
+		{
+			usort($selected, static function($left, $right)
+			{
+				return (int)$left->get('question_level') <=> (int)$right->get('question_level');
+			});
+		}
+
+		return array_map(static function($qitem)
+		{
+			return (int)$qitem->question_srl;
+		}, $selected);
+	}
+
+	/**
 	 * 공통 지문에 연결된 현재 문제번호 범위를 반환한다.
 	 *
 	 * @param int $passage_srl
@@ -835,6 +990,7 @@ class examItem extends BaseObject
 
 	function getAllQuestionPoint()
 	{
+		if((int)$this->get('page_type') === 2) return 0;
 		$total_point = (int)$this->get('total_point');
 		if($total_point > 0) return $total_point;
 

@@ -1,0 +1,84 @@
+<div class="exam-csv-import">
+	<h2>{$lang->csv_import_title}</h2>
+	<p class="csv-intro">{$lang->csv_import_intro}</p>
+
+	<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/csv_import/1'" class="csv-message {$XE_VALIDATOR_MESSAGE_TYPE}">
+		{$XE_VALIDATOR_MESSAGE}
+	</div>
+	<div cond="$question_edit_invalidates_results" class="csv-message warning">{$lang->about_question_change_invalidates_results}</div>
+	<div cond="$is_question_bank" class="csv-message warning"><strong>{$lang->question_bank_notice_title}</strong><br />{$lang->about_bank_csv_restrictions}</div>
+
+	<section class="csv-section">
+		<h3>1. 템플릿 다운로드</h3>
+		<p>UTF-8 CSV 템플릿입니다. Excel에서 열어 예시 행을 수정하거나 필요한 행을 추가하세요.</p>
+		<a href="{getUrl('act','dispExamCsvTemplateDownload')}" class="csv-button csv-button-secondary">{$lang->cmd_csv_template_download}</a>
+	</section>
+
+	<section class="csv-section csv-cautions">
+		<h3>필수 주의사항</h3>
+		<ul>
+			<li><strong>공통지문 행은 반드시 연결할 모든 문제 행보다 아래에, CSV의 마지막 부분에 작성해야 합니다.</strong></li>
+			<li><strong>공통지문 행의 문제번호는 반드시 비워 두세요.</strong> 문제범위만 <code>1~3</code> 형식으로 입력합니다.</li>
+			<li><strong>문제번호가 CSV 안에서 중복되면 마지막 행으로 덮어씁니다.</strong> 현재 시험에 같은 번호가 있으면 해당 기존 문제도 덮어씁니다.</li>
+			<li>새 문제번호는 현재 마지막 문제의 다음 번호부터 빈 번호 없이 연속되어야 합니다. CSV에 없는 기존 문제는 삭제되지 않습니다.</li>
+			<li>이미 다른 공통지문에 연결된 문제범위는 다시 연결할 수 없습니다.</li>
+			<li>객관식 정답은 보기 번호를 입력합니다. 복수 정답은 <code>1,3</code>처럼 쉼표로 구분하며, 선택한 답이 모두 일치해야 정답입니다.</li>
+			<li>모든단어·일부단어 채점은 정답 칸에 단어를 쉼표로 2개 이상 구분해 입력합니다.</li>
+		</ul>
+	</section>
+
+	<details class="csv-section csv-columns">
+		<summary>CSV 열 입력 방법</summary>
+		<div class="csv-table-wrap">
+			<table>
+				<thead><tr><th>열</th><th>입력 방법</th></tr></thead>
+				<tbody>
+					<tr><td>문제번호</td><td>1 이상의 정수. 공통지문은 빈칸.</td></tr>
+					<tr><td>난이도</td><td>하, 중, 상 중 하나. 공통지문은 빈칸 가능.</td></tr>
+					<tr><td>문제유형</td><td>객관식, 주관식, 공통지문 중 하나.</td></tr>
+					<tr><td>문제범위</td><td>공통지문만 <code>1~3</code> 형식으로 입력.</td></tr>
+					<tr><td>문제</td><td>문제 제목. 공통지문에서는 지문 제목으로 사용.</td></tr>
+					<tr><td>지문 사용 여부</td><td>Y 또는 N. 공통지문은 자동으로 Y 처리.</td></tr>
+					<tr><td>지문 머리글/본문</td><td>본문은 HTML 입력 가능. 위험한 태그는 가져올 때 제거.</td></tr>
+					<tr><td>(공통) 정답</td><td>객관식은 보기 번호, 주관식은 정답 또는 정규식.</td></tr>
+					<tr><td>객관식 보기 1~5</td><td>사용할 보기 내용을 입력. 사용하지 않는 보기는 빈칸.</td></tr>
+					<tr><td>주관식 채점 기준</td><td>완전일치, 모든단어, 일부단어, 정규식 중 하나.</td></tr>
+					<tr><td>해설/배점</td><td>해설은 일반 텍스트, 배점은 0~100 정수.</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</details>
+
+	<section class="csv-section">
+		<h3>2. 수정한 CSV 업로드</h3>
+		<form action="./" method="post" enctype="multipart/form-data" onsubmit="return confirmCsvImport(this);">
+			<input type="hidden" name="module" value="exam" />
+			<input type="hidden" name="act" value="procExamCsvImport" />
+			<input type="hidden" name="mid" value="{$mid}" />
+			<input type="hidden" name="module_srl" value="{$module_info->module_srl}" />
+			<input type="hidden" name="document_srl" value="{$examitem->document_srl}" />
+			<input type="hidden" name="xe_validator_id" value="modules/exam/csv_import/1" />
+			<input type="hidden" name="MAX_FILE_SIZE" value="20971520" />
+			<label class="csv-file-label" for="question_csv">CSV 파일</label>
+			<input type="file" name="question_csv" id="question_csv" accept=".csv,text/csv" required="required" />
+			<p class="csv-help">최대 20MB (서버 업로드 제한: {$csv_upload_max_size})</p>
+			<button type="submit" class="csv-button">{$lang->cmd_csv_import}</button>
+			<button type="button" class="csv-button csv-button-secondary" onclick="refreshOpenerAndClose();">{$lang->cmd_close}</button>
+		</form>
+	</section>
+</div>
+
+<script>
+document.body.classList.add('exam-csv-page');
+function confirmCsvImport(form) {
+	if (!form.question_csv || !form.question_csv.value) return false;
+	return window.confirm('{escape($question_edit_invalidates_results ? $lang->confirm_csv_import_invalidates_results : $lang->confirm_csv_import)}');
+}
+function refreshOpenerAndClose() {
+	if (window.opener && !window.opener.closed) window.opener.location.reload();
+	window.close();
+}
+<block cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/csv_import/1' && $XE_VALIDATOR_MESSAGE_TYPE != 'error'">
+if (window.opener && !window.opener.closed) window.opener.location.reload();
+</block>
+</script>

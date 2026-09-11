@@ -46,10 +46,11 @@
             <div class="ta_l">
                 <block loop="$lang->qTypeList=>$key,$val">
                 <label for="q_type{$key}">
-                    <input type="radio" name="q_type" id="q_type{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_type')" disabled="disabled"|cond="$key==2 && !$examitem->getQuestionCount() && !$questionitem->isPassage()" /> {$val}
+                    <input type="radio" name="q_type" id="q_type{$key}" value="{$key}" checked="checked"|cond="$key==$questionitem->get('question_type')" disabled="disabled"|cond="$key==2 && ($is_question_bank || (!$examitem->getQuestionCount() && !$questionitem->isPassage()))" /> {$val}
                 </label> &nbsp;&nbsp;
                 </block>
 				<p class="info" cond="!$examitem->getQuestionCount() && !$questionitem->isPassage()">{$lang->msg_passage_requires_questions}</p>
+				<p class="info" cond="$is_question_bank">{$lang->about_bank_common_passage_disabled}</p>
             </div>
         </td>
     </tr>
@@ -112,6 +113,29 @@
                 </div>
                 <div id="answer_type1" style="display:none"|cond="!$questionitem->get('question_type')">
                     <input type="text" name="q_answer6" value="{$questionitem->get('answer')}"|cond="$questionitem->get('question_type')" class="iText" /><br />
+                    <div class="subjective_check_setting">
+                        <label for="subjective_check_type">{$lang->q_subjectiveCheckType}</label>
+                        <select name="subjective_check_type" id="subjective_check_type">
+                            <option loop="$lang->subjectiveCheckList=>$key,$val" value="{$key}" selected="selected"|cond="$questionitem->get('subjective_check_type')==$key">{$val}</option>
+                        </select>
+                        <ul class="subjective_check_descriptions">
+                            <li loop="$lang->subjectiveCheckDescriptionList=>$key,$val"><strong>{$lang->subjectiveCheckList[$key]}</strong>: {$val}</li>
+                        </ul>
+						<details class="subjective_regex_help">
+							<summary>{$lang->subjectiveRegexHelpSummary}</summary>
+							<div class="subjective_regex_help_content">
+								<p>{$lang->subjectiveRegexHelpIntro}</p>
+								<ul>
+									<li loop="$lang->subjectiveRegexHelpList=>$key,$val">{$val}</li>
+								</ul>
+								<strong>{$lang->subjectiveRegexExampleTitle}</strong>
+								<ul class="subjective_regex_examples">
+									<li loop="$lang->subjectiveRegexExampleList=>$key,$val"><code>{$val}</code></li>
+								</ul>
+								<p class="subjective_regex_caution">{$lang->subjectiveRegexHelpCaution}</p>
+							</div>
+						</details>
+                    </div>
                 </div>
             </div>
         </td>
@@ -144,7 +168,8 @@
         </td>
         <td>
             <div class="ta_l">
-                <input type="text" name="q_point" id="q_point" value="{$questionitem->get('point')}" class="iText" />
+                <input type="text" name="q_point" id="q_point" value="{$is_question_bank?0:$questionitem->get('point')}" class="iText" disabled="disabled"|cond="$is_question_bank" />
+				<p class="info" cond="$is_question_bank">{$lang->about_bank_point_disabled}</p>
             </div>
         </td>
     </tr>

@@ -2,6 +2,7 @@ jQuery(function($) {
     // 객관식 문제에서 답 클릭시 입력과 함께 표시
     $('.qanswer_list a.ans_check').click(function(event) {
         event.preventDefault();
+        if ($(this).closest('[data-practice-graded="Y"]').length) return;
         var chk_val = $(this).attr('data-value').split(',');
 
         var $answer = $('#answer'+chk_val[0]);
@@ -168,6 +169,8 @@ jQuery(function($) {
 		$('input[name="q_answer"]').val(source.answer);
 		// 복수답안 처리
 		$('select[name="answer_check_type"]').val(source.answer_check_type);
+		// 주관식 채점 기준 반영
+		$('select[name="subjective_check_type"]').val(Number(source.subjective_check_type) || 0);
 		// 해설
 		$('#q_content').val(source.content);
 		// 배점

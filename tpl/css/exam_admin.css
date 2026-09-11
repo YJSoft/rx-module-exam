@@ -10,4 +10,13 @@
 .exam_form.modal .answer_marking{font-weight:bold;color:#000;margin-right:3px;font-size:12px}
 .exam_form.modal .answer_marking.on{color:red}
 .exam_form.modal #answer_type0 input[type="text"] {width:250px}
+.exam_form.modal .subjective_check_setting {margin-top:8px}
+.exam_form.modal .subjective_check_descriptions {margin:6px 0 0;padding-left:20px;color:#666;font-size:12px;line-height:1.6}
+.exam_form.modal .subjective_regex_help {margin-top:8px;border:1px solid #d8d8d8;background:#fff}
+.exam_form.modal .subjective_regex_help summary {padding:7px 9px;cursor:pointer;font-weight:bold}
+.exam_form.modal .subjective_regex_help_content {padding:0 10px 9px;color:#555;line-height:1.6}
+.exam_form.modal .subjective_regex_help_content p {margin:6px 0}
+.exam_form.modal .subjective_regex_help_content ul {margin:6px 0;padding-left:20px}
+.exam_form.modal .subjective_regex_examples code {white-space:normal;word-break:break-word}
+.exam_form.modal .subjective_regex_caution {padding:6px;background:#fff8dc;color:#725500}
 .w250{width:250px !important}

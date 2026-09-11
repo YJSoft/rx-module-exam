@@ -6,11 +6,12 @@
         </block>
 		<block cond="$mode!='write'">
         <a cond="!$question_edit_locked" href="{getUrl('mode','write','question_srl','')}" class="btn">{$lang->cmd_question_write}</a>
+		<a cond="!$question_edit_locked" href="{getUrl('act','dispExamCsvImport','mode','','question_srl','')}" class="btn" onclick="examopen(this.href,'exam_csv_import');return false;">{$lang->cmd_csv_import}</a>
         <a href="{getUrl('act','','mode','','question_srl','')}" class="btn">{$lang->cmd_back}</a>
         </block>
     </div>
     <p class="qcnt">
-        총 <span id="total_q_count">{$examitem->getQuestionCount()}</span> 문항
+        총 <span id="total_q_count">{$examitem->getDisplayQuestionCount()}</span> 문항
         총 <span id="total_q_point">{$examitem->getAllQuestionPoint()}</span> 점
     </p>
 </div>

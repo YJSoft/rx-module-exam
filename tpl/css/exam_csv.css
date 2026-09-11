@@ -1,0 +1,30 @@
+.exam-csv-page{min-width:0!important;min-height:100%;overflow:auto!important;background:#f4f6f8!important}
+.exam-csv-page #wrap,.exam-csv-page #container,.exam-csv-page .content,.exam-csv-page .spot,.exam-csv-page .paper_list,.exam-csv-page .paper_inn,.exam-csv-page .paper,.exam-csv-page .paper_inner{position:static!important;float:none!important;width:auto!important;min-width:0!important;height:auto!important;min-height:0!important;margin:0!important;background:none!important;white-space:normal!important;overflow:visible!important;box-sizing:border-box}
+.exam-csv-page .exam-paper-modern{min-height:100vh;padding:20px}
+.exam-csv-page .exam-paper-modern .paper-shell,.exam-csv-page .exam-paper-modern .paper{width:auto;max-width:none}
+.exam-csv-import{max-width:920px;margin:0 auto;padding:24px;box-sizing:border-box;color:#222;text-align:left}
+.exam-csv-import h2{width:auto!important;height:auto!important;margin:0 0 8px!important;padding:0!important;border:0!important;font-size:26px!important;text-align:left!important}
+.exam-csv-import h3{margin:0 0 10px;font-size:17px}
+.csv-intro{margin:0 0 18px;color:#555;font-size:14px;line-height:1.6}
+.csv-section{margin:0 0 16px;padding:18px;border:1px solid #d8dee6;border-radius:8px;background:#fff;box-sizing:border-box;font-size:14px;line-height:1.65}
+.csv-cautions{border-color:#e7b64b;background:#fffaf0}
+.csv-cautions ul{margin:0;padding-left:22px;list-style:disc}
+.csv-cautions li{margin:6px 0}
+.csv-columns summary{cursor:pointer;font-weight:bold}
+.csv-table-wrap{margin-top:14px;overflow-x:auto}
+.csv-columns table{width:100%;border-collapse:collapse}
+.csv-columns th,.csv-columns td{padding:9px 10px;border:1px solid #d8dee6;text-align:left;vertical-align:top}
+.csv-columns th{background:#f5f7fa}
+.csv-file-label{display:block;margin-bottom:7px;font-weight:bold}
+.csv-help{margin:6px 0 14px;color:#667085;font-size:12px}
+.csv-button{display:inline-block;margin:4px 6px 4px 0;padding:10px 16px;border:1px solid #3146a8;border-radius:5px;background:#3146a8;color:#fff!important;font-weight:bold;text-decoration:none;cursor:pointer}
+.csv-button-secondary{border-color:#697386;background:#fff;color:#344054!important}
+.csv-message{margin:0 0 14px;padding:12px 14px;border:1px solid #8bc49b;border-radius:6px;background:#f0fbf3;color:#166534;font-size:14px;line-height:1.5}
+.csv-message.error{border-color:#ef9a9a;background:#fff1f1;color:#991b1b}
+.csv-message.warning{border-color:#e7b64b;background:#fff8dc;color:#725500}
+body.color_scheme_dark .exam-csv-import{color:#e5e7eb}
+body.color_scheme_dark .csv-section{border-color:#334155;background:#1e293b;color:#e5e7eb}
+body.color_scheme_dark .csv-cautions{background:#352b16}
+body.color_scheme_dark .csv-intro,body.color_scheme_dark .csv-help{color:#94a3b8}
+body.color_scheme_dark .csv-columns th{background:#172033}
+@media(max-width:767px){.exam-csv-import{padding:14px}.csv-section{padding:14px}.csv-button{width:100%;margin-right:0;box-sizing:border-box;text-align:center}}

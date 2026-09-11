@@ -12,11 +12,13 @@
 	<div class="common-passage-content">{$question_block->passage->getDescription()}</div>
 </section>
 <div loop="$question_block->questions=>$no,$qitem" class="qitem">
-    <div class="qtitle">
-        <div class="txt">
+    <div class="qtitle question-editor-title">
+        <div class="txt question-editor-copy">
             <span class="question-number">{$no}</span> {$qitem->getTitle()} <span class="question-point">{$qitem->getPoint()}점</span> <span class="question-level">{$lang->q_level}: {$lang->qLevelList[$qitem->getQLevel()]}</span> <span cond="!$qitem->getQType()" class="answer-key">{$lang->q_answer}: {$qitem->getAnswer()}</span>
-            <a cond="!$question_edit_locked" href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$qitem->question_srl)}" class="btn"><i class="bi bi-pencil" aria-hidden="true"></i> {$lang->cmd_question_edit}</a>
-            <a cond="!$question_edit_locked" href="#" data-value="{$examitem->document_srl}|{$qitem->question_srl}" class="btn question_delete"><i class="bi bi-trash3" aria-hidden="true"></i> {$lang->cmd_question_delete}</a>
+        </div>
+        <div cond="!$question_edit_locked" class="question-editor-actions">
+            <a href="{getUrl('act','dispExamEditMode','mode','write','question_srl',$qitem->question_srl)}" class="btn"><i class="bi bi-pencil" aria-hidden="true"></i> {$lang->cmd_question_edit}</a>
+            <a href="#" data-value="{$examitem->document_srl}|{$qitem->question_srl}" class="btn question_delete"><i class="bi bi-trash3" aria-hidden="true"></i> {$lang->cmd_question_delete}</a>
         </div>
     </div>
     <fieldset cond="$qitem->isDescription()=='Y' && $qitem->getDescription()" class="description">

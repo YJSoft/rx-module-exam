@@ -78,6 +78,22 @@ input.underInput{width:75px;border:0 none;border-bottom:1px solid #333;backgroun
 .exam-leave-notice{margin:0 0 16px;padding:12px 14px;border:1px solid #e3b341;border-radius:6px;background:#fff8d8;color:#5c4300;line-height:1.6}
 .exam-leave-notice strong{display:block;margin-bottom:3px}
 
+/* practice mode */
+#examJoin[data-practice="Y"] [data-practice-question="Y"]:not(.is-active){display:none}
+#examJoin[data-practice="Y"] [hidden]{display:none!important}
+.practice-progress{display:flex;align-items:center;gap:12px;margin:0 10px 18px;padding:12px 14px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;font-size:13px}
+.practice-progress progress{flex:1;min-width:100px;height:12px}
+.practice-question-actions{margin:12px 20px;text-align:right}
+.practice-question-actions .exam_btn1,.practice-navigation .exam_btn1{min-width:110px;padding:9px 14px;border:1px solid #313fa0;border-radius:4px;background:#313fa0;color:#fff;cursor:pointer}
+.practice-question-actions .exam_btn1:disabled,.practice-navigation .exam_btn1:disabled{border-color:#aab0ba;background:#aab0ba;cursor:default}
+.practice-navigation{display:flex;justify-content:space-between;gap:12px;margin:20px 10px}
+.practice-result{margin:12px 20px;padding:14px;border:1px solid #ef4444;border-radius:6px;background:#fff1f2;color:#881337;line-height:1.7}
+.practice-result.is-O{border-color:#22c55e;background:#f0fdf4;color:#166534}
+.practice-result.is-P{border-color:#eab308;background:#fefce8;color:#713f12}
+.practice-result p{margin:6px 0}
+.is-practice-locked .qanswer_list a{cursor:default;opacity:.75}
+.is-practice-locked .underInput{background:#f1f5f9}
+
 /* question insert/edit table */
 .tbl_q_write{table-layout:fixed;width:100%;border-collapse:collapse;border-spacing:0;border-top:1px solid #bcbcbc;border-bottom:1px solid #bcbcbc}
 .tbl_q_write .ta_l{padding-left:12px;text-align:left}
@@ -98,6 +114,15 @@ input.underInput{width:75px;border:0 none;border-bottom:1px solid #333;backgroun
 .tbl_q_write tbody td .iTextarea{width:250px;height:50px;padding:8px 5px 8px;font-size:12px;border:1px solid #e0e0e0;color:#747474}
 .tbl_q_write tbody td .answer_marking{font-weight:bold;color:#000;margin-right:3px;font-size:12px}
 .tbl_q_write tbody td .answer_marking.on{color:red}
+.tbl_q_write .subjective_check_setting{margin-top:8px}
+.tbl_q_write .subjective_check_descriptions{margin:6px 0 0;padding-left:20px;color:#666;font-size:12px;line-height:1.6}
+.tbl_q_write .subjective_regex_help{margin-top:8px;border:1px solid #ddd;background:#fafafa;color:#555}
+.tbl_q_write .subjective_regex_help summary{padding:8px 10px;cursor:pointer;font-weight:bold;color:#444}
+.tbl_q_write .subjective_regex_help_content{padding:0 12px 10px;line-height:1.6}
+.tbl_q_write .subjective_regex_help_content p{margin:7px 0}
+.tbl_q_write .subjective_regex_help_content ul{margin:7px 0;padding-left:20px}
+.tbl_q_write .subjective_regex_examples code{white-space:normal;word-break:break-word}
+.tbl_q_write .subjective_regex_caution{padding:7px;background:#fff8dc;color:#725500}
 .tbl_q_write tbody td p.info{padding-top:10px}
 .tbl_q_write tbody td img {vertical-align:middle}
 
@@ -135,4 +160,8 @@ input.underInput{width:75px;border:0 none;border-bottom:1px solid #333;backgroun
 	.tbl_q_write tbody td{padding:12px}
 	.tbl_q_write tbody td .iText,.tbl_q_write tbody td .iTextarea{width:100%;height:auto;min-height:40px;box-sizing:border-box}
 	.exam-connection-status,.exam-draft-status{margin:0 0 10px}
+	.practice-progress{flex-wrap:wrap;margin:0 0 14px}
+	.practice-progress progress{order:3;flex-basis:100%}
+	.practice-question-actions,.practice-result,.practice-navigation{margin-right:0;margin-left:0}
+	.practice-navigation .exam_btn1{flex:1;min-height:44px}
 }

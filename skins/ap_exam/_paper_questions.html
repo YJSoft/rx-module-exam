@@ -8,11 +8,12 @@
 <div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/exam/exam_join/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
     <p>{$XE_VALIDATOR_MESSAGE}</p>
 </div>
-<form ruleset="examJoin" id="examJoin" action="./" method="post" data-exam-srl="{$examitem->document_srl}" data-timed="{($examitem->isTime() && $examitem->get('exam_time'))?'Y':'N'}" data-allow-resume="{$examitem->get('allow_retake')}" data-leave-warning="{escape($lang->msg_exam_leave_warning)}" data-draft-saved="{escape($lang->exam_draft_saved)}" data-draft-restored="{escape($lang->exam_draft_restored)}" data-offline="{escape($lang->exam_offline)}" data-online="{escape($lang->exam_online)}" data-mobile-warning="{escape($lang->msg_mobile_timed_exam)}">
+<form ruleset="examJoin" id="examJoin" action="./" method="post" data-exam-srl="{$examitem->document_srl}" data-practice="{$is_practice?'Y':'N'}" data-timed="{(!$is_practice && $examitem->isTime() && $examitem->get('exam_time'))?'Y':'N'}" data-allow-resume="{($is_practice || $examitem->get('allow_retake')=='Y')?'Y':'N'}" data-leave-warning="{escape($lang->msg_exam_leave_warning)}" data-draft-saved="{escape($lang->exam_draft_saved)}" data-draft-restored="{escape($lang->exam_draft_restored)}" data-offline="{escape($lang->exam_offline)}" data-online="{escape($lang->exam_online)}" data-mobile-warning="{escape($lang->msg_mobile_timed_exam)}" data-msg-answer-required="{escape($lang->msg_not_answer)}" data-msg-practice-incomplete="{escape($lang->msg_practice_incomplete)}">
 <div class="exam-leave-notice" role="alert">
 	<strong>{$lang->exam_leave_warning_title}</strong>
-	<span cond="$examitem->get('allow_retake')=='Y'">{$lang->exam_leave_notice_resume}</span>
-	<span cond="$examitem->get('allow_retake')!='Y'">{$lang->exam_leave_notice_no_resume}</span>
+	<span cond="$is_practice">{$lang->practice_leave_notice}</span>
+	<span cond="!$is_practice && $examitem->get('allow_retake')=='Y'">{$lang->exam_leave_notice_resume}</span>
+	<span cond="!$is_practice && $examitem->get('allow_retake')!='Y'">{$lang->exam_leave_notice_no_resume}</span>
 </div>
 <div class="exam-connection-status" data-exam-connection role="status" aria-live="polite" hidden></div>
 <div class="exam-draft-status" data-exam-draft-status role="status" aria-live="polite" hidden></div>
@@ -23,12 +24,17 @@
 <input type="hidden" name="xe_validator_id" value="modules/exam/exam_join/1" />
 <input type="hidden" name="document_srl" value="{$document_srl}" />
 <input type="hidden" name="valid_check" value="Y" />
+	<div cond="$is_practice" class="practice-progress" role="status">
+		<span><strong data-practice-current>1</strong> / {$examitem->getQuestionCount()}</span>
+		<progress data-practice-progress max="{$examitem->getQuestionCount()}" value="{$practice_submitted_count}"></progress>
+		<span>{$lang->practice_submitted_count}: <strong data-practice-submitted>{$practice_submitted_count}</strong></span>
+	</div>
 	<block loop="$question_blocks=>$question_block">
-	<section cond="$question_block->passage" class="common-passage">
+	<section cond="$question_block->passage" class="common-passage" data-practice-passage="{$is_practice?'Y':'N'}" data-practice-start="{$question_block->start}" data-practice-end="{$question_block->end}">
 		<h4><i class="xi-documents"></i> {sprintf($lang->passage_range_label, $question_block->start, $question_block->end)} · {$question_block->passage->getTitle()}</h4>
 		<div class="common-passage-content">{$question_block->passage->getDescription()}</div>
 	</section>
-    <div loop="$question_block->questions=>$no,$qitem" class="qitem">
+    <div loop="$question_block->questions=>$no,$qitem" class="qitem" data-practice-question="{$is_practice?'Y':'N'}" data-practice-number="{$no}" data-practice-graded="{$qitem->get('practice_graded')=='Y'?'Y':'N'}">
         <div class="qtitle">
             <div class="txt"><span>{$no}</span>. {$qitem->getTitle()} [{$qitem->getPoint()}점] <span class="question-level">{$lang->q_level}: {$lang->qLevelList[$qitem->getQLevel()]}</span></div>
         </div>
@@ -37,19 +43,32 @@
             {$qitem->getDescription()}
         </fieldset>
         <p cond="$qitem->getQType()" class="qanswer">
-            <label for="answer{$no}">정　답: <input type="text" name="answer{$no}" id="answer{$no}" value="" class="underInput" data-question-srl="{$qitem->question_srl}" /></label>
+            <label for="answer{$no}">정　답: <input type="text" name="answer{$no}" id="answer{$no}" value="{escape($is_practice?$qitem->get('practice_answer'):'')}" class="underInput" data-question-srl="{$qitem->question_srl}" readonly="readonly"|cond="$is_practice && $qitem->get('practice_graded')=='Y'" /></label>
         </p>
         <ul cond="!$qitem->getQType()" class="qanswer_list">
-        <input type="hidden" name="answer{$no}" id="answer{$no}" value="" data-question-srl="{$qitem->question_srl}" />
+        <input type="hidden" name="answer{$no}" id="answer{$no}" value="{escape($is_practice?$qitem->get('practice_answer'):'')}" data-question-srl="{$qitem->question_srl}" />
         <li loop="$lang->numIconList=>$i,$icon" cond="$qitem->getAnswer($i) != ''">
             <div class="txt"><a href="#" class="ans_check" data-value="{$no},{$i},{($qitem->getAnswerCount()>1)?'Y':'N';}">{$icon} {$qitem->getAnswer($i)}</a></div>
             <div class="marking"></div>
         </li>
         </ul>
+		<div cond="$is_practice" class="practice-result is-{$qitem->get('practice_answer_result')}" data-practice-result hidden="hidden"|cond="$qitem->get('practice_graded')!='Y'">
+			<strong data-practice-result-label>{$qitem->get('practice_answer_result')=='O'?$lang->practice_result_correct:($qitem->get('practice_answer_result')=='P'?$lang->practice_result_partial:$lang->practice_result_wrong)}</strong>
+			<p><b>{$lang->practice_correct_answer}:</b> <span data-practice-correct>{$qitem->get('practice_correct_answer')}</span></p>
+			<div><b>{$lang->practice_explanation}:</b> <span data-practice-explanation>{$qitem->get('practice_explanation')}</span></div>
+		</div>
+		<div cond="$is_practice" class="practice-question-actions">
+			<button type="button" class="exam_btn1 btn_submit" data-practice-submit disabled="disabled"|cond="$qitem->get('practice_graded')=='Y'"><i class="xi-check-circle"></i> {$qitem->get('practice_graded')=='Y'?$lang->practice_answer_submitted:$lang->practice_submit_answer}</button>
+		</div>
     </div>
 	</block>
+	<div cond="$is_practice" class="practice-navigation">
+		<button type="button" class="exam_btn1" data-practice-prev><i class="xi-angle-left"></i> {$lang->cmd_prev_question}</button>
+		<button type="button" class="exam_btn1" data-practice-next>{$lang->cmd_next_question} <i class="xi-angle-right"></i></button>
+	</div>
     <div class="paper_message_area" style="margin-top:20px">
-        <button type="submit" class="exam_btn1 btn_submit"><i class="xi-form-checkout"></i> 답안지 제출</button>
+        <button cond="!$is_practice" type="submit" class="exam_btn1 btn_submit"><i class="xi-form-checkout"></i> 답안지 제출</button>
+		<button cond="$is_practice" type="submit" class="exam_btn1 btn_submit" data-practice-finish disabled="disabled"|cond="$practice_submitted_count < $examitem->getQuestionCount()"><i class="xi-flag"></i> {$lang->practice_finish}</button>
     </div>
 </form>
 </block>
@@ -58,7 +77,7 @@
 var msg_not_answer_text = '{$lang->msg_not_answer_text}';
 var msg_not_answer_radio = '{$lang->msg_not_answer_radio}';
 
-<block cond="($examitem->isTime() && $examitem->get('exam_time'))">
+<block cond="(!$is_practice && $examitem->isTime() && $examitem->get('exam_time'))">
 jQuery(function($) {
 	var max_time = parseInt($('#examTimer').attr('data-value'), 10) || 0;
 	var timer_submitted = false;

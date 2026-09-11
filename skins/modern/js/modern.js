@@ -4,6 +4,7 @@ jQuery(function($) {
     // Select one or more answers and keep the hidden form value in sync.
     $('.qanswer_list a.ans_check').on('click', function(event) {
         event.preventDefault();
+        if ($(this).closest('[data-practice-graded="Y"]').length) return;
 
         var values = $(this).attr('data-value').split(',');
         var $answer = $('#answer' + values[0]);

@@ -18,6 +18,7 @@
         <column name="description_title" var="description_title" default="" />
         <column name="description" var="description" default="" />
         <column name="answer_check_type" var="answer_check_type" filter="number" />
+        <column name="subjective_check_type" var="subjective_check_type" filter="number" />
         <column name="status" var="status" />
         <column name="point" var="point" default="0" />
     </columns>

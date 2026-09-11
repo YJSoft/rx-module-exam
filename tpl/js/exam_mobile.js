@@ -53,8 +53,9 @@
             return;
         }
 
+		var practice = $form.attr('data-practice') === 'Y';
 		var timed = $form.attr('data-timed') === 'Y';
-		var allowResume = $form.attr('data-allow-resume') === 'Y';
+		var allowResume = practice || $form.attr('data-allow-resume') === 'Y';
 		var canSaveDraft = !timed || allowResume;
 		var $connection = $form.find('[data-exam-connection]');
 		var $draftStatus = $form.find('[data-exam-draft-status]');
@@ -72,7 +73,11 @@
                 .toggleClass('is-offline', !online)
                 .toggleClass('is-online', online)
                 .text(online ? $form.attr('data-online') : $form.attr('data-offline'));
-            $form.find('[type=submit]').prop('disabled', !online);
+            $form.find('[type=submit]').not('[data-practice-finish]').prop('disabled', !online);
+			if (practice) {
+				var complete = !$form.find('[data-practice-question="Y"][data-practice-graded!="Y"]').length;
+				$form.find('[data-practice-finish]').prop('disabled', !online || !complete);
+			}
 
             if (online) {
                 window.setTimeout(function() {
@@ -147,6 +152,9 @@
 
                 var restored = false;
                 $form.find('[data-question-srl]').each(function() {
+					if ($(this).closest('[data-practice-graded="Y"]').length) {
+						return;
+					}
                     var questionSrl = String($(this).attr('data-question-srl'));
                     if (Object.prototype.hasOwnProperty.call(draft.answers, questionSrl)) {
                         $(this).val(draft.answers[questionSrl]);
@@ -176,7 +184,7 @@
 		}
 
 		function submitAbandonment() {
-			if (allowResume || abandonmentSent || !window.navigator.sendBeacon || !window.FormData) {
+			if (practice || allowResume || abandonmentSent || !window.navigator.sendBeacon || !window.FormData) {
 				return;
 			}
 			var formData = new window.FormData($form[0]);

@@ -26,6 +26,8 @@
 		<action name="dispExamCreate" type="view" />
 		<action name="dispExamDelete" type="view" />
 		<action name="dispExamEditMode" type="view" />
+		<action name="dispExamCsvImport" type="view" />
+		<action name="dispExamCsvTemplateDownload" type="view" />
 		<action name="disExamMyResult" type="view" />
 		<action name="dispExamCorrectCheck" type="view" />
 		<action name="dispExamManualGrade" type="view" />
@@ -39,6 +41,8 @@
 		<action name="procExamQuestionInsert" type="controller" ruleset="insertQuestion" />
 		<action name="procExamQuestionDelete" type="controller" />
 		<action name="procExamQuestionSwap" type="controller" />
+		<action name="procExamCsvImport" type="controller" />
+		<action name="procExamPracticeSubmit" type="controller" />
 		<action name="procExamJoin" type="controller" ruleset="examJoin" />
 		<action name="procExamManualGrade" type="controller" ruleset="manualGrade" />
 

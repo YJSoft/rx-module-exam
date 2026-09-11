@@ -84,7 +84,7 @@
     <td cond="$val->type=='regdate' && $val->idx==-1"><div class="ta_c">{$examitem->getRegdate('Y.m.d')}</div></td>
     <td cond="$val->type=='exam_date' && $val->idx==-1"><div class="ta_c">{$examitem->getExamDate()}</div></td>
     <td cond="$val->type=='last_update' && $val->idx==-1"><div class="ta_c">{zdate($examitem->get('last_update'),'Y.m.d')}</div></td>
-    <td cond="$val->type=='exam_question_count' && $val->idx==-1"><div class="ta_c">{$examitem->getQuestionCount()}</div></td>
+    <td cond="$val->type=='exam_question_count' && $val->idx==-1"><div class="ta_c">{$examitem->getDisplayQuestionCount()}</div></td>
     <td cond="$val->type=='exam_join_count' && $val->idx==-1"><div class="ta_c">{$examitem->getJoinCount()}</div></td>
     <td cond="$val->type=='exam_join_point' && $val->idx==-1"><div class="ta_c">{$examitem->getJoinPoint()}</div></td>
     <td cond="$val->type=='exam_pass_point' && $val->idx==-1"><div class="ta_c">{$examitem->getPassPoint()}P</div></td>
